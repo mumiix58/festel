@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: festlmacher-api
+    env: node
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        value: mongodb+srv://gey14853:Muhammed5858@cluster0.5mylt.mongodb.net/festlmacher?retryWrites=true&w=majority
+      - key: JWT_SECRET
+        value: festlmacher2024secure
+    autoDeploy: true

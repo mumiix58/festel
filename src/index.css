@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-primary-50 text-primary-900 antialiased;
+  }
+
+  /* Prevent body scroll when mobile menu is open */
+  body.menu-open {
+    @apply overflow-hidden;
+  }
+}
+
+/* Services Slider Custom Styles */
+.services-slider {
+  @apply relative px-12;
+}
+
+.services-slider .swiper-button-next,
+.services-slider .swiper-button-prev {
+  @apply absolute top-[calc(33%-20px)] z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-accent shadow-lg transition-all hover:bg-accent hover:text-white;
+}
+
+.services-slider .swiper-button-prev {
+  @apply left-0;
+}
+
+.services-slider .swiper-button-next {
+  @apply right-0;
+}
+
+.services-slider .swiper-button-next::after,
+.services-slider .swiper-button-prev::after {
+  @apply text-lg font-bold;
+}
+
+.services-slider .swiper-pagination {
+  @apply relative mt-6;
+}
+
+.services-slider .swiper-pagination-bullet {
+  @apply h-2.5 w-2.5 bg-gray-300 opacity-100 transition-all;
+}
+
+.services-slider .swiper-pagination-bullet-active {
+  @apply w-8 rounded-full bg-accent;
+}
+
+/* Hero Slider Styles */
+.hero-slider {
+  @apply relative w-full;
+  height: 100vh;
+}
+
+.hero-slider .swiper-pagination-bullet {
+  @apply h-2.5 w-2.5 bg-white opacity-75 transition-all;
+}
+
+.hero-slider .swiper-pagination-bullet-active {
+  @apply w-8 rounded-full opacity-100;
+}
+
+@media (max-width: 640px) {
+  .hero-slider {
+    height: 100vh;
+    margin-top: -5rem; /* Compensate for header height */
+  }
+  
+  .hero-content {
+    @apply px-4 pb-16 pt-32;
+  }
+  
+  .container {
+    @apply px-4;
+  }
+  
+  .py-24 {
+    @apply py-16;
+  }
+  
+  .gap-8 {
+    @apply gap-6;
+  }
+
+  .text-4xl {
+    @apply text-3xl;
+  }
+
+  .text-xl {
+    @apply text-lg;
+  }
+}
