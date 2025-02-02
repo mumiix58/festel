@@ -1,9 +1,7 @@
-import api from './api';
 import { v4 as uuidv4 } from 'uuid';
-import { AxiosRequestConfig } from 'axios';
 
-// Extend AxiosRequestConfig to include our custom properties
-interface CustomRequestConfig extends AxiosRequestConfig {
+// Custom type for request config
+interface RequestConfig {
   retry?: number;
   retryDelay?: number;
 }

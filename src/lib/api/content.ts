@@ -1,11 +1,17 @@
 import { connectDB } from '../db';
 import { AboutContent, FAQContent, HomeContent, ReferencesContent, ServicesPageContent } from '@/types';
 
+interface ContentDocument {
+  page: string;
+  content: any;
+  updatedAt?: Date;
+}
+
 // Get content for a specific page
 export async function getPageContent(page: string) {
   try {
     const db = await connectDB();
-    const content = await db.collection('content').findOne({ page });
+    const content = await db.collection('content').findOne<ContentDocument>({ page });
     return content?.content || null;
   } catch (error) {
     console.error(`Error fetching ${page} content:`, error);
