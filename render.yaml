@@ -3,13 +3,16 @@ services:
     name: festlmacher-api
     env: node
     plan: free
-    buildCommand: cd server && npm install
-    startCommand: cd server && npm start
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node index.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: MONGODB_URI
-        value: mongodb+srv://gey14853:Muhammed5858@cluster0.5mylt.mongodb.net/festlmacher?retryWrites=true&w=majority
+        sync: false
       - key: JWT_SECRET
-        value: festlmacher2024secure
+        sync: false
+      - key: FRONTEND_URL
+        value: https://festlmacher.netlify.app
     autoDeploy: true

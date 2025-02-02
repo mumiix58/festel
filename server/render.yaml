@@ -14,5 +14,5 @@ services:
       - key: JWT_SECRET
         sync: false
       - key: FRONTEND_URL
-        value: https://festlmacher.netlify.app
+        value: https://cateringandmore.at
     autoDeploy: true
