@@ -1,3 +1,11 @@
+// Add UserProfile type
+export interface UserProfile {
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  password?: string;
+}
+
 // Base Types
 export interface ImageContent {
   id: string;
