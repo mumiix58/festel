@@ -6,6 +6,8 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
     plugins: [react()],
+    root: '.',
+    base: '/',
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
@@ -14,7 +16,11 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       sourcemap: false,
+      emptyOutDir: true,
       rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html')
+        },
         output: {
           manualChunks: {
             vendor: ['react', 'react-dom', 'react-router-dom'],
