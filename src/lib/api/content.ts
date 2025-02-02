@@ -11,8 +11,8 @@ interface ContentDocument {
 export async function getPageContent(page: string) {
   try {
     const db = await connectDB();
-    const content = await db.collection('content').findOne<ContentDocument>({ page });
-    return content?.content || null;
+    const doc = await db.collection('content').findOne({ page });
+    return doc?.content || null;
   } catch (error) {
     console.error(`Error fetching ${page} content:`, error);
     throw error;

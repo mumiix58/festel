@@ -37,7 +37,7 @@ export async function connectDB() {
             }
           })
         }),
-        findOne: async (query: Record<string, any> = {}) => {
+        findOne: async (query: Record<string, any> = {}): Promise<DbDocument | null> => {
           let result = null;
           await collections[name].iterate((value: DbDocument, key) => {
             if (!result && Object.entries(query).every(
