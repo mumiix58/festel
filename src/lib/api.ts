@@ -1,6 +1,6 @@
 import { config } from './config';
 
-const API_URL = config.apiUrl;
+const API_URL = config.apiUrl || 'http://localhost:3000/api';
 
 const api = {
   get: async (url: string) => {
@@ -10,8 +10,7 @@ const api = {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
-        },
-        credentials: 'include'
+        }
       });
 
       if (!response.ok) {
@@ -33,7 +32,6 @@ const api = {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        credentials: 'include',
         body: JSON.stringify(data)
       });
 
@@ -56,7 +54,6 @@ const api = {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        credentials: 'include',
         body: JSON.stringify(data)
       });
 
@@ -77,8 +74,7 @@ const api = {
         method: 'DELETE',
         headers: {
           'Accept': 'application/json'
-        },
-        credentials: 'include'
+        }
       });
 
       if (!response.ok) {
@@ -93,4 +89,4 @@ const api = {
   }
 };
 
-export default api;
+export default api

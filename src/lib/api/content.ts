@@ -1,18 +1,11 @@
-import { connectDB } from '../db';
+import api from '../api';
 import { AboutContent, FAQContent, HomeContent, ReferencesContent, ServicesPageContent } from '@/types';
-
-interface ContentDocument {
-  page: string;
-  content: any;
-  updatedAt?: Date;
-}
 
 // Get content for a specific page
 export async function getPageContent(page: string) {
   try {
-    const db = await connectDB();
-    const doc = await db.collection('content').findOne({ page });
-    return doc?.content || null;
+    const response = await api.get(`/content/${page}`);
+    return response.content;
   } catch (error) {
     console.error(`Error fetching ${page} content:`, error);
     throw error;
@@ -22,13 +15,8 @@ export async function getPageContent(page: string) {
 // Update content for a specific page
 export async function updatePageContent(page: string, content: any) {
   try {
-    const db = await connectDB();
-    await db.collection('content').updateOne(
-      { page },
-      { $set: { content, updatedAt: new Date() } },
-      { upsert: true }
-    );
-    return content;
+    const response = await api.put(`/content/${page}`, content);
+    return response.content;
   } catch (error) {
     console.error(`Error updating ${page} content:`, error);
     throw error;
