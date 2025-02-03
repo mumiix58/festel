@@ -7,6 +7,9 @@ export const config = {
   },
   googleMaps: {
     apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''
+  },
+  mongodb: {
+    uri: import.meta.env.MONGODB_URI || 'mongodb+srv://gey14853:Muhammed5858@festelmacher.egk1s.mongodb.net/?retryWrites=true&w=majority&appName=festelmacher'
   }
 };
 

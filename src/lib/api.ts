@@ -23,7 +23,11 @@ const api = {
         credentials: 'include'
       });
 
-      const data = await api.handleResponse(response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
       return data;
     } catch (error) {
       console.error('API GET error:', error);
@@ -44,7 +48,11 @@ const api = {
         body: JSON.stringify(data)
       });
 
-      const responseData = await api.handleResponse(response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
       showToast.success('Successfully saved');
       return responseData;
     } catch (error) {
@@ -66,7 +74,11 @@ const api = {
         body: JSON.stringify(data)
       });
 
-      const responseData = await api.handleResponse(response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
       showToast.success('Successfully updated');
       return responseData;
     } catch (error) {
@@ -86,7 +98,11 @@ const api = {
         credentials: 'include'
       });
 
-      const data = await api.handleResponse(response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
       showToast.success('Successfully deleted');
       return data;
     } catch (error) {
@@ -108,7 +124,11 @@ const api = {
         body: JSON.stringify(data)
       });
 
-      const responseData = await api.handleResponse(response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
       showToast.success('Successfully updated');
       return responseData;
     } catch (error) {

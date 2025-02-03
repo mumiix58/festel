@@ -31,13 +31,10 @@ const defaultSlides: SlideContent[] = [
 // Get all slides including defaults
 export const getAllSlides = async (): Promise<SlideContent[]> => {
   try {
-    const loadingId = showToast.loading('Loading slides...');
+    showToast.loading('Loading slides...');
     
     // First try to get slides from API
     const response = await api.get('/slider');
-    
-    // Clear loading toast
-    toast.dismiss(loadingId);
     
     // Validate response format
     if (!response || (!Array.isArray(response) && !Array.isArray(response.data))) {
@@ -67,7 +64,7 @@ export const getAllSlides = async (): Promise<SlideContent[]> => {
 
 // Add new slide
 export const addSlide = async (file: File): Promise<SlideContent> => {
-  const loadingId = showToast.loading('Uploading slide...');
+  showToast.loading('Uploading slide...');
   
   try {
     const formData = new FormData();
@@ -88,11 +85,9 @@ export const addSlide = async (file: File): Promise<SlideContent> => {
       throw new Error('Invalid response format: missing slide data');
     }
 
-    toast.dismiss(loadingId);
     showToast.success('Slide added successfully');
     return data.slide;
   } catch (error) {
-    toast.dismiss(loadingId);
     console.error('Error adding slide:', error);
     showToast.error('Failed to add slide');
     throw new Error(error instanceof Error ? error.message : 'Failed to add slide');
@@ -101,7 +96,7 @@ export const addSlide = async (file: File): Promise<SlideContent> => {
 
 // Update slide
 export const updateSlide = async (slideId: string, updates: Partial<SlideContent>): Promise<void> => {
-  const loadingId = showToast.loading('Updating slide...');
+  showToast.loading('Updating slide...');
   
   try {
     const response = await api.put(`/slider/${slideId}`, updates);
@@ -110,10 +105,8 @@ export const updateSlide = async (slideId: string, updates: Partial<SlideContent
       throw new Error('Invalid response format from server');
     }
 
-    toast.dismiss(loadingId);
     showToast.success('Slide updated successfully');
   } catch (error) {
-    toast.dismiss(loadingId);
     console.error('Error updating slide:', error);
     showToast.error('Failed to update slide');
     throw new Error(error instanceof Error ? error.message : 'Failed to update slide');
@@ -122,7 +115,7 @@ export const updateSlide = async (slideId: string, updates: Partial<SlideContent
 
 // Delete slide
 export const deleteSlide = async (slideId: string): Promise<void> => {
-  const loadingId = showToast.loading('Deleting slide...');
+  showToast.loading('Deleting slide...');
   
   try {
     const response = await api.delete(`/slider/${slideId}`);
@@ -131,10 +124,8 @@ export const deleteSlide = async (slideId: string): Promise<void> => {
       throw new Error('Invalid response format from server');
     }
 
-    toast.dismiss(loadingId);
     showToast.success('Slide deleted successfully');
   } catch (error) {
-    toast.dismiss(loadingId);
     console.error('Error deleting slide:', error);
     showToast.error('Failed to delete slide');
     throw new Error(error instanceof Error ? error.message : 'Failed to delete slide');
@@ -143,7 +134,7 @@ export const deleteSlide = async (slideId: string): Promise<void> => {
 
 // Reorder slides
 export const reorderSlides = async (slideId: string, direction: 'up' | 'down'): Promise<void> => {
-  const loadingId = showToast.loading('Reordering slides...');
+  showToast.loading('Reordering slides...');
   
   try {
     const response = await api.patch(`/slider/${slideId}/reorder`, { direction });
@@ -152,10 +143,8 @@ export const reorderSlides = async (slideId: string, direction: 'up' | 'down'): 
       throw new Error('Invalid response format from server');
     }
 
-    toast.dismiss(loadingId);
     showToast.success('Slides reordered successfully');
   } catch (error) {
-    toast.dismiss(loadingId);
     console.error('Error reordering slides:', error);
     showToast.error('Failed to reorder slides');
     throw new Error(error instanceof Error ? error.message : 'Failed to reorder slides');
