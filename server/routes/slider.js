@@ -12,10 +12,11 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.get('/', async (req, res) => {
   try {
     const slides = await Slider.find().sort('order');
+    console.log('Slides fetched from MongoDB');
     res.json(slides);
   } catch (error) {
     console.error('Error fetching slides:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Error fetching slides from database' });
   }
 });
 
@@ -50,10 +51,14 @@ router.post('/', authenticateToken, isAdmin, upload.single('image'), async (req,
       metadata: { slideId: slide._id }
     });
 
-    res.status(201).json(slide);
+    console.log('New slide successfully saved to MongoDB');
+    res.status(201).json({ 
+      message: 'Slide successfully saved to database',
+      slide 
+    });
   } catch (error) {
     console.error('Error creating slide:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Error saving slide to database' });
   }
 });
 
@@ -78,10 +83,14 @@ router.put('/:id', authenticateToken, isAdmin, async (req, res) => {
       metadata: { slideId: slide._id }
     });
 
-    res.json(slide);
+    console.log(`Slide ${slide._id} successfully updated in MongoDB`);
+    res.json({ 
+      message: 'Slide successfully updated in database',
+      slide 
+    });
   } catch (error) {
     console.error('Error updating slide:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Error updating slide in database' });
   }
 });
 
@@ -112,10 +121,11 @@ router.delete('/:id', authenticateToken, isAdmin, async (req, res) => {
       metadata: { slideId: slide._id }
     });
 
-    res.json({ message: 'Slide deleted successfully' });
+    console.log(`Slide ${slide._id} successfully deleted from MongoDB`);
+    res.json({ message: 'Slide successfully deleted from database' });
   } catch (error) {
     console.error('Error deleting slide:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Error deleting slide from database' });
   }
 });
 
@@ -150,10 +160,11 @@ router.patch('/:id/reorder', authenticateToken, isAdmin, async (req, res) => {
       metadata: { slideId: slide._id }
     });
 
-    res.json({ message: 'Slides reordered successfully' });
+    console.log('Slides successfully reordered in MongoDB');
+    res.json({ message: 'Slides successfully reordered in database' });
   } catch (error) {
     console.error('Error reordering slides:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Error reordering slides in database' });
   }
 });
 

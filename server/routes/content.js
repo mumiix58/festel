@@ -9,10 +9,11 @@ const router = express.Router();
 router.get('/:page', async (req, res) => {
   try {
     const content = await Content.findOne({ page: req.params.page });
+    console.log(`Content fetched from MongoDB for page: ${req.params.page}`);
     res.json({ content: content?.content || null });
   } catch (error) {
     console.error('Content fetch error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Error fetching content from database' });
   }
 });
 
@@ -36,10 +37,14 @@ router.put('/:page', authenticateToken, isAdmin, async (req, res) => {
       metadata: { page: req.params.page }
     });
 
-    res.json({ content: content.content });
+    console.log(`Content successfully saved to MongoDB for page: ${req.params.page}`);
+    res.json({ 
+      message: `Content for ${req.params.page} successfully saved to database`,
+      content: content.content 
+    });
   } catch (error) {
     console.error('Content update error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Error saving content to database' });
   }
 });
 
