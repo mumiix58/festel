@@ -4,11 +4,13 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import { errorHandler } from './middleware/error.js';
 import connectDB from './config/db.js';
+import { initializeContent } from './scripts/initContent.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
 import contentRoutes from './routes/content.js';
 import settingsRoutes from './routes/settings.js';
+import sliderRoutes from './routes/slider.js';
 
 // Load environment variables
 dotenv.config();
@@ -26,6 +28,11 @@ const startServer = async () => {
     console.log('Connecting to database...');
     await connectDB();
     console.log('Database connection established');
+
+    // Initialize default content
+    console.log('Initializing default content...');
+    await initializeContent();
+    console.log('Default content initialized');
 
     // CORS configuration
     const allowedOrigins = [
@@ -63,6 +70,7 @@ const startServer = async () => {
     app.use('/api/auth', authRoutes);
     app.use('/api/content', contentRoutes);
     app.use('/api/settings', settingsRoutes);
+    app.use('/api/slider', sliderRoutes);
 
     // Health check
     app.get('/api/health', (req, res) => {

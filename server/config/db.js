@@ -1,40 +1,29 @@
 import mongoose from 'mongoose';
-import { initializeAdmin } from '../models/User.js';
-import { initializeSettings } from '../models/Settings.js';
-import { initializeContent } from '../scripts/initContent.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://gey14853:Muhammed5858@festelmacher.egk1s.mongodb.net/?retryWrites=true&w=majority&appName=festelmacher';
 
 const connectDB = async () => {
   try {
-    if (!process.env.MONGODB_URI) {
+    if (!MONGODB_URI) {
       throw new Error('MONGODB_URI environment variable is not set');
     }
 
     // Configure mongoose options
     mongoose.set('strictQuery', false);
 
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+    const conn = await mongoose.connect(MONGODB_URI, {
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
-      family: 4, // Force IPv4
+      family: 4,
       retryWrites: true,
       w: 'majority'
     });
     
     console.log(`MongoDB Connected: ${conn.connection.host}`);
-
-    // Initialize default data
-    try {
-      await Promise.all([
-        initializeAdmin(),
-        initializeSettings(),
-        initializeContent()
-      ]);
-      console.log('Default data initialized successfully');
-    } catch (initError) {
-      console.warn('Warning: Error initializing default data:', initError);
-      // Don't throw error to allow server to start even if initialization fails
-    }
 
     // Set up connection error handler
     mongoose.connection.on('error', err => {
@@ -62,6 +51,8 @@ const connectDB = async () => {
         process.exit(1);
       }
     });
+
+    return conn;
 
   } catch (error) {
     console.error('MongoDB connection error:', error);

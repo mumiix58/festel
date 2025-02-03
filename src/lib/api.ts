@@ -1,6 +1,8 @@
 import { config } from './config';
 import { showToast } from './toast';
 
+const isAdminRoute = () => window.location.pathname.startsWith('/admin');
+
 const api = {
   baseUrl: config.apiUrl,
 
@@ -31,7 +33,9 @@ const api = {
       return data;
     } catch (error) {
       console.error('API GET error:', error);
-      showToast.error('Failed to fetch data');
+      if (isAdminRoute()) {
+        showToast.error('Failed to fetch data');
+      }
       throw error;
     }
   },
@@ -53,11 +57,15 @@ const api = {
       }
 
       const responseData = await response.json();
-      showToast.success('Successfully saved');
+      if (isAdminRoute()) {
+        showToast.success('Successfully saved');
+      }
       return responseData;
     } catch (error) {
       console.error('API POST error:', error);
-      showToast.error('Failed to save data');
+      if (isAdminRoute()) {
+        showToast.error('Failed to save data');
+      }
       throw error;
     }
   },
@@ -79,11 +87,15 @@ const api = {
       }
 
       const responseData = await response.json();
-      showToast.success('Successfully updated');
+      if (isAdminRoute()) {
+        showToast.success('Successfully updated');
+      }
       return responseData;
     } catch (error) {
       console.error('API PUT error:', error);
-      showToast.error('Failed to update data');
+      if (isAdminRoute()) {
+        showToast.error('Failed to update data');
+      }
       throw error;
     }
   },
@@ -103,11 +115,15 @@ const api = {
       }
 
       const data = await response.json();
-      showToast.success('Successfully deleted');
+      if (isAdminRoute()) {
+        showToast.success('Successfully deleted');
+      }
       return data;
     } catch (error) {
       console.error('API DELETE error:', error);
-      showToast.error('Failed to delete data');
+      if (isAdminRoute()) {
+        showToast.error('Failed to delete data');
+      }
       throw error;
     }
   },
@@ -129,11 +145,15 @@ const api = {
       }
 
       const responseData = await response.json();
-      showToast.success('Successfully updated');
+      if (isAdminRoute()) {
+        showToast.success('Successfully updated');
+      }
       return responseData;
     } catch (error) {
       console.error('API PATCH error:', error);
-      showToast.error('Failed to update data');
+      if (isAdminRoute()) {
+        showToast.error('Failed to update data');
+      }
       throw error;
     }
   }
