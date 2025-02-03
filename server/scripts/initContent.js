@@ -1,11 +1,11 @@
-import { Content } from '../models/Content.js';
-import { Settings } from '../models/Settings.js';
-import { Slider } from '../models/Slider.js';
-import { FAQ } from '../models/FAQ.js';
-import { Service } from '../models/Service.js';
-import { Reference } from '../models/Reference.js';
-import { Equipment } from '../models/Equipment.js';
-import { Legal } from '../models/Legal.js';
+import Content from '../models/Content.js';
+import Settings from '../models/Settings.js';
+import Slider from '../models/Slider.js';
+import FAQ from '../models/FAQ.js';
+import Service from '../models/Service.js';
+import Reference from '../models/Reference.js';
+import Equipment from '../models/Equipment.js';
+import Legal from '../models/Legal.js';
 import { 
   defaultHomeContent,
   defaultAboutContent,
@@ -156,37 +156,6 @@ export async function initializeContent() {
         }
       ]);
       console.log('Default legal content initialized');
-    }
-
-    // Initialize default settings if not exists
-    const existingSettings = await Settings.countDocuments();
-    if (existingSettings === 0) {
-      await Settings.create({
-        company: {
-          name: "FEST'LMACHER Gastronomie",
-          address: {
-            street: "Handelskai 265",
-            city: "Wien",
-            postalCode: "1020",
-            country: "Österreich"
-          },
-          contact: {
-            phone: "+43 (0)699 – 1600 2800",
-            email: "catering@festlmacher.at"
-          }
-        },
-        social: {
-          facebook: "https://facebook.com/festlmacher",
-          instagram: "https://instagram.com/festlmacher",
-          linkedin: "https://linkedin.com/company/festlmacher"
-        },
-        seo: {
-          title: "FEST'LMACHER Gastronomie | Ihr Catering Partner in Wien",
-          description: "Professioneller Catering-Service in Wien für Ihre Veranstaltungen.",
-          keywords: "catering wien, event catering, hochzeit catering"
-        }
-      });
-      console.log('Default settings initialized');
     }
 
     console.log('All default content successfully initialized in MongoDB');

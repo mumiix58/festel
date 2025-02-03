@@ -22,4 +22,6 @@ contentSchema.pre('save', function(next) {
   next();
 });
 
-export default mongoose.model('Content', contentSchema);
+const Content = mongoose.model('Content', contentSchema);
+
+export default Content;
