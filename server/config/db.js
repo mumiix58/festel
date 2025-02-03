@@ -1,9 +1,12 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { initializeAdmin } from '../models/User.js';
+import { initializeSettings } from '../models/Settings.js';
+import { initializeContent } from '../scripts/initContent.js';
 
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://gey14853:Muhammed5858@festelmacher.egk1s.mongodb.net/?retryWrites=true&w=majority&appName=festelmacher';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://gey14853:Muhammed5858@festelmacher.egk1s.mongodb.net/festelmacher?retryWrites=true&w=majority';
 
 const connectDB = async () => {
   try {
@@ -24,6 +27,18 @@ const connectDB = async () => {
     });
     
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+
+    // Initialize default data
+    try {
+      await Promise.all([
+        initializeAdmin(),
+        initializeSettings(),
+        initializeContent()
+      ]);
+      console.log('Default data initialized successfully');
+    } catch (initError) {
+      console.warn('Warning: Error initializing default data:', initError);
+    }
 
     // Set up connection error handler
     mongoose.connection.on('error', err => {
@@ -56,8 +71,7 @@ const connectDB = async () => {
 
   } catch (error) {
     console.error('MongoDB connection error:', error);
-    // Wait 5 seconds before exiting to allow logs to be written
-    setTimeout(() => process.exit(1), 5000);
+    process.exit(1);
   }
 };
 
