@@ -1,4 +1,4 @@
-{/* Update App.tsx to fix admin routes */}
+import { Toaster } from 'react-hot-toast';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Header } from '@/components/layout/Header';
@@ -61,6 +61,7 @@ export default function App() {
       <ErrorBoundary>
         <Router>
           <ScrollToTop />
+          <Toaster />
           <Routes>
             {/* Admin Routes */}
             <Route path="/admin/login" element={<Login />} />

@@ -1,103 +1,62 @@
-import localforage from 'localforage';
+import mongoose from 'mongoose';
+import { showToast } from './toast';
 
-// Initialize localforage instances for different collections
-const collections: { [key: string]: LocalForage } = {};
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/festlmacher';
 
-interface DbDocument {
-  _id?: string;
-  [key: string]: any;
-}
+let isConnected = false;
 
 export async function connectDB() {
-  return {
-    collection: (name: string) => {
-      // Create or get collection instance
-      if (!collections[name]) {
-        collections[name] = localforage.createInstance({
-          name: 'festlmacher',
-          storeName: name
-        });
-      }
+  if (isConnected) {
+    return;
+  }
 
-      return {
-        find: async (query: Record<string, any> = {}) => ({
-          sort: () => ({
-            toArray: async () => {
-              const items: DbDocument[] = [];
-              await collections[name].iterate((value: DbDocument) => {
-                // Simple query matching
-                const matches = Object.entries(query).every(
-                  ([key, val]) => !query || value[key] === val
-                );
-                if (matches) {
-                  items.push(value);
-                }
-              });
-              return items;
-            }
-          })
-        }),
-        findOne: async (query: Record<string, any> = {}): Promise<DbDocument | null> => {
-          let result: DbDocument | null = null;
-          await collections[name].iterate((value: DbDocument, key) => {
-            if (!result && Object.entries(query).every(
-              ([k, v]) => !query || value[k] === v
-            )) {
-              result = { ...value, _id: key };
-              return false; // Stop iteration once found
-            }
-          });
-          return result;
-        },
-        insertOne: async (doc: DbDocument) => {
-          const id = doc._id || crypto.randomUUID();
-          await collections[name].setItem(id, { ...doc, _id: id });
-          return { insertedId: id };
-        },
-        updateOne: async (filter: Record<string, any>, update: { $set: Record<string, any> }, options: { upsert?: boolean } = {}) => {
-          let found = false;
-          await collections[name].iterate(async (value: DbDocument, key) => {
-            if (!found && Object.entries(filter).every(
-              ([k, v]) => value[k] === v
-            )) {
-              found = true;
-              const newDoc = { ...value, ...update.$set };
-              await collections[name].setItem(key, newDoc);
-            }
-          });
+  try {
+    await mongoose.connect(MONGODB_URI);
+    isConnected = true;
+    console.log('Connected to MongoDB');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    throw new Error('Failed to connect to database');
+  }
 
-          if (!found && options.upsert) {
-            const id = crypto.randomUUID();
-            await collections[name].setItem(id, { 
-              ...filter, 
-              ...update.$set, 
-              _id: id 
-            });
-            found = true;
-          }
+  mongoose.connection.on('error', (err) => {
+    console.error('MongoDB connection error:', err);
+    showToast.error('Database connection error');
+  });
 
-          return { modifiedCount: found ? 1 : 0 };
-        },
-        deleteOne: async (filter: Record<string, any>) => {
-          let found = false;
-          await collections[name].iterate(async (value: DbDocument, key) => {
-            if (!found && Object.entries(filter).every(
-              ([k, v]) => value[k] === v
-            )) {
-              found = true;
-              await collections[name].removeItem(key);
-            }
-          });
-          return { deletedCount: found ? 1 : 0 };
-        }
-      };
+  mongoose.connection.on('disconnected', () => {
+    console.log('MongoDB disconnected');
+    isConnected = false;
+  });
+
+  process.on('SIGINT', async () => {
+    try {
+      await mongoose.connection.close();
+      console.log('MongoDB connection closed');
+      process.exit(0);
+    } catch (err) {
+      console.error('Error closing MongoDB connection:', err);
+      process.exit(1);
     }
-  };
+  });
+
+  return mongoose.connection;
+}
+
+export async function getCollection(name: string) {
+  await connectDB();
+  return mongoose.connection.collection(name);
 }
 
 export async function closeDB() {
-  // Clear references to collections
-  Object.keys(collections).forEach(key => {
-    delete collections[key];
-  });
+  if (isConnected) {
+    try {
+      await mongoose.connection.close();
+      isConnected = false;
+      console.log('MongoDB connection closed');
+    } catch (error) {
+      console.error('Error closing MongoDB connection:', error);
+      throw new Error('Failed to close database connection');
+    }
+  }
 }

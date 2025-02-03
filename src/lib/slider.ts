@@ -1,13 +1,7 @@
 import { SlideContent } from '@/types';
-import localforage from 'localforage';
+import api from './api';
 
-// Initialize localforage instance for slider
-const sliderStore = localforage.createInstance({
-  name: 'slider',
-  storeName: 'slides'
-});
-
-// Default slides to use while loading or on error
+// Default slides as fallback
 const defaultSlides: SlideContent[] = [
   {
     id: 'default-1',
@@ -21,12 +15,12 @@ const defaultSlides: SlideContent[] = [
     isDefault: true
   },
   {
-    id: 'default-2', 
+    id: 'default-2',
     image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0',
-    title: '30 Jahre FEST\'LMACHER',
-    subtitle: 'Drei Jahrzehnte kulinarische Exzellenz und perfekter Service',
-    buttonText: 'Unsere Geschichte',
-    buttonLink: '/uber-uns',
+    title: 'Professionelles Catering',
+    subtitle: 'Hochwertige Speisen und erstklassiger Service',
+    buttonText: 'Mehr erfahren',
+    buttonLink: '/dienstleistungen',
     order: 1,
     showLogo: false,
     isDefault: true
@@ -36,115 +30,97 @@ const defaultSlides: SlideContent[] = [
 // Get all slides including defaults
 export const getAllSlides = async (): Promise<SlideContent[]> => {
   try {
-    const customSlides = await getCustomSlides();
-    return [...defaultSlides, ...customSlides].sort((a, b) => a.order - b.order);
-  } catch (error) {
-    console.error('Error loading slides');
-    // Return default slides on error
-    return defaultSlides;
-  }
-};
+    // First try to get slides from API
+    const response = await api.get('/slider');
+    
+    // Validate response format
+    if (!response || (!Array.isArray(response) && !Array.isArray(response.data))) {
+      console.warn('Invalid response format from API, using default slides');
+      return defaultSlides;
+    }
 
-// Get only custom slides
-const getCustomSlides = async (): Promise<SlideContent[]> => {
-  try {
-    const slides = await sliderStore.getItem<SlideContent[]>('slides');
-    return slides?.filter(slide => !slide.isDefault) || [];
+    // Handle both response formats
+    const slides = Array.isArray(response) ? response : response.data || [];
+    
+    // If no slides returned, use defaults
+    if (slides.length === 0) {
+      console.warn('No slides returned from API, using default slides');
+      return defaultSlides;
+    }
+
+    return slides;
   } catch (error) {
-    console.error('Error loading custom slides');
-    return [];
+    console.warn('Error loading slides from API, using default slides:', error);
+    return defaultSlides;
   }
 };
 
 // Add new slide
 export const addSlide = async (file: File): Promise<SlideContent> => {
   try {
-    const reader = new FileReader();
-    const allSlides = await getAllSlides();
-    
-    return new Promise((resolve, reject) => {
-      reader.onload = async () => {
-        try {
-          const newSlide: SlideContent = {
-            id: `slide-${Date.now()}`,
-            image: reader.result as string,
-            title: 'Neuer Slide',
-            subtitle: 'Slide Beschreibung',
-            buttonText: 'Jetzt anfragen',
-            buttonLink: '/kontakt',
-            order: allSlides.length,
-            showLogo: true,
-            isDefault: false
-          };
-          
-          const customSlides = await getCustomSlides();
-          await sliderStore.setItem('slides', [...customSlides, newSlide]);
-          resolve(newSlide);
-        } catch (error) {
-          reject(new Error('Failed to save slide'));
-        }
-      };
-      
-      reader.onerror = () => reject(new Error('Failed to read image'));
-      reader.readAsDataURL(file);
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await fetch(`${api.baseUrl}/slider`, {
+      method: 'POST',
+      body: formData
     });
+
+    if (!response.ok) {
+      throw new Error(`Failed to add slide: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    if (!data.slide) {
+      throw new Error('Invalid response format: missing slide data');
+    }
+
+    return data.slide;
   } catch (error) {
-    console.error('Error adding slide');
-    throw new Error('Failed to add slide');
+    console.error('Error adding slide:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to add slide');
   }
 };
 
 // Update slide
 export const updateSlide = async (slideId: string, updates: Partial<SlideContent>): Promise<void> => {
   try {
-    const customSlides = await getCustomSlides();
-    const updatedSlides = customSlides.map(slide =>
-      slide.id === slideId ? { ...slide, ...updates } : slide
-    );
-    await sliderStore.setItem('slides', updatedSlides);
+    const response = await api.put(`/slider/${slideId}`, updates);
+    
+    if (!response || !response.message) {
+      throw new Error('Invalid response format from server');
+    }
   } catch (error) {
-    console.error('Error updating slide');
-    throw new Error('Failed to update slide');
+    console.error('Error updating slide:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to update slide');
   }
 };
 
 // Delete slide
 export const deleteSlide = async (slideId: string): Promise<void> => {
   try {
-    const customSlides = await getCustomSlides();
-    const updatedSlides = customSlides.filter(slide => slide.id !== slideId);
-    await sliderStore.setItem('slides', updatedSlides);
+    const response = await api.delete(`/slider/${slideId}`);
+    
+    if (!response || !response.message) {
+      throw new Error('Invalid response format from server');
+    }
   } catch (error) {
-    console.error('Error deleting slide');
-    throw new Error('Failed to delete slide');
+    console.error('Error deleting slide:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to delete slide');
   }
 };
 
 // Reorder slides
 export const reorderSlides = async (slideId: string, direction: 'up' | 'down'): Promise<void> => {
   try {
-    const allSlides = await getAllSlides();
-    const currentIndex = allSlides.findIndex(slide => slide.id === slideId);
+    const response = await api.patch(`/slider/${slideId}/reorder`, { direction });
     
-    if (currentIndex === -1) return;
-    
-    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    if (newIndex < 0 || newIndex >= allSlides.length) return;
-    
-    const customSlides = await getCustomSlides();
-    const updatedSlides = customSlides.map(slide => {
-      if (slide.id === slideId) {
-        return { ...slide, order: newIndex };
-      }
-      if (slide.order === newIndex) {
-        return { ...slide, order: currentIndex };
-      }
-      return slide;
-    });
-    
-    await sliderStore.setItem('slides', updatedSlides);
+    if (!response || !response.message) {
+      throw new Error('Invalid response format from server');
+    }
   } catch (error) {
-    console.error('Error reordering slides');
-    throw new Error('Failed to reorder slides');
+    console.error('Error reordering slides:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to reorder slides');
   }
 };

@@ -6,11 +6,15 @@ import { PagePreview } from './PagePreview';
 interface PageEditorProps {
   pageId: string;
   content: PageContent;
-  onSave: (content: PageContent) => void;
+  onSave: (content: PageContent) => Promise<void>;
   saving: boolean;
+  saveMessage?: {
+    type: 'success' | 'error';
+    text: string;
+  } | null;
 }
 
-export function PageEditor({ pageId, content, onSave, saving }: PageEditorProps) {
+export function PageEditor({ pageId, content, onSave, saving, saveMessage }: PageEditorProps) {
   const [editingContent, setEditingContent] = useState(content);
   const [history, setHistory] = useState([content]);
   const [historyIndex, setHistoryIndex] = useState(0);
@@ -43,6 +47,16 @@ export function PageEditor({ pageId, content, onSave, saving }: PageEditorProps)
 
   return (
     <div className="relative min-h-screen">
+      {saveMessage && (
+        <div
+          className={`fixed right-4 top-4 z-50 rounded-lg p-4 shadow-lg ${
+            saveMessage.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+          }`}
+        >
+          {saveMessage.text}
+        </div>
+      )}
+
       <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2">
         <button
           onClick={handleUndo}
