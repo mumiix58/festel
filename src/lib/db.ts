@@ -38,12 +38,13 @@ export async function connectDB() {
           })
         }),
         findOne: async (query: Record<string, any> = {}): Promise<DbDocument | null> => {
-          let result = null;
+          let result: DbDocument | null = null;
           await collections[name].iterate((value: DbDocument, key) => {
             if (!result && Object.entries(query).every(
               ([k, v]) => !query || value[k] === v
             )) {
               result = { ...value, _id: key };
+              return false; // Stop iteration once found
             }
           });
           return result;
