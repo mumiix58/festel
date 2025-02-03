@@ -5,7 +5,7 @@ import { showToast } from '../toast';
 // Get content for a specific page
 export async function getPageContent(page: string) {
   try {
-    const loadingToast = showToast.loading('Loading content...');
+    const loadingId = showToast.loading('Loading content...');
     const response = await api.get(`/content/${page}`);
     
     // Validate response format
@@ -14,7 +14,6 @@ export async function getPageContent(page: string) {
       throw new Error('Invalid response format from server');
     }
 
-    toast.dismiss(loadingToast);
     showToast.success('Content loaded successfully');
     return response.content || response.data || null;
   } catch (error) {
@@ -27,7 +26,7 @@ export async function getPageContent(page: string) {
 // Update content for a specific page
 export async function updatePageContent(page: string, content: any) {
   try {
-    const loadingToast = showToast.loading('Saving changes...');
+    const loadingId = showToast.loading('Saving changes...');
     const response = await api.put(`/content/${page}`, content);
     
     // Validate response format
@@ -36,7 +35,6 @@ export async function updatePageContent(page: string, content: any) {
       throw new Error('Invalid response format from server');
     }
 
-    toast.dismiss(loadingToast);
     showToast.success('Changes saved successfully');
     return response.content || response.data;
   } catch (error) {
