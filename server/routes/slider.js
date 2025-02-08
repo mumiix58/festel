@@ -1,12 +1,8 @@
 import express from 'express';
-import multer from 'multer';
-import { v2 as cloudinary } from 'cloudinary';
 import Slider from '../models/Slider.js';
-import Activity from '../models/Activity.js';
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
 
 // Get all slides
 router.get('/', async (req, res) => {
@@ -25,47 +21,27 @@ router.get('/', async (req, res) => {
 });
 
 // Add new slide (protected route)
-router.post('/', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
+router.post('/', authenticateToken, isAdmin, async (req, res) => {
   try {
-    console.log('Adding new slide...');
+    const { image, title, subtitle, buttonText, buttonLink, showLogo } = req.body;
     
-    if (!req.file) {
-      throw new Error('No image file provided');
-    }
-
-    const b64 = Buffer.from(req.file.buffer).toString('base64');
-    const dataURI = `data:${req.file.mimetype};base64,${b64}`;
-
-    console.log('Uploading image to Cloudinary...');
-    const result = await cloudinary.uploader.upload(dataURI, {
-      folder: 'slider',
-      resource_type: 'auto'
-    });
-    console.log('Image uploaded to Cloudinary:', result.secure_url);
-
-    // Get current highest order
+    // Get highest order
     const highestOrder = await Slider.findOne().sort('-order');
     const newOrder = (highestOrder?.order ?? -1) + 1;
 
     const slide = await Slider.create({
-      image: result.secure_url,
-      title: 'New Slide',
-      subtitle: 'Slide Description',
+      image,
+      title: title || 'New Slide',
+      subtitle: subtitle || 'Slide Description',
+      buttonText,
+      buttonLink,
+      showLogo,
       order: newOrder,
       isActive: true
     });
 
-    // Log activity
-    await Activity.create({
-      type: 'content_update',
-      description: 'New slider slide added',
-      userId: req.user._id,
-      metadata: { slideId: slide._id }
-    });
-
-    console.log('New slide saved to database:', slide);
     res.status(201).json({ 
-      message: 'Slide successfully saved to database',
+      message: 'Slide successfully created',
       slide 
     });
   } catch (error) {
@@ -90,14 +66,6 @@ router.put('/:id', authenticateToken, isAdmin, async (req, res) => {
       return res.status(404).json({ message: 'Slide not found' });
     }
 
-    // Log activity
-    await Activity.create({
-      type: 'content_update',
-      description: 'Slider slide updated',
-      userId: req.user._id,
-      metadata: { slideId: slide._id }
-    });
-
     res.json({ 
       message: 'Slide successfully updated',
       slide 
@@ -121,15 +89,6 @@ router.delete('/:id', authenticateToken, isAdmin, async (req, res) => {
     }
 
     await slide.deleteOne();
-
-    // Log activity
-    await Activity.create({
-      type: 'content_update',
-      description: 'Slider slide deleted',
-      userId: req.user._id,
-      metadata: { slideId: slide._id }
-    });
-
     res.json({ message: 'Slide successfully deleted' });
   } catch (error) {
     console.error('Error deleting slide:', error);
@@ -162,14 +121,6 @@ router.patch('/:id/reorder', authenticateToken, isAdmin, async (req, res) => {
 
     slide.order = newOrder;
     await slide.save();
-
-    // Log activity
-    await Activity.create({
-      type: 'content_update',
-      description: 'Slider slides reordered',
-      userId: req.user._id,
-      metadata: { slideId: slide._id }
-    });
 
     res.json({ message: 'Slides successfully reordered' });
   } catch (error) {
