@@ -8,18 +8,34 @@ const router = express.Router();
 // Get content for a specific page
 router.get('/:page', async (req, res) => {
   try {
+    console.log(`Fetching content for page: ${req.params.page}`);
     const content = await Content.findOne({ page: req.params.page });
-    console.log(`Content fetched from MongoDB for page: ${req.params.page}`);
-    res.json({ content: content?.content || null });
+    
+    if (!content) {
+      console.log(`No content found for page: ${req.params.page}`);
+      return res.status(404).json({ 
+        message: 'Content not found',
+        content: null 
+      });
+    }
+
+    console.log(`Content found for page: ${req.params.page}`);
+    res.json({ content: content.content });
   } catch (error) {
-    console.error('Content fetch error:', error);
-    res.status(500).json({ message: 'Error fetching content from database' });
+    console.error('Error fetching content:', error);
+    res.status(500).json({ 
+      message: 'Error fetching content from database',
+      error: error.message 
+    });
   }
 });
 
 // Update content (protected route)
 router.put('/:page', authenticateToken, isAdmin, async (req, res) => {
   try {
+    console.log(`Updating content for page: ${req.params.page}`);
+    console.log('New content:', req.body);
+
     const content = await Content.findOneAndUpdate(
       { page: req.params.page },
       { 
@@ -37,14 +53,17 @@ router.put('/:page', authenticateToken, isAdmin, async (req, res) => {
       metadata: { page: req.params.page }
     });
 
-    console.log(`Content successfully saved to MongoDB for page: ${req.params.page}`);
+    console.log(`Content successfully updated for page: ${req.params.page}`);
     res.json({ 
       message: `Content for ${req.params.page} successfully saved to database`,
       content: content.content 
     });
   } catch (error) {
-    console.error('Content update error:', error);
-    res.status(500).json({ message: 'Error saving content to database' });
+    console.error('Error updating content:', error);
+    res.status(500).json({ 
+      message: 'Error saving content to database',
+      error: error.message 
+    });
   }
 });
 

@@ -5,12 +5,13 @@ import { showToast } from '../toast';
 // Get content for a specific page
 export async function getPageContent(page: string) {
   try {
+    console.log(`Fetching content for page: ${page}`);
     const loadingId = showToast.loading('Loading content...');
-    const response = await api.get(`/content/${page}`);
     
-    // Validate response format
+    const response = await api.get(`/content/${page}`);
+    console.log(`Content response for ${page}:`, response);
+    
     if (!response || (!response.content && !response.data)) {
-      showToast.error('Failed to load content');
       throw new Error('Invalid response format from server');
     }
 
@@ -18,20 +19,21 @@ export async function getPageContent(page: string) {
     return response.content || response.data || null;
   } catch (error) {
     console.error(`Error fetching ${page} content:`, error);
-    showToast.error(`Failed to load ${page} content`);
-    throw new Error(error instanceof Error ? error.message : `Failed to fetch ${page} content`);
+    showToast.error(`Failed to load ${page} content: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw error;
   }
 }
 
 // Update content for a specific page
 export async function updatePageContent(page: string, content: any) {
   try {
+    console.log(`Updating content for page: ${page}`);
     const loadingId = showToast.loading('Saving changes...');
-    const response = await api.put(`/content/${page}`, content);
     
-    // Validate response format
+    const response = await api.put(`/content/${page}`, content);
+    console.log(`Update response for ${page}:`, response);
+    
     if (!response || (!response.content && !response.data)) {
-      showToast.error('Failed to save changes');
       throw new Error('Invalid response format from server');
     }
 
@@ -39,8 +41,8 @@ export async function updatePageContent(page: string, content: any) {
     return response.content || response.data;
   } catch (error) {
     console.error(`Error updating ${page} content:`, error);
-    showToast.error(`Failed to save ${page} content`);
-    throw new Error(error instanceof Error ? error.message : `Failed to update ${page} content`);
+    showToast.error(`Failed to save ${page} content: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw error;
   }
 }
 

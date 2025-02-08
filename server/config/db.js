@@ -32,8 +32,8 @@ const connectDB = async () => {
     console.log(`MongoDB Connected: ${conn.connection.host}`);
 
     // Initialize default data
+    console.log('Initializing default data...');
     try {
-      console.log('Initializing default data...');
       await Promise.all([
         initializeAdmin(),
         initializeSettings(),
@@ -58,18 +58,6 @@ const connectDB = async () => {
     // Handle reconnection
     mongoose.connection.on('reconnected', () => {
       console.log('MongoDB reconnected');
-    });
-
-    // Handle process termination
-    process.on('SIGINT', async () => {
-      try {
-        await mongoose.connection.close();
-        console.log('MongoDB connection closed through app termination');
-        process.exit(0);
-      } catch (err) {
-        console.error('Error closing MongoDB connection:', err);
-        process.exit(1);
-      }
     });
 
     return conn;

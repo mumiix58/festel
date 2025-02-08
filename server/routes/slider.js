@@ -27,23 +27,31 @@ router.get('/', async (req, res) => {
 // Add new slide (protected route)
 router.post('/', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
   try {
+    console.log('Adding new slide...');
+    
     if (!req.file) {
-      return res.status(400).json({ message: 'No image provided' });
+      throw new Error('No image file provided');
     }
 
     const b64 = Buffer.from(req.file.buffer).toString('base64');
     const dataURI = `data:${req.file.mimetype};base64,${b64}`;
 
+    console.log('Uploading image to Cloudinary...');
     const result = await cloudinary.uploader.upload(dataURI, {
       folder: 'slider',
       resource_type: 'auto'
     });
+    console.log('Image uploaded to Cloudinary:', result.secure_url);
+
+    // Get current highest order
+    const highestOrder = await Slider.findOne().sort('-order');
+    const newOrder = (highestOrder?.order ?? -1) + 1;
 
     const slide = await Slider.create({
       image: result.secure_url,
       title: 'New Slide',
       subtitle: 'Slide Description',
-      order: await Slider.countDocuments(),
+      order: newOrder,
       isActive: true
     });
 
@@ -90,15 +98,14 @@ router.put('/:id', authenticateToken, isAdmin, async (req, res) => {
       metadata: { slideId: slide._id }
     });
 
-    console.log('Slide updated in database:', slide);
     res.json({ 
-      message: 'Slide successfully updated in database',
+      message: 'Slide successfully updated',
       slide 
     });
   } catch (error) {
     console.error('Error updating slide:', error);
     res.status(500).json({ 
-      message: 'Error updating slide in database',
+      message: 'Error updating slide',
       error: error.message 
     });
   }
@@ -113,14 +120,6 @@ router.delete('/:id', authenticateToken, isAdmin, async (req, res) => {
       return res.status(404).json({ message: 'Slide not found' });
     }
 
-    // Delete image from Cloudinary if it exists
-    if (slide.image) {
-      const publicId = slide.image.split('/').pop()?.split('.')[0];
-      if (publicId) {
-        await cloudinary.uploader.destroy(`slider/${publicId}`);
-      }
-    }
-
     await slide.deleteOne();
 
     // Log activity
@@ -131,12 +130,11 @@ router.delete('/:id', authenticateToken, isAdmin, async (req, res) => {
       metadata: { slideId: slide._id }
     });
 
-    console.log('Slide deleted from database:', slide._id);
-    res.json({ message: 'Slide successfully deleted from database' });
+    res.json({ message: 'Slide successfully deleted' });
   } catch (error) {
     console.error('Error deleting slide:', error);
     res.status(500).json({ 
-      message: 'Error deleting slide from database',
+      message: 'Error deleting slide',
       error: error.message 
     });
   }
@@ -173,15 +171,16 @@ router.patch('/:id/reorder', authenticateToken, isAdmin, async (req, res) => {
       metadata: { slideId: slide._id }
     });
 
-    console.log('Slides reordered in database');
-    res.json({ message: 'Slides successfully reordered in database' });
+    res.json({ message: 'Slides successfully reordered' });
   } catch (error) {
     console.error('Error reordering slides:', error);
     res.status(500).json({ 
-      message: 'Error reordering slides in database',
+      message: 'Error reordering slides',
       error: error.message 
     });
   }
 });
 
-export default router;
+export { router as default };
+
+export default upload
