@@ -15,16 +15,44 @@ export function SectionSaveButton({ endpoint, data, sectionName, onSaveSuccess }
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
+    if (saving) return;
+    
     setSaving(true);
+    showToast.loading(`Saving ${sectionName}...`);
+
     try {
-      await api.put(endpoint, data);
-      showToast.success(`${sectionName} erfolgreich in MongoDB gespeichert`);
-      if (onSaveSuccess) {
-        onSaveSuccess();
+      // Remove /api prefix as it's handled by the proxy
+      const cleanEndpoint = endpoint.replace('/api/', '/');
+      
+      // Add retry logic
+      let retries = 3;
+      let success = false;
+      let lastError;
+
+      while (retries > 0 && !success) {
+        try {
+          await api.put(cleanEndpoint, data);
+          success = true;
+          showToast.success(`${sectionName} erfolgreich gespeichert`);
+          if (onSaveSuccess) {
+            onSaveSuccess();
+          }
+        } catch (error) {
+          lastError = error;
+          retries--;
+          if (retries > 0) {
+            // Wait longer between each retry
+            await new Promise(resolve => setTimeout(resolve, 2000 * (3 - retries)));
+          }
+        }
+      }
+
+      if (!success && lastError) {
+        throw lastError;
       }
     } catch (error) {
-      showToast.error(`Fehler beim Speichern von ${sectionName}`);
       console.error('Save error:', error);
+      showToast.error(`Fehler beim Speichern von ${sectionName}`);
     } finally {
       setSaving(false);
     }

@@ -5,10 +5,10 @@ import { authenticateToken, isAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get content for a specific page and section
-router.get('/:page/:section?', async (req, res) => {
+// Get content for a specific page
+router.get('/:page', async (req, res) => {
   try {
-    console.log(`Fetching content for page: ${req.params.page}, section: ${req.params.section}`);
+    console.log(`Fetching content for page: ${req.params.page}`);
     const content = await Content.findOne({ page: req.params.page });
     
     if (!content) {
@@ -19,21 +19,8 @@ router.get('/:page/:section?', async (req, res) => {
       });
     }
 
-    // If section is specified, return only that section
-    if (req.params.section) {
-      const sectionContent = content.content[req.params.section];
-      if (!sectionContent) {
-        return res.status(404).json({
-          message: `Section ${req.params.section} not found`,
-          content: null
-        });
-      }
-      console.log(`Content found for section ${req.params.section}:`, sectionContent);
-      return res.json({ content: sectionContent });
-    }
-
-    console.log(`Content found for page ${req.params.page}:`, content);
-    res.json({ content: content.content });
+    console.log(`Content found for page: ${req.params.page}`);
+    res.json(content.content);
   } catch (error) {
     console.error('Error fetching content:', error);
     res.status(500).json({ 
@@ -43,23 +30,39 @@ router.get('/:page/:section?', async (req, res) => {
   }
 });
 
-// Update content for a specific page and section
+// Update content for a specific page section
 router.put('/:page/:section', authenticateToken, isAdmin, async (req, res) => {
   try {
     console.log(`Updating content for page: ${req.params.page}, section: ${req.params.section}`);
-    console.log('New content:', req.body);
+    
+    // Validate request body
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({
+        message: 'Invalid request body'
+      });
+    }
 
+    // Create update query
     const updateQuery = {};
     updateQuery[`content.${req.params.section}`] = req.body;
 
+    // Attempt to update or create document
     const content = await Content.findOneAndUpdate(
       { page: req.params.page },
       { 
         $set: updateQuery,
         lastModified: new Date()
       },
-      { new: true, upsert: true }
+      { 
+        new: true, 
+        upsert: true,
+        runValidators: true
+      }
     );
+
+    if (!content) {
+      throw new Error('Failed to update content');
+    }
 
     // Log activity
     await Activity.create({
@@ -69,15 +72,14 @@ router.put('/:page/:section', authenticateToken, isAdmin, async (req, res) => {
       metadata: { page: req.params.page, section: req.params.section }
     });
 
-    console.log(`Content successfully updated for ${req.params.page} - ${req.params.section}`);
     res.json({ 
-      message: `Content for ${req.params.page} - ${req.params.section} successfully saved to MongoDB`,
+      message: 'Content saved successfully',
       content: content.content[req.params.section]
     });
   } catch (error) {
     console.error('Error updating content:', error);
     res.status(500).json({ 
-      message: 'Error saving content to MongoDB',
+      message: 'Error saving content to database',
       error: error.message 
     });
   }

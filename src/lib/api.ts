@@ -1,5 +1,6 @@
 import { config } from './config';
 import { showToast } from './toast';
+import storage from './storage';
 
 const isAdminRoute = () => window.location.pathname.startsWith('/admin');
 const isDevelopment = import.meta.env.DEV;
@@ -7,12 +8,42 @@ const isDevelopment = import.meta.env.DEV;
 const api = {
   baseUrl: config.apiUrl,
 
-  handleResponse: async (response: Response) => {
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network response was not ok' }));
-      throw new Error(error.message || `HTTP error! status: ${response.status}`);
+  getAuthHeaders() {
+    const user = storage.getCurrentUser();
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Cache-Control': 'no-cache'
+    };
+    
+    if (user?.token) {
+      headers['Authorization'] = `Bearer ${user.token}`;
     }
-    return response.json();
+    
+    return headers;
+  },
+
+  async handleResponse(response: Response) {
+    if (response.status === 404) {
+      return null;
+    }
+
+    const contentType = response.headers.get('content-type');
+    const isJson = contentType && contentType.includes('application/json');
+    
+    if (!response.ok) {
+      const error = isJson 
+        ? await response.json().catch(() => ({ message: `HTTP error! status: ${response.status}` }))
+        : { message: `HTTP error! status: ${response.status}` };
+      throw new Error(error.message || 'Network response was not ok');
+    }
+
+    if (!isJson) {
+      throw new Error('Invalid response format: expected JSON');
+    }
+
+    const data = await response.json();
+    return data?.content || data;
   },
 
   get: async (url: string) => {
@@ -23,86 +54,17 @@ const api = {
 
       const response = await fetch(`${api.baseUrl}${url}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Cache-Control': 'no-cache'
-        }
+        headers: api.getAuthHeaders(),
+        credentials: 'include'
       });
 
-      // Handle 404 and other errors gracefully
-      if (!response.ok) {
-        if (response.status === 404) {
-          if (isDevelopment) {
-            console.warn(`Resource not found: ${url}`);
-          }
-          return null;
-        }
-        const error = await response.json().catch(() => ({ 
-          message: `HTTP error! status: ${response.status}` 
-        }));
-        throw new Error(error.message);
-      }
-
-      const data = await response.json();
-      if (isDevelopment) {
-        console.log(`GET response for ${url}:`, data);
-      }
-      
-      // Handle both { content: ... } and direct data responses
-      if (data && typeof data === 'object' && 'content' in data) {
-        return data.content;
-      }
-      return data;
+      return await api.handleResponse(response);
     } catch (error) {
       if (isDevelopment) {
         console.error('API GET error:', error);
       }
       if (isAdminRoute()) {
         showToast.error(error instanceof Error ? error.message : 'Failed to fetch data');
-      }
-      // Return null instead of throwing to allow graceful fallbacks
-      return null;
-    }
-  },
-
-  post: async (url: string, data: any) => {
-    try {
-      if (isDevelopment) {
-        console.log(`Making POST request to: ${api.baseUrl}${url}`);
-      }
-
-      const response = await fetch(`${api.baseUrl}${url}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ 
-          message: `HTTP error! status: ${response.status}` 
-        }));
-        throw new Error(error.message);
-      }
-
-      const responseData = await response.json();
-      if (isDevelopment) {
-        console.log(`POST response for ${url}:`, responseData);
-      }
-      
-      if (isAdminRoute()) {
-        showToast.success('Successfully saved');
-      }
-      return responseData;
-    } catch (error) {
-      if (isDevelopment) {
-        console.error('API POST error:', error);
-      }
-      if (isAdminRoute()) {
-        showToast.error(error instanceof Error ? error.message : 'Failed to save data');
       }
       throw error;
     }
@@ -111,40 +73,33 @@ const api = {
   put: async (url: string, data: any) => {
     try {
       if (isDevelopment) {
-        console.log(`Making PUT request to: ${api.baseUrl}${url}`);
+        console.log(`Making PUT request to: ${api.baseUrl}${url}`, data);
       }
 
       const response = await fetch(`${api.baseUrl}${url}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
+        headers: api.getAuthHeaders(),
+        credentials: 'include',
         body: JSON.stringify(data)
       });
 
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ 
-          message: `HTTP error! status: ${response.status}` 
-        }));
-        throw new Error(error.message);
+      const result = await api.handleResponse(response);
+      
+      if (isDevelopment) {
+        console.log(`PUT response for ${url}:`, result);
       }
 
-      const responseData = await response.json();
-      if (isDevelopment) {
-        console.log(`PUT response for ${url}:`, responseData);
+      if (isAdminRoute()) {
+        showToast.success('Successfully saved');
       }
       
-      if (isAdminRoute()) {
-        showToast.success('Successfully updated');
-      }
-      return responseData;
+      return result;
     } catch (error) {
       if (isDevelopment) {
         console.error('API PUT error:', error);
       }
       if (isAdminRoute()) {
-        showToast.error(error instanceof Error ? error.message : 'Failed to update data');
+        showToast.error(error instanceof Error ? error.message : 'Failed to save data');
       }
       throw error;
     }
@@ -158,27 +113,17 @@ const api = {
 
       const response = await fetch(`${api.baseUrl}${url}`, {
         method: 'DELETE',
-        headers: {
-          'Accept': 'application/json'
-        }
+        headers: api.getAuthHeaders(),
+        credentials: 'include'
       });
 
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ 
-          message: `HTTP error! status: ${response.status}` 
-        }));
-        throw new Error(error.message);
-      }
-
-      const data = await response.json();
-      if (isDevelopment) {
-        console.log(`DELETE response for ${url}:`, data);
-      }
+      const result = await api.handleResponse(response);
       
       if (isAdminRoute()) {
         showToast.success('Successfully deleted');
       }
-      return data;
+      
+      return result;
     } catch (error) {
       if (isDevelopment) {
         console.error('API DELETE error:', error);
@@ -193,34 +138,23 @@ const api = {
   patch: async (url: string, data: any) => {
     try {
       if (isDevelopment) {
-        console.log(`Making PATCH request to: ${api.baseUrl}${url}`);
+        console.log(`Making PATCH request to: ${api.baseUrl}${url}`, data);
       }
 
       const response = await fetch(`${api.baseUrl}${url}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
+        headers: api.getAuthHeaders(),
+        credentials: 'include',
         body: JSON.stringify(data)
       });
 
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ 
-          message: `HTTP error! status: ${response.status}` 
-        }));
-        throw new Error(error.message);
-      }
-
-      const responseData = await response.json();
-      if (isDevelopment) {
-        console.log(`PATCH response for ${url}:`, responseData);
-      }
+      const result = await api.handleResponse(response);
       
       if (isAdminRoute()) {
         showToast.success('Successfully updated');
       }
-      return responseData;
+      
+      return result;
     } catch (error) {
       if (isDevelopment) {
         console.error('API PATCH error:', error);

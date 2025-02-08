@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AboutContent } from '@/types';
-import { getAboutContent, updateAboutContent } from '@/lib/about';
+import api from '@/lib/api';
+import { showToast } from '@/lib/toast';
 
 export function useAbout() {
   const [content, setContent] = useState<AboutContent | null>(null);
@@ -13,12 +14,14 @@ export function useAbout() {
 
   const loadContent = async () => {
     try {
-      const aboutContent = await getAboutContent();
+      setLoading(true);
+      const aboutContent = await api.get('/content/about');
       setContent(aboutContent);
       setError(null);
     } catch (err) {
       console.error('Error loading about content:', err);
       setError('Failed to load about content');
+      showToast.error('Fehler beim Laden der Inhalte');
     } finally {
       setLoading(false);
     }
@@ -26,13 +29,12 @@ export function useAbout() {
 
   const updateContent = async (newContent: AboutContent) => {
     try {
-      await updateAboutContent(newContent);
       setContent(newContent);
-      setError(null);
       return true;
     } catch (err) {
       console.error('Error updating about content:', err);
       setError('Failed to update about content');
+      showToast.error('Fehler beim Aktualisieren der Inhalte');
       return false;
     }
   };

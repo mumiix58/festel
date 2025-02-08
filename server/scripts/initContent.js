@@ -1,73 +1,75 @@
 import Content from '../models/Content.js';
-import Settings from '../models/Settings.js';
-import Slider from '../models/Slider.js';
-import FAQ from '../models/FAQ.js';
-import Service from '../models/Service.js';
-import Reference from '../models/Reference.js';
-import Equipment from '../models/Equipment.js';
-import Legal from '../models/Legal.js';
-import { 
-  defaultHomeContent,
-  defaultAboutContent,
-  defaultServicesContent,
-  defaultFAQContent,
-  defaultReferencesContent
-} from '../data/defaultContent.js';
+import { v4 as uuidv4 } from 'uuid';
+
+// Default About content
+const defaultAboutContent = {
+  hero: {
+    title: 'Über Uns',
+    subtitle: 'Ihr vertrauenswürdiger Partner für erstklassiges Catering',
+    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0'
+  },
+  story: {
+    title: 'Unsere Geschichte',
+    content: `FEST'LMACHER steht seit über 20 Jahren für erstklassiges Catering und perfekten Service in Wien. Als erfahrener Gastronom wissen wir, worauf es bei der Planung und Durchführung von Events ankommt.
+
+Unser Erfolg basiert auf der Leidenschaft für exzellente Küche und dem Streben nach perfektem Service. Jede Veranstaltung ist für uns einzigartig und verdient besondere Aufmerksamkeit.`,
+    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0'
+  },
+  values: [
+    {
+      id: uuidv4(),
+      title: 'Qualität',
+      description: 'Wir verwenden nur die besten Zutaten und arbeiten mit lokalen Lieferanten zusammen.'
+    },
+    {
+      id: uuidv4(),
+      title: 'Innovation',
+      description: 'Unsere Küche verbindet Tradition mit modernen Einflüssen.'
+    },
+    {
+      id: uuidv4(),
+      title: 'Nachhaltigkeit',
+      description: 'Umweltbewusstes Handeln ist Teil unserer Unternehmensphilosophie.'
+    }
+  ],
+  team: [
+    {
+      id: uuidv4(),
+      name: 'Michael Weber',
+      role: 'Küchenchef',
+      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80',
+      description: 'Experte für internationale Küche mit über 15 Jahren Erfahrung.'
+    },
+    {
+      id: uuidv4(),
+      name: 'Anna Schmidt',
+      role: 'Event Managerin',
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e',
+      description: 'Spezialisiert auf die Organisation von Großveranstaltungen.'
+    }
+  ],
+  seo: {
+    title: "Über Uns - FEST'LMACHER Catering Wien",
+    description: "Lernen Sie FEST'LMACHER kennen - Ihr professioneller Catering Service in Wien.",
+    keywords: "catering wien, über uns, catering service"
+  }
+};
 
 export async function initializeContent() {
   try {
-    console.log('Initializing default content in MongoDB...');
+    console.log('Initializing default content...');
 
-    // Initialize Content collection with default content
-    const contentTypes = [
-      { page: 'home', content: defaultHomeContent },
-      { page: 'about', content: defaultAboutContent },
-      { page: 'services', content: defaultServicesContent },
-      { page: 'faq', content: defaultFAQContent },
-      { page: 'references', content: defaultReferencesContent }
-    ];
-
-    for (const { page, content } of contentTypes) {
-      const existingContent = await Content.findOne({ page });
-      if (!existingContent) {
-        await Content.create({ page, content });
-        console.log(`Default ${page} content initialized`);
-      }
+    // Check if about content exists
+    const aboutContent = await Content.findOne({ page: 'about' });
+    if (!aboutContent) {
+      await Content.create({
+        page: 'about',
+        content: defaultAboutContent
+      });
+      console.log('Default about content initialized');
     }
 
-    // Initialize default slider content
-    const existingSlides = await Slider.countDocuments();
-    if (existingSlides === 0) {
-      await Slider.create([
-        {
-          image: 'https://images.unsplash.com/photo-1555244162-803834f70033',
-          title: 'Erstklassiges Catering',
-          subtitle: 'Für jeden Anlass die perfekte Lösung',
-          buttonText: 'Jetzt anfragen',
-          buttonLink: '/kontakt',
-          order: 0,
-          showLogo: true,
-          isActive: true,
-          isDefault: true
-        },
-        {
-          image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0',
-          title: 'Professionelles Catering',
-          subtitle: 'Hochwertige Speisen und erstklassiger Service',
-          buttonText: 'Mehr erfahren',
-          buttonLink: '/dienstleistungen',
-          order: 1,
-          showLogo: false,
-          isActive: true,
-          isDefault: true
-        }
-      ]);
-      console.log('Default slider content initialized');
-    }
-
-    // Initialize other content...
-    
-    console.log('All default content successfully initialized in MongoDB');
+    console.log('Content initialization complete');
   } catch (error) {
     console.error('Error initializing content:', error);
     throw error;

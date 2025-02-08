@@ -31,49 +31,30 @@ const defaultSlides: SlideContent[] = [
 // Get all slides including defaults
 export const getAllSlides = async (): Promise<SlideContent[]> => {
   try {
-    console.log('Fetching slides from server...');
+    // First try to get slides from localStorage
+    const cachedSlides = localStorage.getItem('slides');
+    if (cachedSlides) {
+      const slides = JSON.parse(cachedSlides);
+      if (Array.isArray(slides) && slides.length > 0) {
+        return slides;
+      }
+    }
+
+    // If no cached slides, try to get from API
     const response = await api.get('/slider');
     
-    // Check if response exists and is valid
-    if (!response) {
-      console.warn('No response from server, using defaults');
-      return defaultSlides;
+    // Validate API response
+    if (Array.isArray(response) && response.length > 0) {
+      // Cache valid slides
+      localStorage.setItem('slides', JSON.stringify(response));
+      return response;
     }
 
-    // Handle both array and object responses
-    const slides = Array.isArray(response) ? response : response.data || [];
-    console.log('Received slides from server:', slides);
-
-    // Validate slides array
-    if (!Array.isArray(slides)) {
-      console.warn('Invalid response format (not an array), using defaults');
-      return defaultSlides;
-    }
-
-    // If no slides in database, use defaults
-    if (slides.length === 0) {
-      console.warn('No slides found in database, using defaults');
-      return defaultSlides;
-    }
-
-    // Ensure all required fields are present
-    const validSlides = slides.every(slide => 
-      slide.id && 
-      slide.image && 
-      slide.title && 
-      slide.subtitle && 
-      typeof slide.order === 'number'
-    );
-
-    if (!validSlides) {
-      console.warn('Invalid slide data format, using defaults');
-      return defaultSlides;
-    }
-
-    console.log('Successfully loaded slides:', slides);
-    return slides;
+    // If API fails or returns empty array, use defaults
+    return defaultSlides;
   } catch (error) {
     console.error('Error loading slides:', error);
+    // Return defaults on error
     return defaultSlides;
   }
 };
@@ -86,8 +67,7 @@ export const addSlide = async (file: File): Promise<SlideContent> => {
 
     const response = await fetch(`${api.baseUrl}/slider`, {
       method: 'POST',
-      body: formData,
-      credentials: 'include'
+      body: formData
     });
 
     if (!response.ok) {
@@ -96,10 +76,9 @@ export const addSlide = async (file: File): Promise<SlideContent> => {
 
     const data = await response.json();
     
-    if (!data.slide) {
-      throw new Error('Invalid response format: missing slide data');
-    }
-
+    // Clear slides cache to force refresh
+    localStorage.removeItem('slides');
+    
     return data.slide;
   } catch (error) {
     console.error('Error adding slide:', error);
@@ -111,6 +90,8 @@ export const addSlide = async (file: File): Promise<SlideContent> => {
 export const updateSlide = async (slideId: string, updates: Partial<SlideContent>): Promise<void> => {
   try {
     await api.put(`/slider/${slideId}`, updates);
+    // Clear slides cache to force refresh
+    localStorage.removeItem('slides');
   } catch (error) {
     console.error('Error updating slide:', error);
     throw error;
@@ -121,6 +102,8 @@ export const updateSlide = async (slideId: string, updates: Partial<SlideContent
 export const deleteSlide = async (slideId: string): Promise<void> => {
   try {
     await api.delete(`/slider/${slideId}`);
+    // Clear slides cache to force refresh
+    localStorage.removeItem('slides');
   } catch (error) {
     console.error('Error deleting slide:', error);
     throw error;
@@ -131,6 +114,8 @@ export const deleteSlide = async (slideId: string): Promise<void> => {
 export const reorderSlides = async (slideId: string, direction: 'up' | 'down'): Promise<void> => {
   try {
     await api.patch(`/slider/${slideId}/reorder`, { direction });
+    // Clear slides cache to force refresh
+    localStorage.removeItem('slides');
   } catch (error) {
     console.error('Error reordering slides:', error);
     throw error;
