@@ -53,18 +53,26 @@ const startServer = async () => {
         if (allowedOrigins.includes(origin)) {
           callback(null, true);
         } else {
+          console.warn('CORS blocked request from:', origin);
+          console.warn('Allowed origins:', allowedOrigins);
           callback(new Error('Not allowed by CORS'));
         }
       },
       credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization']
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
     }));
 
     // Middleware
     app.use(express.json({ limit: '10mb' }));
     app.use(express.urlencoded({ extended: true, limit: '10mb' }));
     app.use(cookieParser());
+
+    // Debug middleware
+    app.use((req, res, next) => {
+      console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+      next();
+    });
 
     // Routes
     app.use('/api/auth', authRoutes);

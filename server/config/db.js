@@ -14,6 +14,9 @@ const connectDB = async () => {
       throw new Error('MONGODB_URI environment variable is not set');
     }
 
+    console.log('Connecting to MongoDB...');
+    console.log('MongoDB URI:', MONGODB_URI.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@')); // Hide password in logs
+
     // Configure mongoose options
     mongoose.set('strictQuery', false);
 
@@ -30,6 +33,7 @@ const connectDB = async () => {
 
     // Initialize default data
     try {
+      console.log('Initializing default data...');
       await Promise.all([
         initializeAdmin(),
         initializeSettings(),
@@ -37,7 +41,8 @@ const connectDB = async () => {
       ]);
       console.log('Default data initialized successfully');
     } catch (initError) {
-      console.warn('Warning: Error initializing default data:', initError);
+      console.error('Error initializing default data:', initError);
+      throw initError;
     }
 
     // Set up connection error handler
@@ -71,7 +76,7 @@ const connectDB = async () => {
 
   } catch (error) {
     console.error('MongoDB connection error:', error);
-    process.exit(1);
+    throw error;
   }
 };
 

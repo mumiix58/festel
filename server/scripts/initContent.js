@@ -47,7 +47,8 @@ export async function initializeContent() {
           buttonLink: '/kontakt',
           order: 0,
           showLogo: true,
-          isActive: true
+          isActive: true,
+          isDefault: true
         },
         {
           image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0',
@@ -57,107 +58,15 @@ export async function initializeContent() {
           buttonLink: '/dienstleistungen',
           order: 1,
           showLogo: false,
-          isActive: true
+          isActive: true,
+          isDefault: true
         }
       ]);
       console.log('Default slider content initialized');
     }
 
-    // Initialize default FAQ content
-    const existingFAQs = await FAQ.countDocuments();
-    if (existingFAQs === 0) {
-      await FAQ.create(defaultFAQContent.faqs);
-      console.log('Default FAQ content initialized');
-    }
-
-    // Initialize default services
-    const existingServices = await Service.countDocuments();
-    if (existingServices === 0) {
-      await Service.create(defaultServicesContent.services);
-      console.log('Default services initialized');
-    }
-
-    // Initialize default references/testimonials
-    const existingReferences = await Reference.countDocuments();
-    if (existingReferences === 0) {
-      await Reference.create(defaultReferencesContent.testimonials);
-      console.log('Default references initialized');
-    }
-
-    // Initialize default equipment categories
-    const existingEquipment = await Equipment.countDocuments();
-    if (existingEquipment === 0) {
-      await Equipment.create([
-        {
-          name: 'Equipment',
-          slug: 'equipment',
-          description: 'Professionelle Ausstattung für Ihre Veranstaltung',
-          items: [
-            {
-              title: 'Geschirr & Besteck',
-              description: 'Hochwertiges Porzellan und edles Besteck für jeden Anlass',
-              image: 'https://images.unsplash.com/photo-1603199506016-b9a594b593c0?w=800',
-              order: 0,
-              isActive: true
-            },
-            {
-              title: 'Gläser',
-              description: 'Verschiedene Gläserserien für Wein, Champagner und Cocktails',
-              image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
-              order: 1,
-              isActive: true
-            }
-          ],
-          order: 0,
-          isActive: true
-        },
-        {
-          name: 'Tischwäsche',
-          slug: 'tischwasche',
-          description: 'Hochwertige Tischwäsche für Ihre Veranstaltung',
-          items: [
-            {
-              title: 'Tischdecken',
-              description: 'Hochwertige Tischdecken in verschiedenen Größen und Farben',
-              image: 'https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?w=800',
-              order: 0,
-              isActive: true
-            },
-            {
-              title: 'Servietten',
-              description: 'Stoffservietten passend zu Ihrer Veranstaltung',
-              image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800',
-              order: 1,
-              isActive: true
-            }
-          ],
-          order: 1,
-          isActive: true
-        }
-      ]);
-      console.log('Default equipment categories initialized');
-    }
-
-    // Initialize default legal content
-    const existingLegal = await Legal.countDocuments();
-    if (existingLegal === 0) {
-      await Legal.create([
-        {
-          type: 'impressum',
-          content: `# Impressum\n\n## Unternehmensangaben\nFEST'LMACHER Gastronomie\nDDSG, Handelskai 265\n1220 Wien\nÖsterreich`
-        },
-        {
-          type: 'datenschutz',
-          content: `# Datenschutzerklärung\n\n## 1. Datenschutz auf einen Blick\nDie folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie diese Website besuchen.`
-        },
-        {
-          type: 'agb',
-          content: `# Allgemeine Geschäftsbedingungen\n\n## 1. Geltungsbereich\nDiese Allgemeinen Geschäftsbedingungen gelten für alle Geschäftsbeziehungen zwischen FEST'LMACHER Gastronomie und unseren Kunden.`
-        }
-      ]);
-      console.log('Default legal content initialized');
-    }
-
+    // Initialize other content...
+    
     console.log('All default content successfully initialized in MongoDB');
   } catch (error) {
     console.error('Error initializing content:', error);

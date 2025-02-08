@@ -1,6 +1,6 @@
+import { v4 as uuidv4 } from 'uuid';
 import { SlideContent } from '@/types';
 import api from './api';
-import { showToast } from './toast';
 
 // Default slides as fallback
 const defaultSlides: SlideContent[] = [
@@ -31,48 +31,63 @@ const defaultSlides: SlideContent[] = [
 // Get all slides including defaults
 export const getAllSlides = async (): Promise<SlideContent[]> => {
   try {
-    showToast.loading('Loading slides...');
-    
-    // First try to get slides from API
+    console.log('Fetching slides from server...');
     const response = await api.get('/slider');
     
-    // Validate response format
-    if (!response || (!Array.isArray(response) && !Array.isArray(response.data))) {
-      console.warn('Invalid response format from API, using default slides');
-      showToast.error('Failed to load slides from server, using defaults');
+    // Check if response exists and is valid
+    if (!response) {
+      console.warn('No response from server, using defaults');
       return defaultSlides;
     }
 
-    // Handle both response formats
+    // Handle both array and object responses
     const slides = Array.isArray(response) ? response : response.data || [];
-    
-    // If no slides returned, use defaults
-    if (slides.length === 0) {
-      console.warn('No slides returned from API, using default slides');
-      showToast.error('No slides found, using defaults');
+    console.log('Received slides from server:', slides);
+
+    // Validate slides array
+    if (!Array.isArray(slides)) {
+      console.warn('Invalid response format (not an array), using defaults');
       return defaultSlides;
     }
 
-    showToast.success('Slides loaded successfully');
+    // If no slides in database, use defaults
+    if (slides.length === 0) {
+      console.warn('No slides found in database, using defaults');
+      return defaultSlides;
+    }
+
+    // Ensure all required fields are present
+    const validSlides = slides.every(slide => 
+      slide.id && 
+      slide.image && 
+      slide.title && 
+      slide.subtitle && 
+      typeof slide.order === 'number'
+    );
+
+    if (!validSlides) {
+      console.warn('Invalid slide data format, using defaults');
+      return defaultSlides;
+    }
+
+    console.log('Successfully loaded slides:', slides);
     return slides;
   } catch (error) {
-    console.warn('Error loading slides from API, using default slides:', error);
-    showToast.error('Failed to load slides from server, using defaults');
+    console.error('Error loading slides:', error);
     return defaultSlides;
   }
 };
 
 // Add new slide
 export const addSlide = async (file: File): Promise<SlideContent> => {
-  showToast.loading('Uploading slide...');
-  
   try {
     const formData = new FormData();
     formData.append('image', file);
 
     const response = await fetch(`${api.baseUrl}/slider`, {
       method: 'POST',
-      body: formData
+      body: formData,
+      credentials: 'include'
     });
 
     if (!response.ok) {
@@ -85,68 +100,51 @@ export const addSlide = async (file: File): Promise<SlideContent> => {
       throw new Error('Invalid response format: missing slide data');
     }
 
-    showToast.success('Slide added successfully');
     return data.slide;
   } catch (error) {
     console.error('Error adding slide:', error);
-    showToast.error('Failed to add slide');
-    throw new Error(error instanceof Error ? error.message : 'Failed to add slide');
+    throw error;
   }
 };
 
 // Update slide
 export const updateSlide = async (slideId: string, updates: Partial<SlideContent>): Promise<void> => {
-  showToast.loading('Updating slide...');
-  
   try {
     const response = await api.put(`/slider/${slideId}`, updates);
     
     if (!response || !response.message) {
       throw new Error('Invalid response format from server');
     }
-
-    showToast.success('Slide updated successfully');
   } catch (error) {
     console.error('Error updating slide:', error);
-    showToast.error('Failed to update slide');
-    throw new Error(error instanceof Error ? error.message : 'Failed to update slide');
+    throw error;
   }
 };
 
 // Delete slide
 export const deleteSlide = async (slideId: string): Promise<void> => {
-  showToast.loading('Deleting slide...');
-  
   try {
     const response = await api.delete(`/slider/${slideId}`);
     
     if (!response || !response.message) {
       throw new Error('Invalid response format from server');
     }
-
-    showToast.success('Slide deleted successfully');
   } catch (error) {
     console.error('Error deleting slide:', error);
-    showToast.error('Failed to delete slide');
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete slide');
+    throw error;
   }
 };
 
 // Reorder slides
 export const reorderSlides = async (slideId: string, direction: 'up' | 'down'): Promise<void> => {
-  showToast.loading('Reordering slides...');
-  
   try {
     const response = await api.patch(`/slider/${slideId}/reorder`, { direction });
     
     if (!response || !response.message) {
       throw new Error('Invalid response format from server');
     }
-
-    showToast.success('Slides reordered successfully');
   } catch (error) {
     console.error('Error reordering slides:', error);
-    showToast.error('Failed to reorder slides');
-    throw new Error(error instanceof Error ? error.message : 'Failed to reorder slides');
+    throw error;
   }
 };
