@@ -1,5 +1,14 @@
+const getApiUrl = () => {
+  // In development, use the proxy
+  if (import.meta.env.DEV) {
+    return '/api';
+  }
+  // In production, use the Render API URL
+  return import.meta.env.VITE_API_URL || 'https://festlmacher-api-nucz.onrender.com/api';
+};
+
 export const config = {
-  apiUrl: import.meta.env.VITE_API_URL || 'https://festlmacher-api-nucz.onrender.com/api',
+  apiUrl: getApiUrl(),
   emailjs: {
     serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_rr4ht3u',
     templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_p8czqvd',

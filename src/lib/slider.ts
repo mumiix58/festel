@@ -110,11 +110,7 @@ export const addSlide = async (file: File): Promise<SlideContent> => {
 // Update slide
 export const updateSlide = async (slideId: string, updates: Partial<SlideContent>): Promise<void> => {
   try {
-    const response = await api.put(`/slider/${slideId}`, updates);
-    
-    if (!response || !response.message) {
-      throw new Error('Invalid response format from server');
-    }
+    await api.put(`/slider/${slideId}`, updates);
   } catch (error) {
     console.error('Error updating slide:', error);
     throw error;
@@ -124,11 +120,7 @@ export const updateSlide = async (slideId: string, updates: Partial<SlideContent
 // Delete slide
 export const deleteSlide = async (slideId: string): Promise<void> => {
   try {
-    const response = await api.delete(`/slider/${slideId}`);
-    
-    if (!response || !response.message) {
-      throw new Error('Invalid response format from server');
-    }
+    await api.delete(`/slider/${slideId}`);
   } catch (error) {
     console.error('Error deleting slide:', error);
     throw error;
@@ -138,11 +130,7 @@ export const deleteSlide = async (slideId: string): Promise<void> => {
 // Reorder slides
 export const reorderSlides = async (slideId: string, direction: 'up' | 'down'): Promise<void> => {
   try {
-    const response = await api.patch(`/slider/${slideId}/reorder`, { direction });
-    
-    if (!response || !response.message) {
-      throw new Error('Invalid response format from server');
-    }
+    await api.patch(`/slider/${slideId}/reorder`, { direction });
   } catch (error) {
     console.error('Error reordering slides:', error);
     throw error;
