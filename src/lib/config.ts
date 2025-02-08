@@ -4,7 +4,7 @@ const getApiUrl = () => {
     return '/api';
   }
   // In production, use the Render API URL
-  return import.meta.env.VITE_API_URL || 'https://festlmacher-api-nucz.onrender.com/api';
+  return 'https://festlmacher-api-nucz.onrender.com/api';
 };
 
 export const config = {

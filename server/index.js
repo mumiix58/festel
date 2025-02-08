@@ -50,15 +50,29 @@ const startServer = async () => {
       'http://127.0.0.1:5173',
       'http://127.0.0.1:3000',
       'https://cateringandmore.at',
-      'https://festlmacher.netlify.app'
+      'https://festlmacher.netlify.app',
+      'https://stackblitz.com',
+      /\.stackblitz\.io$/,  // Allow all stackblitz.io subdomains
+      /\.netlify\.app$/,    // Allow all netlify.app subdomains
+      /\.vercel\.app$/      // Allow all vercel.app subdomains
     ];
 
     app.use(cors({
       origin: function(origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        
-        if (allowedOrigins.includes(origin)) {
+        // Allow requests with no origin (like mobile apps, curl requests, or same origin)
+        if (!origin) {
+          return callback(null, true);
+        }
+
+        // Check if the origin matches any of our allowed patterns
+        const isAllowed = allowedOrigins.some(allowed => {
+          if (allowed instanceof RegExp) {
+            return allowed.test(origin);
+          }
+          return allowed === origin;
+        });
+
+        if (isAllowed) {
           callback(null, true);
         } else {
           console.warn('CORS blocked request from:', origin);
@@ -68,7 +82,7 @@ const startServer = async () => {
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+      allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Cache-Control']
     }));
 
     // Middleware
