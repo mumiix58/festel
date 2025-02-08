@@ -10,9 +10,15 @@ services:
       - key: NODE_ENV
         value: production
       - key: MONGODB_URI
-        sync: false
+        sync: false # Load from environment
       - key: JWT_SECRET
-        sync: false
+        sync: false # Load from environment  
       - key: FRONTEND_URL
         value: https://festlmacher.netlify.app
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
     autoDeploy: true

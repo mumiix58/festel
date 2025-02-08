@@ -181,6 +181,4 @@ router.patch('/:id/reorder', authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-export { router as default };
-
-export default upload
+export default router;

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import { v2 as cloudinary } from 'cloudinary';
 import { errorHandler } from './middleware/error.js';
 import connectDB from './config/db.js';
 import { initializeContent } from './scripts/initContent.js';
@@ -14,6 +15,13 @@ import sliderRoutes from './routes/slider.js';
 
 // Load environment variables
 dotenv.config();
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const startServer = async () => {
   try {
