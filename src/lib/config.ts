@@ -1,9 +1,5 @@
 const getApiUrl = () => {
-  // In development, use the proxy
-  if (import.meta.env.DEV) {
-    return '/api';
-  }
-  // In production, use the Render API URL
+  // Always use the production API URL
   return 'https://festlmacher-api-nucz.onrender.com/api';
 };
 

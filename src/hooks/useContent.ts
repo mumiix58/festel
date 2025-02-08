@@ -1,56 +1,52 @@
 import { useState, useEffect } from 'react';
-import { getPageContent, updatePageContent } from '@/lib/api/content';
+import { getPageContent, updatePageContent, updatePageSection } from '@/lib/api/content';
+import { showToast } from '@/lib/toast';
 
 export function useContent(pageId: string) {
   const [content, setContent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [saveMessage, setSaveMessage] = useState<{
-    type: 'success' | 'error';
-    text: string;
-  } | null>(null);
-
-  useEffect(() => {
-    loadContent();
-  }, [pageId]);
 
   const loadContent = async () => {
     try {
       setLoading(true);
-      setSaveMessage(null);
       const data = await getPageContent(pageId);
       setContent(data);
       setError(null);
     } catch (err) {
       console.error('Error loading content:', err);
       setError('Failed to load content');
-      setSaveMessage({
-        type: 'error',
-        text: err instanceof Error ? err.message : 'Failed to load content from database'
-      });
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    loadContent();
+  }, [pageId]);
+
   const updateContent = async (newContent: any) => {
     try {
-      setSaveMessage(null);
-      const response = await updatePageContent(pageId, newContent);
-      setContent(response);
-      setError(null);
-      setSaveMessage({
-        type: 'success',
-        text: 'Content successfully saved to database'
-      });
+      await updatePageContent(pageId, newContent);
+      await loadContent(); // Reload to ensure sync
+      showToast.success('Content saved successfully');
       return true;
     } catch (err) {
       console.error('Error updating content:', err);
       setError('Failed to update content');
-      setSaveMessage({
-        type: 'error',
-        text: err instanceof Error ? err.message : 'Failed to save content to database'
-      });
+      return false;
+    }
+  };
+
+  const updateSection = async (section: string, sectionContent: any) => {
+    try {
+      await updatePageSection(pageId, section, sectionContent);
+      await loadContent(); // Reload to ensure sync
+      showToast.success(`${section} saved successfully`);
+      return true;
+    } catch (err) {
+      console.error('Error updating section:', err);
+      setError(`Failed to update ${section}`);
       return false;
     }
   };
@@ -59,8 +55,8 @@ export function useContent(pageId: string) {
     content,
     loading,
     error,
-    saveMessage,
     updateContent,
+    updateSection,
     reloadContent: loadContent
   };
 }

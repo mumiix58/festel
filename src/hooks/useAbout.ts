@@ -8,10 +8,6 @@ export function useAbout() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadContent();
-  }, []);
-
   const loadContent = async () => {
     try {
       setLoading(true);
@@ -27,9 +23,19 @@ export function useAbout() {
     }
   };
 
+  useEffect(() => {
+    loadContent();
+  }, []);
+
   const updateContent = async (newContent: AboutContent) => {
     try {
-      setContent(newContent);
+      // Send update to backend
+      await api.put('/content/about', newContent);
+      
+      // Reload content from backend to ensure sync
+      await loadContent();
+      
+      showToast.success('Änderungen erfolgreich gespeichert');
       return true;
     } catch (err) {
       console.error('Error updating about content:', err);

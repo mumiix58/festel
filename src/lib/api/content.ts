@@ -1,68 +1,41 @@
 import api from '../api';
-import { AboutContent, FAQContent, HomeContent, ReferencesContent, ServicesPageContent } from '@/types';
 import { showToast } from '../toast';
 
-// Get content for a specific page
+// Generic content fetching function
 export async function getPageContent(page: string) {
   try {
     console.log(`Fetching content for page: ${page}`);
-    const loadingId = showToast.loading('Loading content...');
-    
     const response = await api.get(`/content/${page}`);
-    console.log(`Content response for ${page}:`, response);
-    
-    if (!response || (!response.content && !response.data)) {
-      throw new Error('Invalid response format from server');
-    }
-
-    showToast.success('Content loaded successfully');
-    return response.content || response.data || null;
+    return response;
   } catch (error) {
     console.error(`Error fetching ${page} content:`, error);
-    showToast.error(`Failed to load ${page} content: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    showToast.error(`Failed to load ${page} content`);
     throw error;
   }
 }
 
-// Update content for a specific page
+// Generic content updating function
 export async function updatePageContent(page: string, content: any) {
   try {
     console.log(`Updating content for page: ${page}`);
-    const loadingId = showToast.loading('Saving changes...');
-    
     const response = await api.put(`/content/${page}`, content);
-    console.log(`Update response for ${page}:`, response);
-    
-    if (!response || (!response.content && !response.data)) {
-      throw new Error('Invalid response format from server');
-    }
-
-    showToast.success('Changes saved successfully');
-    return response.content || response.data;
+    return response;
   } catch (error) {
     console.error(`Error updating ${page} content:`, error);
-    showToast.error(`Failed to save ${page} content: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    showToast.error(`Failed to save ${page} content`);
     throw error;
   }
 }
 
-// Typed content getters
-export async function getHomeContent(): Promise<HomeContent> {
-  return getPageContent('home');
-}
-
-export async function getAboutContent(): Promise<AboutContent> {
-  return getPageContent('about');
-}
-
-export async function getFAQContent(): Promise<FAQContent> {
-  return getPageContent('faq');
-}
-
-export async function getReferencesContent(): Promise<ReferencesContent> {
-  return getPageContent('references');
-}
-
-export async function getServicesContent(): Promise<ServicesPageContent> {
-  return getPageContent('services');
+// Generic section updating function
+export async function updatePageSection(page: string, section: string, content: any) {
+  try {
+    console.log(`Updating section ${section} for page: ${page}`);
+    const response = await api.put(`/content/${page}/${section}`, content);
+    return response;
+  } catch (error) {
+    console.error(`Error updating ${page} ${section}:`, error);
+    showToast.error(`Failed to save ${section}`);
+    throw error;
+  }
 }

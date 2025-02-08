@@ -24,21 +24,13 @@ const api = {
   },
 
   async handleResponse(response: Response) {
-    if (response.status === 404) {
-      return null;
-    }
-
-    const contentType = response.headers.get('content-type');
-    const isJson = contentType && contentType.includes('application/json');
-    
     if (!response.ok) {
-      const error = isJson 
-        ? await response.json().catch(() => ({ message: `HTTP error! status: ${response.status}` }))
-        : { message: `HTTP error! status: ${response.status}` };
+      const error = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status}` }));
       throw new Error(error.message || 'Network response was not ok');
     }
 
-    if (!isJson) {
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
       throw new Error('Invalid response format: expected JSON');
     }
 
@@ -58,7 +50,13 @@ const api = {
         credentials: 'include'
       });
 
-      return await api.handleResponse(response);
+      const data = await api.handleResponse(response);
+      
+      if (isDevelopment) {
+        console.log(`GET response for ${url}:`, data);
+      }
+
+      return data;
     } catch (error) {
       if (isDevelopment) {
         console.error('API GET error:', error);
@@ -107,29 +105,19 @@ const api = {
 
   delete: async (url: string) => {
     try {
-      if (isDevelopment) {
-        console.log(`Making DELETE request to: ${api.baseUrl}${url}`);
-      }
-
       const response = await fetch(`${api.baseUrl}${url}`, {
         method: 'DELETE',
         headers: api.getAuthHeaders(),
         credentials: 'include'
       });
 
-      const result = await api.handleResponse(response);
-      
-      if (isAdminRoute()) {
-        showToast.success('Successfully deleted');
-      }
-      
-      return result;
+      return api.handleResponse(response);
     } catch (error) {
       if (isDevelopment) {
         console.error('API DELETE error:', error);
       }
       if (isAdminRoute()) {
-        showToast.error(error instanceof Error ? error.message : 'Failed to delete data');
+        showToast.error(error instanceof Error ? error.message : 'Failed to delete');
       }
       throw error;
     }
@@ -137,10 +125,6 @@ const api = {
 
   patch: async (url: string, data: any) => {
     try {
-      if (isDevelopment) {
-        console.log(`Making PATCH request to: ${api.baseUrl}${url}`, data);
-      }
-
       const response = await fetch(`${api.baseUrl}${url}`, {
         method: 'PATCH',
         headers: api.getAuthHeaders(),
@@ -148,19 +132,13 @@ const api = {
         body: JSON.stringify(data)
       });
 
-      const result = await api.handleResponse(response);
-      
-      if (isAdminRoute()) {
-        showToast.success('Successfully updated');
-      }
-      
-      return result;
+      return api.handleResponse(response);
     } catch (error) {
       if (isDevelopment) {
         console.error('API PATCH error:', error);
       }
       if (isAdminRoute()) {
-        showToast.error(error instanceof Error ? error.message : 'Failed to update data');
+        showToast.error(error instanceof Error ? error.message : 'Failed to update');
       }
       throw error;
     }

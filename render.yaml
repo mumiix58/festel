@@ -1,24 +1,25 @@
 services:
   - type: web
-    name: festlmacher-api
-    env: node
-    plan: free
-    rootDir: server
-    buildCommand: npm install
-    startCommand: node index.js
+    name: festlmacher-website
+    env: static
+    buildCommand: npm run build
+    staticPublishPath: ./dist
     envVars:
-      - key: NODE_ENV
-        value: production
-      - key: MONGODB_URI
-        sync: false # Load from environment
-      - key: JWT_SECRET
-        sync: false # Load from environment  
-      - key: FRONTEND_URL
-        value: https://festlmacher.netlify.app
-      - key: CLOUDINARY_CLOUD_NAME
-        sync: false
-      - key: CLOUDINARY_API_KEY
-        sync: false
-      - key: CLOUDINARY_API_SECRET
-        sync: false
-    autoDeploy: true
+      - key: VITE_API_URL
+        value: https://festlmacher-api-nucz.onrender.com/api
+      - key: VITE_EMAILJS_SERVICE_ID
+        value: service_rr4ht3u
+      - key: VITE_EMAILJS_TEMPLATE_ID
+        value: template_p8czqvd
+      - key: VITE_EMAILJS_USER_ID
+        value: GkoX3Rw1QXFuJol9f
+      - key: VITE_GOOGLE_MAPS_API_KEY
+        sync: false # Add this via dashboard for security
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

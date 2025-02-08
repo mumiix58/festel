@@ -19,8 +19,8 @@ router.get('/:page', async (req, res) => {
       });
     }
 
-    console.log(`Content found for page: ${req.params.page}`);
-    res.json(content.content);
+    console.log(`Content found for page: ${req.params.page}:`, content);
+    res.json({ content: content.content });
   } catch (error) {
     console.error('Error fetching content:', error);
     res.status(500).json({ 
@@ -30,10 +30,64 @@ router.get('/:page', async (req, res) => {
   }
 });
 
-// Update content for a specific page section
+// Update entire page content
+router.put('/:page', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    console.log(`Updating content for page: ${req.params.page}`);
+    console.log('Update data:', req.body);
+    
+    // Validate request body
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({
+        message: 'Invalid request body'
+      });
+    }
+
+    // Update or create document
+    const content = await Content.findOneAndUpdate(
+      { page: req.params.page },
+      { 
+        content: req.body,
+        lastModified: new Date()
+      },
+      { 
+        new: true, 
+        upsert: true,
+        runValidators: true
+      }
+    );
+
+    if (!content) {
+      throw new Error('Failed to update content');
+    }
+
+    // Log activity
+    await Activity.create({
+      type: 'content_update',
+      description: `Content updated for ${req.params.page}`,
+      userId: req.user._id,
+      metadata: { page: req.params.page }
+    });
+
+    console.log('Updated content:', content);
+    res.json({ 
+      message: 'Content saved successfully',
+      content: content.content
+    });
+  } catch (error) {
+    console.error('Error updating content:', error);
+    res.status(500).json({ 
+      message: 'Error saving content to database',
+      error: error.message 
+    });
+  }
+});
+
+// Update specific section
 router.put('/:page/:section', authenticateToken, isAdmin, async (req, res) => {
   try {
-    console.log(`Updating content for page: ${req.params.page}, section: ${req.params.section}`);
+    console.log(`Updating section ${req.params.section} for page: ${req.params.page}`);
+    console.log('Update data:', req.body);
     
     // Validate request body
     if (!req.body || typeof req.body !== 'object') {
@@ -46,7 +100,7 @@ router.put('/:page/:section', authenticateToken, isAdmin, async (req, res) => {
     const updateQuery = {};
     updateQuery[`content.${req.params.section}`] = req.body;
 
-    // Attempt to update or create document
+    // Update document
     const content = await Content.findOneAndUpdate(
       { page: req.params.page },
       { 
@@ -67,11 +121,12 @@ router.put('/:page/:section', authenticateToken, isAdmin, async (req, res) => {
     // Log activity
     await Activity.create({
       type: 'content_update',
-      description: `Content updated for ${req.params.page} - ${req.params.section}`,
+      description: `Section ${req.params.section} updated for ${req.params.page}`,
       userId: req.user._id,
       metadata: { page: req.params.page, section: req.params.section }
     });
 
+    console.log('Updated content:', content);
     res.json({ 
       message: 'Content saved successfully',
       content: content.content[req.params.section]
