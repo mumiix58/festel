@@ -72,7 +72,7 @@ export function Services() {
     }
   }, [location]);
 
-  if (loading) {
+  if (loading || !content) {
     return (
       <div className="py-24">
         <Container>
