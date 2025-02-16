@@ -3,19 +3,11 @@ import { Container } from '@/components/ui/Container';
 import { Save, Upload, Plus, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { EquipmentCategory, EquipmentItem } from '@/types';
-import {
-  getAllCategories,
-  addCategory,
-  updateCategory,
-  deleteCategory,
-  addItem,
-  updateItem,
-  deleteItem,
-  updateItemImage
-} from '@/lib/equipment';
+import { getAllCategories, addCategory, updateCategory, addItem, deleteItem, updateItemImage, deleteCategory } from '@/lib/equipment';
 
 export function Equipment() {
   const [categories, setCategories] = useState<EquipmentCategory[]>([]);
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
     type: 'success' | 'error';
@@ -28,6 +20,7 @@ export function Equipment() {
 
   const loadCategories = async () => {
     try {
+      setLoading(true);
       const loadedCategories = await getAllCategories();
       setCategories(loadedCategories);
     } catch (error) {
@@ -36,6 +29,8 @@ export function Equipment() {
         type: 'error',
         text: 'Fehler beim Laden der Kategorien'
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,7 +42,12 @@ export function Equipment() {
         description: 'Beschreibung der Kategorie',
         isActive: true
       });
+
       await loadCategories();
+      
+      // Dispatch event to update navigation
+      window.dispatchEvent(new Event('equipmentCategoriesUpdated'));
+
       setSaveMessage({
         type: 'success',
         text: 'Kategorie erfolgreich hinzugefügt'
@@ -61,15 +61,72 @@ export function Equipment() {
     }
   };
 
+  const handleDeleteCategory = async (categoryId: string) => {
+    if (window.confirm('Möchten Sie diese Kategorie wirklich löschen?')) {
+      try {
+        await deleteCategory(categoryId);
+        await loadCategories();
+        
+        // Dispatch event to update navigation
+        window.dispatchEvent(new Event('equipmentCategoriesUpdated'));
+
+        setSaveMessage({
+          type: 'success',
+          text: 'Kategorie erfolgreich gelöscht'
+        });
+      } catch (error) {
+        console.error('Error deleting category:', error);
+        setSaveMessage({
+          type: 'error',
+          text: 'Fehler beim Löschen der Kategorie'
+        });
+      }
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setSaveMessage(null);
+
+    try {
+      // Save each category
+      for (const category of categories) {
+        await updateCategory(category.id, category);
+      }
+      
+      // Dispatch event to update navigation
+      window.dispatchEvent(new Event('equipmentCategoriesUpdated'));
+      
+      setSaveMessage({
+        type: 'success',
+        text: 'Änderungen erfolgreich gespeichert'
+      });
+    } catch (error) {
+      console.error('Error saving categories:', error);
+      setSaveMessage({
+        type: 'error',
+        text: 'Fehler beim Speichern der Änderungen'
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleAddItem = async (categoryId: string) => {
     try {
-      await addItem(categoryId, {
+      const category = categories.find(c => c.id === categoryId);
+      if (!category) return;
+
+      const newItem: Omit<EquipmentItem, 'id' | 'order'> = {
         title: 'Neues Item',
         description: 'Beschreibung des Items',
         image: 'https://images.unsplash.com/photo-1603199506016-b9a594b593c0?w=800',
         isActive: true
-      });
+      };
+
+      await addItem(categoryId, newItem);
       await loadCategories();
+      
       setSaveMessage({
         type: 'success',
         text: 'Item erfolgreich hinzugefügt'
@@ -119,6 +176,16 @@ export function Equipment() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="py-8">
+        <Container>
+          <div className="text-center">Laden...</div>
+        </Container>
+      </div>
+    );
+  }
+
   return (
     <div className="py-8">
       <Container>
@@ -131,6 +198,14 @@ export function Equipment() {
             >
               <Plus className="h-4 w-4" />
               Kategorie hinzufügen
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-white transition-colors hover:bg-accent-dark disabled:opacity-50"
+            >
+              <Save className="h-4 w-4" />
+              {saving ? 'Wird gespeichert...' : 'Änderungen speichern'}
             </button>
           </div>
         </div>
@@ -154,19 +229,29 @@ export function Equipment() {
               className="rounded-lg bg-white p-6 shadow-lg"
             >
               <div className="mb-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Kategorie Name
-                  </label>
-                  <input
-                    type="text"
-                    value={category.name}
-                    onChange={async (e) => {
-                      await updateCategory(category.id, { name: e.target.value });
-                      await loadCategories();
-                    }}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                  />
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Kategorie Name
+                    </label>
+                    <input
+                      type="text"
+                      value={category.name}
+                      onChange={(e) => {
+                        const updatedCategories = categories.map(c =>
+                          c.id === category.id ? { ...c, name: e.target.value } : c
+                        );
+                        setCategories(updatedCategories);
+                      }}
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                    />
+                  </div>
+                  <button
+                    onClick={() => handleDeleteCategory(category.id)}
+                    className="ml-4 rounded-lg bg-red-100 p-2 text-red-600 hover:bg-red-200"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
@@ -175,9 +260,11 @@ export function Equipment() {
                   <input
                     type="text"
                     value={category.slug}
-                    onChange={async (e) => {
-                      await updateCategory(category.id, { slug: e.target.value });
-                      await loadCategories();
+                    onChange={(e) => {
+                      const updatedCategories = categories.map(c =>
+                        c.id === category.id ? { ...c, slug: e.target.value } : c
+                      );
+                      setCategories(updatedCategories);
                     }}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                   />
@@ -188,9 +275,11 @@ export function Equipment() {
                   </label>
                   <textarea
                     value={category.description}
-                    onChange={async (e) => {
-                      await updateCategory(category.id, { description: e.target.value });
-                      await loadCategories();
+                    onChange={(e) => {
+                      const updatedCategories = categories.map(c =>
+                        c.id === category.id ? { ...c, description: e.target.value } : c
+                      );
+                      setCategories(updatedCategories);
                     }}
                     rows={3}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -201,9 +290,11 @@ export function Equipment() {
                     <input
                       type="checkbox"
                       checked={category.isActive}
-                      onChange={async (e) => {
-                        await updateCategory(category.id, { isActive: e.target.checked });
-                        await loadCategories();
+                      onChange={(e) => {
+                        const updatedCategories = categories.map(c =>
+                          c.id === category.id ? { ...c, isActive: e.target.checked } : c
+                        );
+                        setCategories(updatedCategories);
                       }}
                       className="rounded border-gray-300 text-accent focus:ring-accent"
                     />
@@ -211,17 +302,6 @@ export function Equipment() {
                       Aktiv
                     </span>
                   </label>
-                  <button
-                    onClick={async () => {
-                      if (window.confirm('Möchten Sie diese Kategorie wirklich löschen?')) {
-                        await deleteCategory(category.id);
-                        await loadCategories();
-                      }
-                    }}
-                    className="rounded-lg bg-red-100 p-2 text-red-600 hover:bg-red-200"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
                 </div>
               </div>
 
@@ -238,64 +318,104 @@ export function Equipment() {
                 </div>
 
                 <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {category.items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="relative rounded-lg border border-gray-200 p-4"
-                    >
-                      <div className="aspect-[4/3] overflow-hidden rounded-lg">
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="h-full w-full object-cover"
-                        />
-                        <div className="absolute bottom-4 right-4 flex items-center gap-2">
-                          <button
-                            onClick={() => handleDeleteItem(category.id, item.id)}
-                            className="rounded-full bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-lg hover:bg-red-600"
-                          >
-                            Entfernen
-                          </button>
-                          <label className="flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-lg hover:bg-gray-50">
-                            <Upload className="h-4 w-4" />
-                            <span>Bild ändern</span>
+                  {category.items
+                    .sort((a, b) => a.order - b.order)
+                    .map((item) => (
+                      <div
+                        key={item.id}
+                        className="relative rounded-lg border border-gray-200 p-4"
+                      >
+                        <div className="aspect-[4/3] overflow-hidden rounded-lg">
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            className="h-full w-full object-cover"
+                          />
+                          <div className="absolute bottom-4 right-4 flex items-center gap-2">
+                            <button
+                              onClick={() => handleDeleteItem(category.id, item.id)}
+                              className="rounded-full bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-lg hover:bg-red-600"
+                            >
+                              Entfernen
+                            </button>
+                            <label className="flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-lg hover:bg-gray-50">
+                              <Upload className="h-4 w-4" />
+                              <span>Bild ändern</span>
+                              <input
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleImageUpload(category.id, item.id, file);
+                                }}
+                              />
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 space-y-4">
+                          <input
+                            type="text"
+                            value={item.title}
+                            onChange={(e) => {
+                              const updatedCategories = categories.map(c => {
+                                if (c.id === category.id) {
+                                  const updatedItems = c.items.map(i =>
+                                    i.id === item.id ? { ...i, title: e.target.value } : i
+                                  );
+                                  return { ...c, items: updatedItems };
+                                }
+                                return c;
+                              });
+                              setCategories(updatedCategories);
+                            }}
+                            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                            placeholder="Titel"
+                          />
+                          <textarea
+                            value={item.description}
+                            onChange={(e) => {
+                              const updatedCategories = categories.map(c => {
+                                if (c.id === category.id) {
+                                  const updatedItems = c.items.map(i =>
+                                    i.id === item.id ? { ...i, description: e.target.value } : i
+                                  );
+                                  return { ...c, items: updatedItems };
+                                }
+                                return c;
+                              });
+                              setCategories(updatedCategories);
+                            }}
+                            rows={3}
+                            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                            placeholder="Beschreibung"
+                          />
+                          <label className="flex items-center gap-2">
                             <input
-                              type="file"
-                              className="hidden"
-                              accept="image/*"
+                              type="checkbox"
+                              checked={item.isActive}
                               onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) handleImageUpload(category.id, item.id, file);
+                                const updatedCategories = categories.map(c => {
+                                  if (c.id === category.id) {
+                                    const updatedItems = c.items.map(i =>
+                                      i.id === item.id ? { ...i, isActive: e.target.checked } : i
+                                    );
+                                    return { ...c, items: updatedItems };
+                                  }
+                                  return c;
+                                });
+                                setCategories(updatedCategories);
                               }}
+                              className="rounded border-gray-300 text-accent focus:ring-accent"
                             />
+                            <span className="text-sm font-medium text-gray-700">
+                              Aktiv
+                            </span>
                           </label>
                         </div>
                       </div>
-
-                      <div className="mt-4 space-y-4">
-                        <input
-                          type="text"
-                          value={item.title}
-                          onChange={async (e) => {
-                            await updateItem(category.id, item.id, { title: e.target.value });
-                            await loadCategories();
-                          }}
-                          className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                          placeholder="Titel"
-                        />
-                        <textarea
-                          value={item.description}
-                          onChange={async (e) => {
-                            await updateItem(category.id, item.id, { description: e.target.value });
-                            await loadCategories();
-                          }}
-                          rows={3}
-                          className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                          placeholder="Beschreibung"
-                        />
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
             </div>

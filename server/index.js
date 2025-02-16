@@ -6,12 +6,14 @@ import { v2 as cloudinary } from 'cloudinary';
 import { errorHandler } from './middleware/error.js';
 import connectDB from './config/db.js';
 import { initializeContent } from './scripts/initContent.js';
+import { initializeLegalContent } from './models/Legal.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
 import contentRoutes from './routes/content.js';
 import settingsRoutes from './routes/settings.js';
 import sliderRoutes from './routes/slider.js';
+import legalRoutes from './routes/legal.js';
 
 // Load environment variables
 dotenv.config();
@@ -39,7 +41,10 @@ const startServer = async () => {
 
     // Initialize default content
     console.log('Initializing default content...');
-    await initializeContent();
+    await Promise.all([
+      initializeContent(),
+      initializeLegalContent()
+    ]);
     console.log('Default content initialized');
 
     // CORS configuration
@@ -59,7 +64,7 @@ const startServer = async () => {
 
     app.use(cors({
       origin: function(origin, callback) {
-        // Allow requests with no origin (like mobile apps, curl requests, or same origin)
+        // Allow requests with no origin (like mobile apps, curl requests)
         if (!origin) {
           return callback(null, true);
         }
@@ -76,7 +81,6 @@ const startServer = async () => {
           callback(null, true);
         } else {
           console.warn('CORS blocked request from:', origin);
-          console.warn('Allowed origins:', allowedOrigins);
           callback(new Error('Not allowed by CORS'));
         }
       },
@@ -101,6 +105,7 @@ const startServer = async () => {
     app.use('/api/content', contentRoutes);
     app.use('/api/settings', settingsRoutes);
     app.use('/api/slider', sliderRoutes);
+    app.use('/api/legal', legalRoutes);
 
     // Health check
     app.get('/api/health', (req, res) => {

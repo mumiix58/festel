@@ -11,10 +11,10 @@ export function useSettings() {
     loadSettings();
   }, []);
 
-  const loadSettings = () => {
+  const loadSettings = async () => {
     try {
-      // Get settings from storage
-      const currentSettings = storage.getSettings();
+      setLoading(true);
+      const currentSettings = await storage.getSettings();
       setSettings(currentSettings);
       setError(null);
     } catch (err) {
@@ -31,7 +31,7 @@ export function useSettings() {
       setSettings(updatedSettings);
       setError(null);
       return updatedSettings;
-    } catch (err) {
+    } catch (err: any) {
       console.error('Settings update error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to update settings';
       setError(errorMessage);

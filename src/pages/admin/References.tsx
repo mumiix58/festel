@@ -1,26 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Save, Upload, Plus, Trash2, ArrowUp, ArrowDown, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useReferences } from '@/hooks/useReferences';
+import { ReferencesContent } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export function References() {
   const { content, loading, error, updateContent } = useReferences();
+  const [localContent, setLocalContent] = useState<ReferencesContent | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
     type: 'success' | 'error';
     text: string;
   } | null>(null);
 
+  // Initialize local content when content is loaded
+  useEffect(() => {
+    if (content) {
+      setLocalContent(content);
+    }
+  }, [content]);
+
   const handleSave = async () => {
-    if (!content) return;
+    if (!localContent) return;
 
     setSaving(true);
     setSaveMessage(null);
 
     try {
-      await updateContent(content);
+      await updateContent(localContent);
       setSaveMessage({
         type: 'success',
         text: 'Änderungen erfolgreich gespeichert'
@@ -37,23 +46,21 @@ export function References() {
   };
 
   const handleImageUpload = async (testimonialId: string, file: File) => {
+    if (!localContent) return;
+
     try {
       const reader = new FileReader();
-
       reader.onloadend = () => {
-        if (!content) return;
-
         const imageUrl = reader.result as string;
-        const updatedTestimonials = content.testimonials.map(testimonial =>
+        const updatedTestimonials = localContent.testimonials.map(testimonial =>
           testimonial.id === testimonialId ? { ...testimonial, image: imageUrl } : testimonial
         );
 
-        updateContent({
-          ...content,
+        setLocalContent({
+          ...localContent,
           testimonials: updatedTestimonials
         });
       };
-
       reader.readAsDataURL(file);
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -65,7 +72,7 @@ export function References() {
   };
 
   const handleAddTestimonial = () => {
-    if (!content) return;
+    if (!localContent) return;
 
     const newTestimonial = {
       id: uuidv4(),
@@ -74,41 +81,41 @@ export function References() {
       image: 'https://images.unsplash.com/photo-1555244162-803834f70033',
       quote: 'Kundenbewertung hier eingeben',
       rating: 5,
-      order: content.testimonials.length,
+      order: localContent.testimonials.length,
       isActive: true
     };
 
-    updateContent({
-      ...content,
-      testimonials: [...content.testimonials, newTestimonial]
+    setLocalContent({
+      ...localContent,
+      testimonials: [...localContent.testimonials, newTestimonial]
     });
   };
 
   const handleRemoveTestimonial = (testimonialId: string) => {
-    if (!content) return;
+    if (!localContent) return;
 
     if (window.confirm('Möchten Sie diese Referenz wirklich entfernen?')) {
-      const updatedTestimonials = content.testimonials
+      const updatedTestimonials = localContent.testimonials
         .filter(testimonial => testimonial.id !== testimonialId)
         .map((testimonial, index) => ({ ...testimonial, order: index }));
 
-      updateContent({
-        ...content,
+      setLocalContent({
+        ...localContent,
         testimonials: updatedTestimonials
       });
     }
   };
 
   const handleMoveTestimonial = (testimonialId: string, direction: 'up' | 'down') => {
-    if (!content) return;
+    if (!localContent) return;
 
-    const currentIndex = content.testimonials.findIndex(t => t.id === testimonialId);
+    const currentIndex = localContent.testimonials.findIndex(t => t.id === testimonialId);
     if (currentIndex === -1) return;
 
     const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    if (newIndex < 0 || newIndex >= content.testimonials.length) return;
+    if (newIndex < 0 || newIndex >= localContent.testimonials.length) return;
 
-    const updatedTestimonials = [...content.testimonials];
+    const updatedTestimonials = [...localContent.testimonials];
     const [movedTestimonial] = updatedTestimonials.splice(currentIndex, 1);
     updatedTestimonials.splice(newIndex, 0, movedTestimonial);
 
@@ -118,13 +125,13 @@ export function References() {
       order: index
     }));
 
-    updateContent({
-      ...content,
+    setLocalContent({
+      ...localContent,
       testimonials: reorderedTestimonials
     });
   };
 
-  if (loading || !content) {
+  if (loading || !localContent) {
     return (
       <div className="py-8">
         <Container>
@@ -193,11 +200,11 @@ export function References() {
                 </label>
                 <input
                   type="text"
-                  value={content.hero.title}
+                  value={localContent.hero.title}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      hero: { ...content.hero, title: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      hero: { ...localContent.hero, title: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -209,11 +216,11 @@ export function References() {
                 </label>
                 <input
                   type="text"
-                  value={content.hero.subtitle}
+                  value={localContent.hero.subtitle}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      hero: { ...content.hero, subtitle: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      hero: { ...localContent.hero, subtitle: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -224,7 +231,7 @@ export function References() {
 
           {/* Testimonials Section */}
           <div className="space-y-6">
-            {content.testimonials
+            {localContent.testimonials
               .sort((a, b) => a.order - b.order)
               .map((testimonial) => (
                 <motion.section
@@ -246,7 +253,7 @@ export function References() {
                       </button>
                       <button
                         onClick={() => handleMoveTestimonial(testimonial.id, 'down')}
-                        disabled={testimonial.order === content.testimonials.length - 1}
+                        disabled={testimonial.order === localContent.testimonials.length - 1}
                         className="rounded p-2 hover:bg-gray-100 disabled:opacity-50"
                       >
                         <ArrowDown className="h-4 w-4" />
@@ -270,13 +277,13 @@ export function References() {
                           type="text"
                           value={testimonial.name}
                           onChange={(e) => {
-                            const updatedTestimonials = content.testimonials.map(t =>
+                            const updatedTestimonials = localContent.testimonials.map(t =>
                               t.id === testimonial.id
                                 ? { ...t, name: e.target.value }
                                 : t
                             );
-                            updateContent({
-                              ...content,
+                            setLocalContent({
+                              ...localContent,
                               testimonials: updatedTestimonials
                             });
                           }}
@@ -291,13 +298,13 @@ export function References() {
                           type="text"
                           value={testimonial.event}
                           onChange={(e) => {
-                            const updatedTestimonials = content.testimonials.map(t =>
+                            const updatedTestimonials = localContent.testimonials.map(t =>
                               t.id === testimonial.id
                                 ? { ...t, event: e.target.value }
                                 : t
                             );
-                            updateContent({
-                              ...content,
+                            setLocalContent({
+                              ...localContent,
                               testimonials: updatedTestimonials
                             });
                           }}
@@ -315,13 +322,13 @@ export function References() {
                           <button
                             key={rating}
                             onClick={() => {
-                              const updatedTestimonials = content.testimonials.map(t =>
+                              const updatedTestimonials = localContent.testimonials.map(t =>
                                 t.id === testimonial.id
                                   ? { ...t, rating }
                                   : t
                               );
-                              updateContent({
-                                ...content,
+                              setLocalContent({
+                                ...localContent,
                                 testimonials: updatedTestimonials
                               });
                             }}
@@ -344,13 +351,13 @@ export function References() {
                       <textarea
                         value={testimonial.quote}
                         onChange={(e) => {
-                          const updatedTestimonials = content.testimonials.map(t =>
+                          const updatedTestimonials = localContent.testimonials.map(t =>
                             t.id === testimonial.id
                               ? { ...t, quote: e.target.value }
                               : t
                           );
-                          updateContent({
-                            ...content,
+                          setLocalContent({
+                            ...localContent,
                             testimonials: updatedTestimonials
                           });
                         }}
@@ -391,13 +398,13 @@ export function References() {
                           type="checkbox"
                           checked={testimonial.isActive}
                           onChange={(e) => {
-                            const updatedTestimonials = content.testimonials.map(t =>
+                            const updatedTestimonials = localContent.testimonials.map(t =>
                               t.id === testimonial.id
                                 ? { ...t, isActive: e.target.checked }
                                 : t
                             );
-                            updateContent({
-                              ...content,
+                            setLocalContent({
+                              ...localContent,
                               testimonials: updatedTestimonials
                             });
                           }}
@@ -423,11 +430,11 @@ export function References() {
                 </label>
                 <input
                   type="text"
-                  value={content.cta.title}
+                  value={localContent.cta.title}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      cta: { ...content.cta, title: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      cta: { ...localContent.cta, title: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -438,11 +445,11 @@ export function References() {
                   Beschreibung
                 </label>
                 <textarea
-                  value={content.cta.description}
+                  value={localContent.cta.description}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      cta: { ...content.cta, description: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      cta: { ...localContent.cta, description: e.target.value }
                     })
                   }
                   rows={3}
@@ -456,11 +463,11 @@ export function References() {
                   </label>
                   <input
                     type="text"
-                    value={content.cta.buttonText}
+                    value={localContent.cta.buttonText}
                     onChange={(e) =>
-                      updateContent({
-                        ...content,
-                        cta: { ...content.cta, buttonText: e.target.value }
+                      setLocalContent({
+                        ...localContent,
+                        cta: { ...localContent.cta, buttonText: e.target.value }
                       })
                     }
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -472,11 +479,11 @@ export function References() {
                   </label>
                   <input
                     type="text"
-                    value={content.cta.buttonLink}
+                    value={localContent.cta.buttonLink}
                     onChange={(e) =>
-                      updateContent({
-                        ...content,
-                        cta: { ...content.cta, buttonLink: e.target.value }
+                      setLocalContent({
+                        ...localContent,
+                        cta: { ...localContent.cta, buttonLink: e.target.value }
                       })
                     }
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -496,11 +503,11 @@ export function References() {
                 </label>
                 <input
                   type="text"
-                  value={content.seo.title}
+                  value={localContent.seo.title}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      seo: { ...content.seo, title: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      seo: { ...localContent.seo, title: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -511,15 +518,15 @@ export function References() {
                   Meta Description
                 </label>
                 <textarea
-                  value={content.seo.description}
+                  value={localContent.seo.description}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      seo: { ...content.seo, description: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      seo: { ...localContent.seo, description: e.target.value }
                     })
                   }
                   rows={3}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus :outline-none focus:ring-accent"
+                  className="mt-1 block w-full rounde d-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                 />
               </div>
               <div>
@@ -528,11 +535,11 @@ export function References() {
                 </label>
                 <input
                   type="text"
-                  value={content.seo.keywords}
+                  value={localContent.seo.keywords}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      seo: { ...content.seo, keywords: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      seo: { ...localContent.seo, keywords: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"

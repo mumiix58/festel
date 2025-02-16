@@ -1,6 +1,6 @@
 const getApiUrl = () => {
-  // Always use the production API URL
-  return 'https://festlmacher-api-nucz.onrender.com/api';
+  // Remove /api since we'll add it in the proxy config
+  return 'https://festlmacher-api-nucz.onrender.com';
 };
 
 export const config = {

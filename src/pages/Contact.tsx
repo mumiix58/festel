@@ -36,18 +36,16 @@ export function Contact() {
   }>({ type: null, message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
-  const settings = storage.getSettings();
+  const { settings } = storage.getSettings();
 
   useEffect(() => {
-    const apiKey = settings.seo.googleMapsApiKey;
-
-    if (!apiKey) {
+    if (!settings?.seo?.googleMapsApiKey) {
       setMapError('Google Maps API key is not configured');
       return;
     }
 
     const loader = new Loader({
-      apiKey,
+      apiKey: settings.seo.googleMapsApiKey,
       version: 'weekly',
       libraries: ['places']
     });
@@ -77,7 +75,7 @@ export function Contact() {
       console.error('Error loading Google Maps:', err);
       setMapError('Failed to load Google Maps');
     });
-  }, [settings.seo.googleMapsApiKey]);
+  }, [settings?.seo?.googleMapsApiKey]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -125,6 +123,16 @@ export function Contact() {
 
   // Get today's date in YYYY-MM-DD format for the date input min attribute
   const today = new Date().toISOString().split('T')[0];
+
+  if (!settings) {
+    return (
+      <div className="py-24">
+        <Container>
+          <div className="text-center">Laden...</div>
+        </Container>
+      </div>
+    );
+  }
 
   return (
     <motion.div

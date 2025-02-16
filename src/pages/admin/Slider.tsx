@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Upload, Trash2, Edit, ArrowUp, ArrowDown } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { SlideContent } from '@/types';
 import { getAllSlides, addSlide, updateSlide, deleteSlide, reorderSlides } from '@/lib/slider';
 
@@ -185,136 +185,141 @@ export function Slider() {
         )}
 
         <div className="mt-8 space-y-6">
-          {slides.map((slide) => (
-            <motion.div
-              key={slide.id}
-              layout
-              className="rounded-lg bg-white p-6 shadow-lg"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  {editingSlide === slide.id ? (
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                          Titel
-                        </label>
-                        <input
-                          type="text"
-                          value={slide.title}
-                          onChange={(e) =>
-                            handleUpdateSlide(slide.id, { title: e.target.value })
-                          }
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                          Untertitel
-                        </label>
-                        <input
-                          type="text"
-                          value={slide.subtitle}
-                          onChange={(e) =>
-                            handleUpdateSlide(slide.id, { subtitle: e.target.value })
-                          }
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                          Button Text
-                        </label>
-                        <input
-                          type="text"
-                          value={slide.buttonText}
-                          onChange={(e) =>
-                            handleUpdateSlide(slide.id, { buttonText: e.target.value })
-                          }
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                          Button Link
-                        </label>
-                        <input
-                          type="text"
-                          value={slide.buttonLink}
-                          onChange={(e) =>
-                            handleUpdateSlide(slide.id, { buttonLink: e.target.value })
-                          }
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                        />
-                      </div>
-                      <div>
-                        <label className="flex items-center gap-2">
+          <AnimatePresence>
+            {slides.map((slide) => (
+              <motion.div
+                key={`slide-${slide.id}`}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="rounded-lg bg-white p-6 shadow-lg"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    {editingSlide === slide.id ? (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">
+                            Titel
+                          </label>
                           <input
-                            type="checkbox"
-                            checked={slide.showLogo}
+                            type="text"
+                            value={slide.title}
                             onChange={(e) =>
-                              handleUpdateSlide(slide.id, { showLogo: e.target.checked })
+                              handleUpdateSlide(slide.id, { title: e.target.value })
                             }
-                            className="rounded border-gray-300 text-accent focus:ring-accent"
+                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                           />
-                          <span className="text-sm font-medium text-gray-700">
-                            Logo anzeigen
-                          </span>
-                        </label>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">
+                            Untertitel
+                          </label>
+                          <input
+                            type="text"
+                            value={slide.subtitle}
+                            onChange={(e) =>
+                              handleUpdateSlide(slide.id, { subtitle: e.target.value })
+                            }
+                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">
+                            Button Text
+                          </label>
+                          <input
+                            type="text"
+                            value={slide.buttonText}
+                            onChange={(e) =>
+                              handleUpdateSlide(slide.id, { buttonText: e.target.value })
+                            }
+                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">
+                            Button Link
+                          </label>
+                          <input
+                            type="text"
+                            value={slide.buttonLink}
+                            onChange={(e) =>
+                              handleUpdateSlide(slide.id, { buttonLink: e.target.value })
+                            }
+                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                          />
+                        </div>
+                        <div>
+                          <label className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={slide.showLogo}
+                              onChange={(e) =>
+                                handleUpdateSlide(slide.id, { showLogo: e.target.checked })
+                              }
+                              className="rounded border-gray-300 text-accent focus:ring-accent"
+                            />
+                            <span className="text-sm font-medium text-gray-700">
+                              Logo anzeigen
+                            </span>
+                          </label>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <h3 className="font-display text-xl font-semibold">
-                        {slide.title}
-                      </h3>
-                      <p className="mt-2 text-gray-600">{slide.subtitle}</p>
-                      {slide.showLogo && (
-                        <p className="mt-2 text-sm text-accent">Logo wird angezeigt</p>
-                      )}
-                    </div>
-                  )}
+                    ) : (
+                      <div>
+                        <h3 className="font-display text-xl font-semibold">
+                          {slide.title}
+                        </h3>
+                        <p className="mt-2 text-gray-600">{slide.subtitle}</p>
+                        {slide.showLogo && (
+                          <p className="mt-2 text-sm text-accent">Logo wird angezeigt</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="ml-4 flex items-center gap-2">
+                    <button
+                      onClick={() => handleReorderSlide(slide.id, 'up')}
+                      disabled={slide.order === 0}
+                      className="rounded p-2 hover:bg-gray-100 disabled:opacity-50"
+                    >
+                      <ArrowUp className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleReorderSlide(slide.id, 'down')}
+                      disabled={slide.order === slides.length - 1}
+                      className="rounded p-2 hover:bg-gray-100 disabled:opacity-50"
+                    >
+                      <ArrowDown className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() =>
+                        setEditingSlide(editingSlide === slide.id ? null : slide.id)
+                      }
+                      className="rounded p-2 hover:bg-gray-100"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteSlide(slide.id)}
+                      className="rounded p-2 text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
-                <div className="ml-4 flex items-center gap-2">
-                  <button
-                    onClick={() => handleReorderSlide(slide.id, 'up')}
-                    disabled={slide.order === 0}
-                    className="rounded p-2 hover:bg-gray-100 disabled:opacity-50"
-                  >
-                    <ArrowUp className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => handleReorderSlide(slide.id, 'down')}
-                    disabled={slide.order === slides.length - 1}
-                    className="rounded p-2 hover:bg-gray-100 disabled:opacity-50"
-                  >
-                    <ArrowDown className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() =>
-                      setEditingSlide(editingSlide === slide.id ? null : slide.id)
-                    }
-                    className="rounded p-2 hover:bg-gray-100"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteSlide(slide.id)}
-                    className="rounded p-2 text-red-600 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                <div className="mt-4">
+                  <img
+                    src={slide.image}
+                    alt={slide.title}
+                    className="h-48 w-full rounded-lg object-cover"
+                  />
                 </div>
-              </div>
-              <div className="mt-4">
-                <img
-                  src={slide.image}
-                  alt={slide.title}
-                  className="h-48 w-full rounded-lg object-cover"
-                />
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </Container>
     </div>

@@ -30,7 +30,7 @@ const itemVariants = {
 export function Services() {
   const location = useLocation();
   const servicesRef = useRef<{ [key: string]: HTMLElement | null }>({});
-  const { content, loading } = useServices();
+  const { content, loading, error } = useServices();
 
   const relatedLinks = [
     {
@@ -72,11 +72,23 @@ export function Services() {
     }
   }, [location]);
 
-  if (loading || !content) {
+  if (loading) {
     return (
       <div className="py-24">
         <Container>
           <div className="text-center">Laden...</div>
+        </Container>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="py-24">
+        <Container>
+          <div className="rounded-lg bg-red-50 p-4 text-red-700">
+            {error}
+          </div>
         </Container>
       </div>
     );

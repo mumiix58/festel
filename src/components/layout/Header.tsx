@@ -11,26 +11,30 @@ export function Header() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
   const location = useLocation();
-  const { settings, loading } = useSettings();
+  const { settings, loading: settingsLoading } = useSettings();
   const [logoError, setLogoError] = useState(false);
   const [categories, setCategories] = useState<EquipmentCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load categories for navigation
-    const loadCategories = () => {
-      const navCategories = getNavigationCategories();
-      setCategories(navCategories);
-    };
-
     loadCategories();
-
-    // Listen for category updates
-    window.addEventListener('storage', loadCategories);
-
-    return () => {
-      window.removeEventListener('storage', loadCategories);
-    };
   }, []);
+
+  const loadCategories = async () => {
+    try {
+      setLoading(true);
+      const navCategories = await getNavigationCategories();
+      setCategories(navCategories || []);
+      setError(null);
+    } catch (err) {
+      console.error('Error loading navigation categories:', err);
+      setError('Failed to load categories');
+      setCategories([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (mobileMenuOpen) {
@@ -39,7 +43,6 @@ export function Header() {
       document.body.classList.remove('menu-open');
     }
 
-    // Cleanup timeouts on unmount
     return () => {
       if (closeTimeout) {
         clearTimeout(closeTimeout);
@@ -95,7 +98,7 @@ export function Header() {
   const logoSrc = settings?.logo && !logoError ? settings.logo : defaultLogo;
   const companyName = settings?.company?.name || "FEST'LMACHER";
 
-  if (loading) {
+  if (settingsLoading || loading) {
     return (
       <header className="fixed inset-x-0 top-0 z-50 bg-white/95 shadow-sm backdrop-blur-sm">
         <Container>

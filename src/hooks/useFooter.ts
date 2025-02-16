@@ -13,9 +13,10 @@ export function useFooter() {
 
   const loadContent = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const footerContent = await getFooterContent();
       setContent(footerContent);
-      setError(null);
     } catch (err) {
       console.error('Error loading footer content:', err);
       setError('Failed to load footer content');
@@ -24,11 +25,11 @@ export function useFooter() {
     }
   };
 
-  const updateContent = async (newContent: FooterContent) => {
+  const updateContent = async (newContent: FooterContent): Promise<boolean> => {
     try {
+      setError(null);
       await updateFooterContent(newContent);
       setContent(newContent);
-      setError(null);
       return true;
     } catch (err) {
       console.error('Error updating footer content:', err);

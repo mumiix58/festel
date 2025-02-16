@@ -1,32 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Save, Upload, Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useServices } from '@/hooks/useServices';
 import { optimizeImage } from '@/lib/imageUtils';
-import { ServiceContent } from '@/types';
+import { ServiceContent, ServicesPageContent } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export function Services() {
   const { content, loading, error, updateContent } = useServices();
+  const [localContent, setLocalContent] = useState<ServicesPageContent | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
     type: 'success' | 'error';
     text: string;
   } | null>(null);
 
-  const handleSave = async () => {
-    if (!content) return;
+  // Initialize local content when content is loaded
+  useEffect(() => {
+    if (content) {
+      setLocalContent(content);
+    }
+  }, [content]);
 
+  const handleSave = async () => {
+    if (!localContent) return;
+    
     setSaving(true);
     setSaveMessage(null);
 
     try {
-      await updateContent(content);
-      setSaveMessage({
-        type: 'success',
-        text: 'Änderungen erfolgreich gespeichert'
-      });
+      const success = await updateContent(localContent);
+      if (success) {
+        setSaveMessage({
+          type: 'success',
+          text: 'Änderungen erfolgreich gespeichert'
+        });
+      }
     } catch (error) {
       console.error('Error saving content:', error);
       setSaveMessage({
@@ -39,20 +49,20 @@ export function Services() {
   };
 
   const handleImageUpload = async (serviceId: string, file: File) => {
+    if (!localContent) return;
+
     try {
       const optimizedFile = await optimizeImage(file);
       const reader = new FileReader();
 
       reader.onloadend = () => {
-        if (!content) return;
-
         const imageUrl = reader.result as string;
-        const updatedServices = content.services.map(service =>
+        const updatedServices = localContent.services.map(service =>
           service.id === serviceId ? { ...service, image: imageUrl } : service
         );
 
-        updateContent({
-          ...content,
+        setLocalContent({
+          ...localContent,
           services: updatedServices
         });
       };
@@ -68,7 +78,7 @@ export function Services() {
   };
 
   const handleAddService = () => {
-    if (!content) return;
+    if (!localContent) return;
 
     const newService: ServiceContent = {
       id: `service-${uuidv4()}`,
@@ -76,7 +86,7 @@ export function Services() {
       description: 'Beschreibung der Dienstleistung',
       image: 'https://images.unsplash.com/photo-1555244162-803834f70033',
       features: ['Feature 1', 'Feature 2', 'Feature 3', 'Feature 4'],
-      order: content.services.length,
+      order: localContent.services.length,
       buttonText: 'Jetzt anfragen',
       buttonLink: '/termin',
       isActive: true,
@@ -87,37 +97,37 @@ export function Services() {
       }
     };
 
-    updateContent({
-      ...content,
-      services: [...content.services, newService]
+    setLocalContent({
+      ...localContent,
+      services: [...localContent.services, newService]
     });
   };
 
   const handleRemoveService = (serviceId: string) => {
-    if (!content) return;
+    if (!localContent) return;
 
     if (window.confirm('Möchten Sie diese Dienstleistung wirklich entfernen?')) {
-      const updatedServices = content.services
+      const updatedServices = localContent.services
         .filter(service => service.id !== serviceId)
         .map((service, index) => ({ ...service, order: index }));
 
-      updateContent({
-        ...content,
+      setLocalContent({
+        ...localContent,
         services: updatedServices
       });
     }
   };
 
   const handleMoveService = (serviceId: string, direction: 'up' | 'down') => {
-    if (!content) return;
+    if (!localContent) return;
 
-    const currentIndex = content.services.findIndex(s => s.id === serviceId);
+    const currentIndex = localContent.services.findIndex(s => s.id === serviceId);
     if (currentIndex === -1) return;
 
     const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    if (newIndex < 0 || newIndex >= content.services.length) return;
+    if (newIndex < 0 || newIndex >= localContent.services.length) return;
 
-    const updatedServices = [...content.services];
+    const updatedServices = [...localContent.services];
     const [movedService] = updatedServices.splice(currentIndex, 1);
     updatedServices.splice(newIndex, 0, movedService);
 
@@ -127,16 +137,16 @@ export function Services() {
       order: index
     }));
 
-    updateContent({
-      ...content,
+    setLocalContent({
+      ...localContent,
       services: reorderedServices
     });
   };
 
   const handleAddFeature = (serviceId: string) => {
-    if (!content) return;
+    if (!localContent) return;
 
-    const updatedServices = content.services.map(service => {
+    const updatedServices = localContent.services.map(service => {
       if (service.id === serviceId) {
         return {
           ...service,
@@ -146,16 +156,16 @@ export function Services() {
       return service;
     });
 
-    updateContent({
-      ...content,
+    setLocalContent({
+      ...localContent,
       services: updatedServices
     });
   };
 
   const handleRemoveFeature = (serviceId: string, featureIndex: number) => {
-    if (!content) return;
+    if (!localContent) return;
 
-    const updatedServices = content.services.map(service => {
+    const updatedServices = localContent.services.map(service => {
       if (service.id === serviceId) {
         const updatedFeatures = service.features.filter((_, index) => index !== featureIndex);
         return {
@@ -166,13 +176,13 @@ export function Services() {
       return service;
     });
 
-    updateContent({
-      ...content,
+    setLocalContent({
+      ...localContent,
       services: updatedServices
     });
   };
 
-  if (loading || !content) {
+  if (loading || !localContent) {
     return (
       <div className="py-8">
         <Container>
@@ -186,8 +196,8 @@ export function Services() {
     return (
       <div className="py-8">
         <Container>
-          <div className="rounded-md bg-red-50 p-4">
-            <div className="text-sm text-red-700">{error}</div>
+          <div className="rounded-lg bg-red-50 p-4 text-red-700">
+            {error}
           </div>
         </Container>
       </div>
@@ -241,11 +251,11 @@ export function Services() {
                 </label>
                 <input
                   type="text"
-                  value={content.hero.title}
+                  value={localContent.hero.title}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      hero: { ...content.hero, title: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      hero: { ...localContent.hero, title: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -257,11 +267,11 @@ export function Services() {
                 </label>
                 <input
                   type="text"
-                  value={content.hero.subtitle}
+                  value={localContent.hero.subtitle}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      hero: { ...content.hero, subtitle: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      hero: { ...localContent.hero, subtitle: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -272,7 +282,7 @@ export function Services() {
 
           {/* Services Section */}
           <div className="space-y-6">
-            {content.services
+            {localContent.services
               .sort((a, b) => a.order - b.order)
               .map((service) => (
                 <motion.section
@@ -281,10 +291,52 @@ export function Services() {
                   className="rounded-lg bg-white p-6 shadow-lg"
                 >
                   <div className="flex items-start justify-between">
-                    <h3 className="font-display text-xl font-semibold">
-                      {service.title}
-                    </h3>
-                    <div className="flex items-center gap-2">
+                    <div className="flex-1">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          Titel
+                        </label>
+                        <input
+                          type="text"
+                          value={service.title}
+                          onChange={(e) => {
+                            const updatedServices = localContent.services.map(s =>
+                              s.id === service.id
+                                ? { ...s, title: e.target.value }
+                                : s
+                            );
+                            setLocalContent({
+                              ...localContent,
+                              services: updatedServices
+                            });
+                          }}
+                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                        />
+                      </div>
+
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Beschreibung
+                        </label>
+                        <textarea
+                          value={service.description}
+                          onChange={(e) => {
+                            const updatedServices = localContent.services.map(s =>
+                              s.id === service.id
+                                ? { ...s, description: e.target.value }
+                                : s
+                            );
+                            setLocalContent({
+                              ...localContent,
+                              services: updatedServices
+                            });
+                          }}
+                          rows={3}
+                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                        />
+                      </div>
+                    </div>
+                    <div className="ml-4 flex items-center gap-2">
                       <button
                         onClick={() => handleMoveService(service.id, 'up')}
                         disabled={service.order === 0}
@@ -294,7 +346,7 @@ export function Services() {
                       </button>
                       <button
                         onClick={() => handleMoveService(service.id, 'down')}
-                        disabled={service.order === content.services.length - 1}
+                        disabled={service.order === localContent.services.length - 1}
                         className="rounded p-2 hover:bg-gray-100 disabled:opacity-50"
                       >
                         <ArrowDown className="h-4 w-4" />
@@ -308,239 +360,191 @@ export function Services() {
                     </div>
                   </div>
 
-                  <div className="mt-4 space-y-4">
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Bild
+                    </label>
+                    <div className="mt-2 flex items-center gap-4">
+                      <img
+                        src={service.image}
+                        alt={service.title}
+                        className="h-32 w-48 rounded-lg object-cover"
+                      />
+                      <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-50">
+                        <Upload className="h-4 w-4" />
+                        <span>Bild ändern</span>
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleImageUpload(service.id, file);
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Features
+                      </label>
+                      <button
+                        onClick={() => handleAddFeature(service.id)}
+                        className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-1 text-sm hover:bg-gray-200"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Feature hinzufügen
+                      </button>
+                    </div>
+                    <div className="mt-2 space-y-2">
+                      {service.features.map((feature, index) => (
+                        <div key={`${service.id}-feature-${index}`} className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={feature}
+                            onChange={(e) => {
+                              const updatedServices = localContent.services.map(s => {
+                                if (s.id === service.id) {
+                                  const updatedFeatures = [...s.features];
+                                  updatedFeatures[index] = e.target.value;
+                                  return { ...s, features: updatedFeatures };
+                                }
+                                return s;
+                              });
+                              setLocalContent({
+                                ...localContent,
+                                services: updatedServices
+                              });
+                            }}
+                            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                          />
+                          <button
+                            onClick={() => handleRemoveFeature(service.id, index)}
+                            className="rounded p-2 text-red-600 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Titel
+                        Button Text
                       </label>
                       <input
                         type="text"
-                        value={service.title}
+                        value={service.buttonText}
                         onChange={(e) => {
-                          const updatedServices = content.services.map(s =>
+                          const updatedServices = localContent.services.map(s =>
                             s.id === service.id
-                              ? { ...s, title: e.target.value }
+                              ? { ...s, buttonText: e.target.value }
                               : s
                           );
-                          updateContent({
-                            ...content,
+                          setLocalContent({
+                            ...localContent,
                             services: updatedServices
                           });
                         }}
                         className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       />
                     </div>
-
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Beschreibung
+                        Button Link
                       </label>
+                      <input
+                        type="text"
+                        value={service.buttonLink}
+                        onChange={(e) => {
+                          const updatedServices = localContent.services.map(s =>
+                            s.id === service.id
+                              ? { ...s, buttonLink: e.target.value }
+                              : s
+                          );
+                          setLocalContent({
+                            ...localContent,
+                            services: updatedServices
+                          });
+                        }}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700">
+                      SEO Einstellungen
+                    </label>
+                    <div className="mt-2 space-y-4">
+                      <input
+                        type="text"
+                        value={service.seo.title}
+                        onChange={(e) => {
+                          const updatedServices = localContent.services.map(s =>
+                            s.id === service.id
+                              ? {
+                                  ...s,
+                                  seo: { ...s.seo, title: e.target.value }
+                                }
+                              : s
+                          );
+                          setLocalContent({
+                            ...localContent,
+                            services: updatedServices
+                          });
+                        }}
+                        placeholder="Meta Title"
+                        className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                      />
                       <textarea
-                        value={service.description}
+                        value={service.seo.description}
                         onChange={(e) => {
-                          const updatedServices = content.services.map(s =>
+                          const updatedServices = localContent.services.map(s =>
                             s.id === service.id
-                              ? { ...s, description: e.target.value }
+                              ? {
+                                  ...s,
+                                  seo: {
+                                    ...s.seo,
+                                    description: e.target.value
+                                  }
+                                }
                               : s
                           );
-                          updateContent({
-                            ...content,
+                          setLocalContent({
+                            ...localContent,
                             services: updatedServices
                           });
                         }}
-                        rows={3}
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                        placeholder="Meta Description"
+                        rows={2}
+                        className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Bild
-                      </label>
-                      <div className="mt-2 flex items-center gap-4">
-                        <img
-                          src={service.image}
-                          alt={service.title}
-                          className="h-32 w-48 rounded-lg object-cover"
-                        />
-                        <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-50">
-                          <Upload className="h-4 w-4" />
-                          <span>Bild ändern</span>
-                          <input
-                            type="file"
-                            className="hidden"
-                            accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleImageUpload(service.id, file);
-                            }}
-                          />
-                        </label>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Features
-                        </label>
-                        <button
-                          onClick={() => handleAddFeature(service.id)}
-                          className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-1 text-sm hover:bg-gray-200"
-                        >
-                          <Plus className="h-4 w-4" />
-                          Feature hinzufügen
-                        </button>
-                      </div>
-                      <div className="mt-2 space-y-2">
-                        {service.features.map((feature, index) => (
-                          <div key={index} className="flex items-center gap-2">
-                            <input
-                              type="text"
-                              value={feature}
-                              onChange={(e) => {
-                                const updatedServices = content.services.map(s => {
-                                  if (s.id === service.id) {
-                                    const updatedFeatures = [...s.features];
-                                    updatedFeatures[index] = e.target.value;
-                                    return { ...s, features: updatedFeatures };
-                                  }
-                                  return s;
-                                });
-                                updateContent({
-                                  ...content,
-                                  services: updatedServices
-                                });
-                              }}
-                              className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                            />
-                            <button
-                              onClick={() =>
-                                handleRemoveFeature(service.id, index)
-                              }
-                              className="rounded p-2 text-red-600 hover:bg-red-50"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                          Button Text
-                        </label>
-                        <input
-                          type="text"
-                          value={service.buttonText}
-                          onChange={(e) => {
-                            const updatedServices = content.services.map(s =>
-                              s.id === service.id
-                                ? { ...s, buttonText: e.target.value }
-                                : s
-                            );
-                            updateContent({
-                              ...content,
-                              services: updatedServices
-                            });
-                          }}
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                          Button Link
-                        </label>
-                        <input
-                          type="text"
-                          value={service.buttonLink}
-                          onChange={(e) => {
-                            const updatedServices = content.services.map(s =>
-                              s.id === service.id
-                                ? { ...s, buttonLink: e.target.value }
-                                : s
-                            );
-                            updateContent({
-                              ...content,
-                              services: updatedServices
-                            });
-                          }}
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        SEO Einstellungen
-                      </label>
-                      <div className="mt-2 space-y-4">
-                        <input
-                          type="text"
-                          value={service.seo.title}
-                          onChange={(e) => {
-                            const updatedServices = content.services.map(s =>
-                              s.id === service.id
-                                ? {
-                                    ...s,
-                                    seo: { ...s.seo, title: e.target.value }
-                                  }
-                                : s
-                            );
-                            updateContent({
-                              ...content,
-                              services: updatedServices
-                            });
-                          }}
-                          placeholder="Meta Title"
-                          className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                        />
-                        <textarea
-                          value={service.seo.description}
-                          onChange={(e) => {
-                            const updatedServices = content.services.map(s =>
-                              s.id === service.id
-                                ? {
-                                    ...s,
-                                    seo: {
-                                      ...s.seo,
-                                      description: e.target.value
-                                    }
-                                  }
-                                : s
-                            );
-                            updateContent({
-                              ...content,
-                              services: updatedServices
-                            });
-                          }}
-                          placeholder="Meta Description"
-                          rows={2}
-                          className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                        />
-                        <input
-                          type="text"
-                          value={service.seo.keywords}
-                          onChange={(e) => {
-                            const updatedServices = content.services.map(s =>
-                              s.id === service.id
-                                ? {
-                                    ...s,
-                                    seo: { ...s.seo, keywords: e.target.value }
-                                  }
-                                : s
-                            );
-                            updateContent({
-                              ...content,
-                              services: updatedServices
-                            });
-                          }}
-                          placeholder="Meta Keywords"
-                          className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                        />
-                      </div>
+                      <input
+                        type="text"
+                        value={service.seo.keywords}
+                        onChange={(e) => {
+                          const updatedServices = localContent.services.map(s =>
+                            s.id === service.id
+                              ? {
+                                  ...s,
+                                  seo: { ...s.seo, keywords: e.target.value }
+                                }
+                              : s
+                          );
+                          setLocalContent({
+                            ...localContent,
+                            services: updatedServices
+                          });
+                        }}
+                        placeholder="Meta Keywords"
+                        className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                      />
                     </div>
                   </div>
                 </motion.section>
@@ -557,11 +561,11 @@ export function Services() {
                 </label>
                 <input
                   type="text"
-                  value={content.cta.title}
+                  value={localContent.cta.title}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      cta: { ...content.cta, title: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      cta: { ...localContent.cta, title: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -572,11 +576,11 @@ export function Services() {
                   Beschreibung
                 </label>
                 <textarea
-                  value={content.cta.description}
+                  value={localContent.cta.description}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      cta: { ...content.cta, description: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      cta: { ...localContent.cta, description: e.target.value }
                     })
                   }
                   rows={3}
@@ -590,11 +594,11 @@ export function Services() {
                   </label>
                   <input
                     type="text"
-                    value={content.cta.buttonText}
+                    value={localContent.cta.buttonText}
                     onChange={(e) =>
-                      updateContent({
-                        ...content,
-                        cta: { ...content.cta, buttonText: e.target.value }
+                      setLocalContent({
+                        ...localContent,
+                        cta: { ...localContent.cta, buttonText: e.target.value }
                       })
                     }
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -606,11 +610,11 @@ export function Services() {
                   </label>
                   <input
                     type="text"
-                    value={content.cta.buttonLink}
+                    value={localContent.cta.buttonLink}
                     onChange={(e) =>
-                      updateContent({
-                        ...content,
-                        cta: { ...content.cta, buttonLink: e.target.value }
+                      setLocalContent({
+                        ...localContent,
+                        cta: { ...localContent.cta, buttonLink: e.target.value }
                       })
                     }
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -630,11 +634,11 @@ export function Services() {
                 </label>
                 <input
                   type="text"
-                  value={content.seo.title}
+                  value={localContent.seo.title}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      seo: { ...content.seo, title: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      seo: { ...localContent.seo, title: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -645,11 +649,11 @@ export function Services() {
                   Meta Description
                 </label>
                 <textarea
-                  value={content.seo.description}
+                  value={localContent.seo.description}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      seo: { ...content.seo, description: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      seo: { ...localContent.seo, description: e.target.value }
                     })
                   }
                   rows={3}
@@ -662,11 +666,11 @@ export function Services() {
                 </label>
                 <input
                   type="text"
-                  value={content.seo.keywords}
+                  value={localContent.seo.keywords}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      seo: { ...content.seo, keywords: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      seo: { ...localContent.seo, keywords: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"

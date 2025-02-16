@@ -19,7 +19,7 @@ router.get('/:page', async (req, res) => {
       });
     }
 
-    console.log(`Content found for page: ${req.params.page}:`, content);
+    console.log(`Content found for page: ${req.params.page}`);
     res.json({ content: content.content });
   } catch (error) {
     console.error('Error fetching content:', error);

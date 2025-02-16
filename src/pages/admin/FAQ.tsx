@@ -1,30 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Save, Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useFAQ } from '@/hooks/useFAQ';
+import { FAQContent } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export function FAQ() {
   const { content, loading, error, updateContent } = useFAQ();
+  const [localContent, setLocalContent] = useState<FAQContent | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
     type: 'success' | 'error';
     text: string;
   } | null>(null);
 
+  // Initialize local content when content is loaded
+  useEffect(() => {
+    if (content) {
+      setLocalContent(content);
+    }
+  }, [content]);
+
   const handleSave = async () => {
-    if (!content) return;
+    if (!localContent) return;
 
     setSaving(true);
     setSaveMessage(null);
 
     try {
-      await updateContent(content);
-      setSaveMessage({
-        type: 'success',
-        text: 'Änderungen erfolgreich gespeichert'
-      });
+      const success = await updateContent(localContent);
+      if (success) {
+        setSaveMessage({
+          type: 'success',
+          text: 'Änderungen erfolgreich gespeichert'
+        });
+      }
     } catch (error) {
       console.error('Error saving content:', error);
       setSaveMessage({
@@ -37,47 +48,47 @@ export function FAQ() {
   };
 
   const handleAddFAQ = () => {
-    if (!content) return;
+    if (!localContent) return;
 
     const newFAQ = {
       id: uuidv4(),
       question: 'Neue Frage',
       answer: 'Ihre Antwort hier',
-      order: content.faqs.length,
+      order: localContent.faqs.length,
       isActive: true
     };
 
-    updateContent({
-      ...content,
-      faqs: [...content.faqs, newFAQ]
+    setLocalContent({
+      ...localContent,
+      faqs: [...localContent.faqs, newFAQ]
     });
   };
 
   const handleRemoveFAQ = (faqId: string) => {
-    if (!content) return;
+    if (!localContent) return;
 
     if (window.confirm('Möchten Sie diese FAQ wirklich entfernen?')) {
-      const updatedFAQs = content.faqs
+      const updatedFAQs = localContent.faqs
         .filter(faq => faq.id !== faqId)
         .map((faq, index) => ({ ...faq, order: index }));
 
-      updateContent({
-        ...content,
+      setLocalContent({
+        ...localContent,
         faqs: updatedFAQs
       });
     }
   };
 
   const handleMoveFAQ = (faqId: string, direction: 'up' | 'down') => {
-    if (!content) return;
+    if (!localContent) return;
 
-    const currentIndex = content.faqs.findIndex(f => f.id === faqId);
+    const currentIndex = localContent.faqs.findIndex(f => f.id === faqId);
     if (currentIndex === -1) return;
 
     const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    if (newIndex < 0 || newIndex >= content.faqs.length) return;
+    if (newIndex < 0 || newIndex >= localContent.faqs.length) return;
 
-    const updatedFAQs = [...content.faqs];
+    const updatedFAQs = [...localContent.faqs];
     const [movedFAQ] = updatedFAQs.splice(currentIndex, 1);
     updatedFAQs.splice(newIndex, 0, movedFAQ);
 
@@ -87,13 +98,13 @@ export function FAQ() {
       order: index
     }));
 
-    updateContent({
-      ...content,
+    setLocalContent({
+      ...localContent,
       faqs: reorderedFAQs
     });
   };
 
-  if (loading || !content) {
+  if (loading || !localContent) {
     return (
       <div className="py-8">
         <Container>
@@ -162,11 +173,11 @@ export function FAQ() {
                 </label>
                 <input
                   type="text"
-                  value={content.hero.title}
+                  value={localContent.hero.title}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      hero: { ...content.hero, title: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      hero: { ...localContent.hero, title: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -178,11 +189,11 @@ export function FAQ() {
                 </label>
                 <input
                   type="text"
-                  value={content.hero.subtitle}
+                  value={localContent.hero.subtitle}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      hero: { ...content.hero, subtitle: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      hero: { ...localContent.hero, subtitle: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -193,7 +204,7 @@ export function FAQ() {
 
           {/* FAQs Section */}
           <div className="space-y-6">
-            {content.faqs
+            {localContent.faqs
               .sort((a, b) => a.order - b.order)
               .map((faq) => (
                 <motion.section
@@ -215,7 +226,7 @@ export function FAQ() {
                       </button>
                       <button
                         onClick={() => handleMoveFAQ(faq.id, 'down')}
-                        disabled={faq.order === content.faqs.length - 1}
+                        disabled={faq.order === localContent.faqs.length - 1}
                         className="rounded p-2 hover:bg-gray-100 disabled:opacity-50"
                       >
                         <ArrowDown className="h-4 w-4" />
@@ -238,13 +249,13 @@ export function FAQ() {
                         type="text"
                         value={faq.question}
                         onChange={(e) => {
-                          const updatedFAQs = content.faqs.map(f =>
+                          const updatedFAQs = localContent.faqs.map(f =>
                             f.id === faq.id
                               ? { ...f, question: e.target.value }
                               : f
                           );
-                          updateContent({
-                            ...content,
+                          setLocalContent({
+                            ...localContent,
                             faqs: updatedFAQs
                           });
                         }}
@@ -259,13 +270,13 @@ export function FAQ() {
                       <textarea
                         value={faq.answer}
                         onChange={(e) => {
-                          const updatedFAQs = content.faqs.map(f =>
+                          const updatedFAQs = localContent.faqs.map(f =>
                             f.id === faq.id
                               ? { ...f, answer: e.target.value }
                               : f
                           );
-                          updateContent({
-                            ...content,
+                          setLocalContent({
+                            ...localContent,
                             faqs: updatedFAQs
                           });
                         }}
@@ -280,13 +291,13 @@ export function FAQ() {
                           type="checkbox"
                           checked={faq.isActive}
                           onChange={(e) => {
-                            const updatedFAQs = content.faqs.map(f =>
+                            const updatedFAQs = localContent.faqs.map(f =>
                               f.id === faq.id
                                 ? { ...f, isActive: e.target.checked }
                                 : f
                             );
-                            updateContent({
-                              ...content,
+                            setLocalContent({
+                              ...localContent,
                               faqs: updatedFAQs
                             });
                           }}
@@ -312,11 +323,11 @@ export function FAQ() {
                 </label>
                 <input
                   type="text"
-                  value={content.cta.title}
+                  value={localContent.cta.title}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      cta: { ...content.cta, title: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      cta: { ...localContent.cta, title: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -327,11 +338,11 @@ export function FAQ() {
                   Beschreibung
                 </label>
                 <textarea
-                  value={content.cta.description}
+                  value={localContent.cta.description}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      cta: { ...content.cta, description: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      cta: { ...localContent.cta, description: e.target.value }
                     })
                   }
                   rows={3}
@@ -345,11 +356,11 @@ export function FAQ() {
                   </label>
                   <input
                     type="text"
-                    value={content.cta.buttonText}
+                    value={localContent.cta.buttonText}
                     onChange={(e) =>
-                      updateContent({
-                        ...content,
-                        cta: { ...content.cta, buttonText: e.target.value }
+                      setLocalContent({
+                        ...localContent,
+                        cta: { ...localContent.cta, buttonText: e.target.value }
                       })
                     }
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -361,11 +372,11 @@ export function FAQ() {
                   </label>
                   <input
                     type="text"
-                    value={content.cta.buttonLink}
+                    value={localContent.cta.buttonLink}
                     onChange={(e) =>
-                      updateContent({
-                        ...content,
-                        cta: { ...content.cta, buttonLink: e.target.value }
+                      setLocalContent({
+                        ...localContent,
+                        cta: { ...localContent.cta, buttonLink: e.target.value }
                       })
                     }
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -385,11 +396,11 @@ export function FAQ() {
                 </label>
                 <input
                   type="text"
-                  value={content.seo.title}
+                  value={localContent.seo.title}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      seo: { ...content.seo, title: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      seo: { ...localContent.seo, title: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
@@ -400,11 +411,11 @@ export function FAQ() {
                   Meta Description
                 </label>
                 <textarea
-                  value={content.seo.description}
+                  value={localContent.seo.description}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      seo: { ...content.seo, description: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      seo: { ...localContent.seo, description: e.target.value }
                     })
                   }
                   rows={3}
@@ -417,11 +428,11 @@ export function FAQ() {
                 </label>
                 <input
                   type="text"
-                  value={content.seo.keywords}
+                  value={localContent.seo.keywords}
                   onChange={(e) =>
-                    updateContent({
-                      ...content,
-                      seo: { ...content.seo, keywords: e.target.value }
+                    setLocalContent({
+                      ...localContent,
+                      seo: { ...localContent.seo, keywords: e.target.value }
                     })
                   }
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"

@@ -1,40 +1,50 @@
 import { Settings, User } from '@/types';
+import api from './api';
 import { defaultSettings } from './defaults';
 
 const storage = {
   // Settings
-  getSettings: (): Settings => {
+  getSettings: async (): Promise<Settings> => {
     try {
-      const settingsStr = localStorage.getItem('settings');
-      if (settingsStr) {
-        return JSON.parse(settingsStr);
+      // First try to get from API
+      const settings = await api.get('/settings');
+      if (settings) {
+        return settings;
       }
-      // Save and return default settings if none exist
-      localStorage.setItem('settings', JSON.stringify(defaultSettings));
+      // Return default settings if API fails
       return defaultSettings;
     } catch (error) {
       console.error('Error getting settings:', error);
-      // Always return default settings on error
+      // Return default settings on error
       return defaultSettings;
     }
   },
 
   refreshSettings: async (): Promise<Settings> => {
     try {
-      const settings = storage.getSettings();
-      return settings;
+      // First try to get from API
+      const settings = await api.get('/settings');
+      if (settings) {
+        return settings;
+      }
+      // Return default settings if API fails
+      return defaultSettings;
     } catch (error) {
       console.error('Error refreshing settings:', error);
+      // Return default settings on error
       return defaultSettings;
     }
   },
 
   updateSettings: async (settings: Settings): Promise<Settings> => {
     try {
-      localStorage.setItem('settings', JSON.stringify(settings));
-      return settings;
+      const updatedSettings = await api.put('/settings', settings);
+      if (!updatedSettings) {
+        throw new Error('Failed to update settings');
+      }
+      return updatedSettings;
     } catch (error) {
-      console.error('Error updating settings:', error);
+      console.error('Settings update error:', error);
       throw new Error('Failed to update settings');
     }
   },
@@ -59,17 +69,12 @@ const storage = {
 
   authenticateUser: async (email: string, password: string) => {
     try {
-      // Default admin credentials
-      if (email === 'admin@festlmacher.at' && password === 'Muhammed5858') {
-        const user = {
-          id: '1',
-          email: 'admin@festlmacher.at',
-          firstName: 'Admin',
-          lastName: 'User',
-          role: 'admin'
-        };
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        return { success: true, user };
+      const response = await api.post('/auth/login', { email, password });
+      
+      if (response?.success && response.user) {
+        localStorage.setItem('currentUser', JSON.stringify(response.user));
+        localStorage.setItem('authToken', response.user.token);
+        return { success: true, user: response.user };
       }
       
       return { 
@@ -78,6 +83,7 @@ const storage = {
       };
     } catch (error: any) {
       localStorage.removeItem('currentUser');
+      localStorage.removeItem('authToken');
       return { 
         success: false, 
         error: error.message || 'Invalid credentials'
@@ -87,36 +93,9 @@ const storage = {
 
   logoutUser: () => {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('authToken');
     window.location.href = '/admin/login';
   }
 };
-
-// Initialize storage with default data
-const initializeStorage = () => {
-  // Initialize settings if not exists
-  if (!localStorage.getItem('settings')) {
-    localStorage.setItem('settings', JSON.stringify(defaultSettings));
-  }
-
-  // Initialize analytics data
-  if (!localStorage.getItem('pageViews')) {
-    localStorage.setItem('pageViews', '0');
-  }
-  if (!localStorage.getItem('uniqueVisitors')) {
-    localStorage.setItem('uniqueVisitors', '0');
-  }
-  if (!localStorage.getItem('visitorIds')) {
-    localStorage.setItem('visitorIds', '[]');
-  }
-  if (!localStorage.getItem('activities')) {
-    localStorage.setItem('activities', '[]');
-  }
-  if (!localStorage.getItem('contactMessages')) {
-    localStorage.setItem('contactMessages', '[]');
-  }
-};
-
-// Run initialization
-initializeStorage();
 
 export default storage;

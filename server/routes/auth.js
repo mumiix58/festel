@@ -34,7 +34,6 @@ router.post('/login', async (req, res) => {
 
     // Return user data with token
     res.json({
-      success: true,
       user: {
         id: user._id,
         email: user.email,
@@ -50,45 +49,25 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Update profile
-router.put('/profile', authenticateToken, async (req, res) => {
+// Refresh token
+router.post('/refresh', authenticateToken, async (req, res) => {
   try {
-    const { currentPassword, newPassword, email } = req.body;
     const user = await User.findById(req.user.id);
-
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(401).json({ message: 'User not found' });
     }
 
-    // If updating password
-    if (currentPassword && newPassword) {
-      const isValidPassword = await user.comparePassword(currentPassword);
-      if (!isValidPassword) {
-        return res.status(400).json({ message: 'Current password is incorrect' });
-      }
-      user.password = newPassword;
-    }
+    const token = jwt.sign(
+      { userId: user._id },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
 
-    // If updating email
-    if (email && email !== user.email) {
-      const emailExists = await User.findOne({ email });
-      if (emailExists) {
-        return res.status(400).json({ message: 'Email already in use' });
-      }
-      user.email = email;
-    }
-
-    await user.save();
-    res.json({ message: 'Profile updated successfully' });
+    res.json({ token });
   } catch (error) {
-    console.error('Profile update error:', error);
-    res.status(500).json({ message: 'Failed to update profile' });
+    console.error('Token refresh error:', error);
+    res.status(500).json({ message: 'Server error' });
   }
-});
-
-// Logout
-router.post('/logout', authenticateToken, (req, res) => {
-  res.json({ message: 'Logged out successfully' });
 });
 
 export default router;

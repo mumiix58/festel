@@ -39,21 +39,50 @@ const itemVariants = {
 export function Home() {
   const { content: servicesContent } = useServices();
   const [homeContent, setHomeContent] = useState<HomeContent | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadContent = async () => {
       try {
+        setLoading(true);
         const content = await getHomeContent();
         setHomeContent(content);
+        setError(null);
       } catch (error) {
         console.error('Error loading home content:', error);
+        setError('Failed to load content');
+      } finally {
+        setLoading(false);
       }
     };
     loadContent();
   }, []);
 
-  if (!homeContent) {
-    return null;
+  if (loading || !homeContent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg">Laden...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg text-red-600">{error}</div>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-dark"
+          >
+            Erneut versuchen
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -74,7 +103,7 @@ export function Home() {
       >
         <Container>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {homeContent?.stats
+            {homeContent.stats
               .filter(stat => stat.isActive)
               .sort((a, b) => a.order - b.order)
               .map((stat) => (

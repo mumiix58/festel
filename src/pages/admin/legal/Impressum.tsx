@@ -1,15 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Save } from 'lucide-react';
 import { useLegal } from '@/hooks/useLegal';
 
 export function ImpressumAdmin() {
   const { content, loading, error, updateContent } = useLegal();
+  const [localContent, setLocalContent] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
     type: 'success' | 'error';
     text: string;
   } | null>(null);
+
+  // Initialize local content when content is loaded
+  useEffect(() => {
+    if (content) {
+      setLocalContent(content.impressum);
+    }
+  }, [content]);
 
   const handleSave = async () => {
     if (!content) return;
@@ -18,11 +26,17 @@ export function ImpressumAdmin() {
     setSaveMessage(null);
 
     try {
-      await updateContent(content);
-      setSaveMessage({
-        type: 'success',
-        text: 'Impressum erfolgreich gespeichert'
+      const success = await updateContent({
+        ...content,
+        impressum: localContent
       });
+
+      if (success) {
+        setSaveMessage({
+          type: 'success',
+          text: 'Impressum erfolgreich gespeichert'
+        });
+      }
     } catch (error) {
       console.error('Error saving impressum:', error);
       setSaveMessage({
@@ -34,11 +48,35 @@ export function ImpressumAdmin() {
     }
   };
 
-  if (loading || !content) {
+  if (loading) {
     return (
       <div className="py-8">
         <Container>
           <div className="text-center">Laden...</div>
+        </Container>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="py-8">
+        <Container>
+          <div className="rounded-lg bg-red-50 p-4 text-red-700">
+            {error}
+          </div>
+        </Container>
+      </div>
+    );
+  }
+
+  if (!content) {
+    return (
+      <div className="py-8">
+        <Container>
+          <div className="rounded-lg bg-red-50 p-4 text-red-700">
+            Keine Inhalte verfügbar
+          </div>
         </Container>
       </div>
     );
@@ -73,13 +111,8 @@ export function ImpressumAdmin() {
 
         <div className="mt-8">
           <textarea
-            value={content.impressum}
-            onChange={(e) =>
-              updateContent({
-                ...content,
-                impressum: e.target.value
-              })
-            }
+            value={localContent}
+            onChange={(e) => setLocalContent(e.target.value)}
             className="min-h-[600px] w-full rounded-lg border border-gray-300 p-4 font-mono text-sm shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
             placeholder="# Impressum Inhalt (Markdown)"
           />

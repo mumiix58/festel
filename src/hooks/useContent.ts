@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getPageContent, updatePageContent, updatePageSection } from '@/lib/api/content';
+import api from '@/lib/api';
 import { showToast } from '@/lib/toast';
 
 export function useContent(pageId: string) {
@@ -10,7 +10,7 @@ export function useContent(pageId: string) {
   const loadContent = async () => {
     try {
       setLoading(true);
-      const data = await getPageContent(pageId);
+      const data = await api.get(`/content/${pageId}`);
       setContent(data);
       setError(null);
     } catch (err) {
@@ -27,7 +27,7 @@ export function useContent(pageId: string) {
 
   const updateContent = async (newContent: any) => {
     try {
-      await updatePageContent(pageId, newContent);
+      await api.put(`/content/${pageId}`, newContent);
       await loadContent(); // Reload to ensure sync
       showToast.success('Content saved successfully');
       return true;
@@ -40,7 +40,7 @@ export function useContent(pageId: string) {
 
   const updateSection = async (section: string, sectionContent: any) => {
     try {
-      await updatePageSection(pageId, section, sectionContent);
+      await api.put(`/content/${pageId}/${section}`, sectionContent);
       await loadContent(); // Reload to ensure sync
       showToast.success(`${section} saved successfully`);
       return true;

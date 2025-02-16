@@ -1,11 +1,5 @@
 import { FooterContent } from '@/types';
-import localforage from 'localforage';
-
-// Initialize localforage instance for footer
-const footerStore = localforage.createInstance({
-  name: 'footer',
-  storeName: 'content'
-});
+import api from '@/lib/api';
 
 // Default SEO-optimized footer content
 const defaultFooterContent: FooterContent = {
@@ -54,13 +48,14 @@ const defaultFooterContent: FooterContent = {
   metaKeywords: 'catering wien, event catering, hochzeit catering, firmen catering, business catering, party service, buffet service, gourmet catering, festlmacher'
 };
 
-// Get footer content
+// Get footer content from backend with fallback
 export async function getFooterContent(): Promise<FooterContent> {
   try {
-    const content = await footerStore.getItem<FooterContent>('content');
+    const content = await api.get('/content/footer');
     return content || defaultFooterContent;
   } catch (error) {
     console.error('Error loading footer content:', error);
+    // Return default content as fallback
     return defaultFooterContent;
   }
 }
@@ -68,9 +63,9 @@ export async function getFooterContent(): Promise<FooterContent> {
 // Update footer content
 export async function updateFooterContent(content: FooterContent): Promise<void> {
   try {
-    await footerStore.setItem('content', content);
+    await api.put('/content/footer', content);
   } catch (error) {
     console.error('Error updating footer content:', error);
-    throw new Error('Fehler beim Speichern der Footer-Inhalte');
+    throw error;
   }
 }

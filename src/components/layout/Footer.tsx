@@ -3,13 +3,32 @@ import { Container } from '@/components/ui/Container';
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';
 import { useSettings } from '@/hooks/useSettings';
 import { useFooter } from '@/hooks/useFooter';
-import { FooterContent } from '@/types';
 
 export function Footer() {
   const { settings } = useSettings();
-  const { content } = useFooter();
+  const { content, loading, error } = useFooter();
 
-  if (!settings || !content) return null;
+  if (loading || !content || !settings) {
+    return (
+      <footer className="bg-primary-900 text-white">
+        <Container className="py-12">
+          <div className="animate-pulse">
+            <div className="h-8 w-32 bg-gray-700 rounded"></div>
+            <div className="mt-4 space-y-2">
+              <div className="h-4 w-48 bg-gray-700 rounded"></div>
+              <div className="h-4 w-40 bg-gray-700 rounded"></div>
+              <div className="h-4 w-44 bg-gray-700 rounded"></div>
+            </div>
+          </div>
+        </Container>
+      </footer>
+    );
+  }
+
+  if (error) {
+    console.error('Footer error:', error);
+    return null;
+  }
 
   return (
     <footer className="bg-primary-900 text-white">
@@ -112,7 +131,7 @@ export function Footer() {
           <div>
             <h4 className="font-display text-lg font-semibold">Links</h4>
             <ul className="mt-4 space-y-2 text-sm">
-              {content.quickLinks.map((link: FooterContent['quickLinks'][0], index: number) => (
+              {content.quickLinks.map((link, index) => (
                 <li key={index}>
                   {link.isExternal ? (
                     <a
@@ -139,7 +158,7 @@ export function Footer() {
           <div>
             <h4 className="font-display text-lg font-semibold">Öffnungszeiten</h4>
             <ul className="mt-4 space-y-2 text-sm">
-              {content.openingHours.map((item: FooterContent['openingHours'][0], index: number) => (
+              {content.openingHours.map((item, index) => (
                 <li key={index}>
                   <span className="font-semibold">{item.day}:</span> {item.hours}
                 </li>

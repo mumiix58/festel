@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { LegalContent } from '@/types';
 import { getLegalContent, updateLegalContent } from '@/lib/legal';
+import { showToast } from '@/lib/toast';
 
 export function useLegal() {
   const [content, setContent] = useState<LegalContent | null>(null);
@@ -13,26 +14,30 @@ export function useLegal() {
 
   const loadContent = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const legalContent = await getLegalContent();
       setContent(legalContent);
-      setError(null);
     } catch (err) {
       console.error('Error loading legal content:', err);
       setError('Failed to load legal content');
+      showToast.error('Fehler beim Laden der rechtlichen Inhalte');
     } finally {
       setLoading(false);
     }
   };
 
-  const updateContent = async (newContent: LegalContent) => {
+  const updateContent = async (newContent: LegalContent): Promise<boolean> => {
     try {
+      setError(null);
       await updateLegalContent(newContent);
       setContent(newContent);
-      setError(null);
+      showToast.success('Rechtliche Inhalte erfolgreich gespeichert');
       return true;
     } catch (err) {
       console.error('Error updating legal content:', err);
       setError('Failed to update legal content');
+      showToast.error('Fehler beim Speichern der rechtlichen Inhalte');
       return false;
     }
   };

@@ -1,26 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Save, Plus, Trash2 } from 'lucide-react';
 import { useFooter } from '@/hooks/useFooter';
 import { useSettings } from '@/hooks/useSettings';
+import { FooterContent } from '@/types';
 
 export function Footer() {
   const { settings, updateSettings } = useSettings();
   const { content, updateContent } = useFooter();
+  const [localContent, setLocalContent] = useState<FooterContent | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
     type: 'success' | 'error';
     text: string;
   } | null>(null);
 
+  // Initialize local content when content is loaded
+  useEffect(() => {
+    if (content) {
+      setLocalContent(content);
+    }
+  }, [content]);
+
   const handleSave = async () => {
-    if (!content || !settings) return;
+    if (!content || !settings || !localContent) return;
 
     setSaving(true);
     setSaveMessage(null);
 
     try {
-      await updateContent(content);
+      await updateContent(localContent);
       await updateSettings(settings);
       setSaveMessage({
         type: 'success',
@@ -38,48 +47,48 @@ export function Footer() {
   };
 
   const handleAddOpeningHour = () => {
-    if (!content) return;
-    updateContent({
-      ...content,
+    if (!localContent) return;
+    setLocalContent({
+      ...localContent,
       openingHours: [
-        ...content.openingHours,
+        ...localContent.openingHours,
         { day: 'Neuer Tag', hours: 'Öffnungszeiten' }
       ]
     });
   };
 
   const handleRemoveOpeningHour = (index: number) => {
-    if (!content) return;
-    const newHours = [...content.openingHours];
+    if (!localContent) return;
+    const newHours = [...localContent.openingHours];
     newHours.splice(index, 1);
-    updateContent({
-      ...content,
+    setLocalContent({
+      ...localContent,
       openingHours: newHours
     });
   };
 
   const handleAddQuickLink = () => {
-    if (!content) return;
-    updateContent({
-      ...content,
+    if (!localContent) return;
+    setLocalContent({
+      ...localContent,
       quickLinks: [
-        ...content.quickLinks,
+        ...localContent.quickLinks,
         { text: 'Neuer Link', url: '/', isExternal: false }
       ]
     });
   };
 
   const handleRemoveQuickLink = (index: number) => {
-    if (!content) return;
-    const newLinks = [...content.quickLinks];
+    if (!localContent) return;
+    const newLinks = [...localContent.quickLinks];
     newLinks.splice(index, 1);
-    updateContent({
-      ...content,
+    setLocalContent({
+      ...localContent,
       quickLinks: newLinks
     });
   };
 
-  if (!content || !settings) {
+  if (!content || !settings || !localContent) {
     return (
       <div className="py-8">
         <Container>
@@ -117,209 +126,22 @@ export function Footer() {
         )}
 
         <div className="mt-8 space-y-8">
-          {/* Company Information */}
+          {/* Footer Description */}
           <section className="rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="font-display text-xl font-semibold">Unternehmensinformationen</h2>
-            <div className="mt-4 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Firmenname
-                </label>
-                <input
-                  type="text"
-                  value={settings.company.name}
-                  onChange={(e) =>
-                    updateSettings({
-                      ...settings,
-                      company: { ...settings.company, name: e.target.value }
-                    })
-                  }
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                />
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Straße
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.company.address.street}
-                    onChange={(e) =>
-                      updateSettings({
-                        ...settings,
-                        company: {
-                          ...settings.company,
-                          address: { ...settings.company.address, street: e.target.value }
-                        }
-                      })
-                    }
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    PLZ
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.company.address.postalCode}
-                    onChange={(e) =>
-                      updateSettings({
-                        ...settings,
-                        company: {
-                          ...settings.company,
-                          address: { ...settings.company.address, postalCode: e.target.value }
-                        }
-                      })
-                    }
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Stadt
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.company.address.city}
-                    onChange={(e) =>
-                      updateSettings({
-                        ...settings,
-                        company: {
-                          ...settings.company,
-                          address: { ...settings.company.address, city: e.target.value }
-                        }
-                      })
-                    }
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Land
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.company.address.country}
-                    onChange={(e) =>
-                      updateSettings({
-                        ...settings,
-                        company: {
-                          ...settings.company,
-                          address: { ...settings.company.address, country: e.target.value }
-                        }
-                      })
-                    }
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Telefon
-                  </label>
-                  <input
-                    type="tel"
-                    value={settings.company.contact.phone}
-                    onChange={(e) =>
-                      updateSettings({
-                        ...settings,
-                        company: {
-                          ...settings.company,
-                          contact: { ...settings.company.contact, phone: e.target.value }
-                        }
-                      })
-                    }
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={settings.company.contact.email}
-                    onChange={(e) =>
-                      updateSettings({
-                        ...settings,
-                        company: {
-                          ...settings.company,
-                          contact: { ...settings.company.contact, email: e.target.value }
-                        }
-                      })
-                    }
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Social Media */}
-          <section className="rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="font-display text-xl font-semibold">Social Media</h2>
-            <div className="mt-4 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Facebook URL
-                </label>
-                <input
-                  type="url"
-                  value={settings.social.facebook}
-                  onChange={(e) =>
-                    updateSettings({
-                      ...settings,
-                      social: { ...settings.social, facebook: e.target.value }
-                    })
-                  }
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                  placeholder="https://facebook.com/..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Instagram URL
-                </label>
-                <input
-                  type="url"
-                  value={settings.social.instagram}
-                  onChange={(e) =>
-                    updateSettings({
-                      ...settings,
-                      social: { ...settings.social, instagram: e.target.value }
-                    })
-                  }
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                  placeholder="https://instagram.com/..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  LinkedIn URL
-                </label>
-                <input
-                  type="url"
-                  value={settings.social.linkedin}
-                  onChange={(e) =>
-                    updateSettings({
-                      ...settings,
-                      social: { ...settings.social, linkedin: e.target.value }
-                    })
-                  }
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                  placeholder="https://linkedin.com/..."
-                />
-              </div>
+            <h2 className="font-display text-xl font-semibold">Footer Beschreibung</h2>
+            <div className="mt-4">
+              <textarea
+                value={localContent.description}
+                onChange={(e) =>
+                  setLocalContent({
+                    ...localContent,
+                    description: e.target.value
+                  })
+                }
+                rows={4}
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                placeholder="Footer Beschreibung"
+              />
             </div>
           </section>
 
@@ -336,16 +158,16 @@ export function Footer() {
               </button>
             </div>
             <div className="mt-4 space-y-4">
-              {content.openingHours.map((hour, index) => (
+              {localContent.openingHours.map((hour, index) => (
                 <div key={index} className="flex items-center gap-4">
                   <div className="flex-1">
                     <input
                       type="text"
                       value={hour.day}
                       onChange={(e) => {
-                        const newHours = [...content.openingHours];
+                        const newHours = [...localContent.openingHours];
                         newHours[index] = { ...hour, day: e.target.value };
-                        updateContent({ ...content, openingHours: newHours });
+                        setLocalContent({ ...localContent, openingHours: newHours });
                       }}
                       className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       placeholder="Tag"
@@ -356,9 +178,9 @@ export function Footer() {
                       type="text"
                       value={hour.hours}
                       onChange={(e) => {
-                        const newHours = [...content.openingHours];
+                        const newHours = [...localContent.openingHours];
                         newHours[index] = { ...hour, hours: e.target.value };
-                        updateContent({ ...content, openingHours: newHours });
+                        setLocalContent({ ...localContent, openingHours: newHours });
                       }}
                       className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       placeholder="Öffnungszeiten"
@@ -388,16 +210,16 @@ export function Footer() {
               </button>
             </div>
             <div className="mt-4 space-y-4">
-              {content.quickLinks.map((link, index) => (
+              {localContent.quickLinks.map((link, index) => (
                 <div key={index} className="flex items-center gap-4">
                   <div className="flex-1">
                     <input
                       type="text"
                       value={link.text}
                       onChange={(e) => {
-                        const newLinks = [...content.quickLinks];
+                        const newLinks = [...localContent.quickLinks];
                         newLinks[index] = { ...link, text: e.target.value };
-                        updateContent({ ...content, quickLinks: newLinks });
+                        setLocalContent({ ...localContent, quickLinks: newLinks });
                       }}
                       className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       placeholder="Link Text"
@@ -408,9 +230,9 @@ export function Footer() {
                       type="text"
                       value={link.url}
                       onChange={(e) => {
-                        const newLinks = [...content.quickLinks];
+                        const newLinks = [...localContent.quickLinks];
                         newLinks[index] = { ...link, url: e.target.value };
-                        updateContent({ ...content, quickLinks: newLinks });
+                        setLocalContent({ ...localContent, quickLinks: newLinks });
                       }}
                       className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       placeholder="Link URL"
@@ -422,9 +244,9 @@ export function Footer() {
                         type="checkbox"
                         checked={link.isExternal}
                         onChange={(e) => {
-                          const newLinks = [...content.quickLinks];
+                          const newLinks = [...localContent.quickLinks];
                           newLinks[index] = { ...link, isExternal: e.target.checked };
-                          updateContent({ ...content, quickLinks: newLinks });
+                          setLocalContent({ ...localContent, quickLinks: newLinks });
                         }}
                         className="rounded border-gray-300 text-accent focus:ring-accent"
                       />
@@ -439,25 +261,6 @@ export function Footer() {
                   </div>
                 </div>
               ))}
-            </div>
-          </section>
-
-          {/* Footer Description */}
-          <section className="rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="font-display text-xl font-semibold">Footer Beschreibung</h2>
-            <div className="mt-4">
-              <textarea
-                value={content.description}
-                onChange={(e) =>
-                  updateContent({
-                    ...content,
-                    description: e.target.value
-                  })
-                }
-                rows={4}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
-                placeholder="Footer Beschreibung"
-              />
             </div>
           </section>
         </div>
