@@ -5,11 +5,14 @@ import { v4 as uuidv4 } from 'uuid';
 // Get all categories with fallback
 export async function getAllCategories(): Promise<EquipmentCategory[]> {
   try {
-    // Get from content API
-    const response = await api.get('/content/equipment');
-    if (response?.content?.categories) {
-      return response.content.categories;
+    console.log('Fetching all equipment categories...');
+    const response = await api.get('/equipment');
+    console.log('Categories response:', response);
+    
+    if (response && Array.isArray(response)) {
+      return response;
     }
+    console.log('No categories found, returning empty array');
     return [];
   } catch (error) {
     console.error('Error loading categories:', error);
@@ -31,8 +34,8 @@ export async function getNavigationCategories(): Promise<EquipmentCategory[]> {
 // Get category by slug
 export async function getCategoryBySlug(slug: string): Promise<EquipmentCategory | null> {
   try {
-    const categories = await getAllCategories();
-    return categories.find(cat => cat.slug === slug) || null;
+    const response = await api.get(`/equipment/slug/${slug}`);
+    return response || null;
   } catch (error) {
     console.error('Error getting category by slug:', error);
     return null;
@@ -42,26 +45,22 @@ export async function getCategoryBySlug(slug: string): Promise<EquipmentCategory
 // Add new category
 export async function addCategory(category: Omit<EquipmentCategory, 'id' | 'items' | 'order'>): Promise<EquipmentCategory> {
   try {
-    const categories = await getAllCategories();
-    
-    const newCategory: EquipmentCategory = {
+    const newCategory = {
       ...category,
       id: `category-${uuidv4()}`,
       items: [],
-      order: categories.length
+      order: 0,
+      isActive: true
     };
 
-    const updatedCategories = [...categories, newCategory];
+    console.log('Adding new category:', newCategory);
+    const response = await api.post('/equipment', newCategory);
     
-    const response = await api.put('/content/equipment', {
-      categories: updatedCategories
-    });
-
     if (!response) {
       throw new Error('Failed to add category');
     }
 
-    return newCategory;
+    return response;
   } catch (error) {
     console.error('Error adding category:', error);
     throw error;
@@ -71,15 +70,9 @@ export async function addCategory(category: Omit<EquipmentCategory, 'id' | 'item
 // Update category
 export async function updateCategory(categoryId: string, updates: Partial<EquipmentCategory>): Promise<void> {
   try {
-    const categories = await getAllCategories();
-    const updatedCategories = categories.map(category =>
-      category.id === categoryId ? { ...category, ...updates } : category
-    );
-
-    const response = await api.put('/content/equipment', {
-      categories: updatedCategories
-    });
-
+    console.log('Updating category:', categoryId, updates);
+    const response = await api.put(`/equipment/${categoryId}`, updates);
+    
     if (!response) {
       throw new Error('Failed to update category');
     }
@@ -92,15 +85,9 @@ export async function updateCategory(categoryId: string, updates: Partial<Equipm
 // Delete category
 export async function deleteCategory(categoryId: string): Promise<void> {
   try {
-    const categories = await getAllCategories();
-    const updatedCategories = categories
-      .filter(category => category.id !== categoryId)
-      .map((category, index) => ({ ...category, order: index }));
-
-    const response = await api.put('/content/equipment', {
-      categories: updatedCategories
-    });
-
+    console.log('Deleting category:', categoryId);
+    const response = await api.delete(`/equipment/${categoryId}`);
+    
     if (!response) {
       throw new Error('Failed to delete category');
     }
@@ -113,28 +100,14 @@ export async function deleteCategory(categoryId: string): Promise<void> {
 // Add item to category
 export async function addItem(categoryId: string, item: Omit<EquipmentItem, 'id' | 'order'>): Promise<void> {
   try {
-    const categories = await getAllCategories();
-    const category = categories.find(c => c.id === categoryId);
-    if (!category) {
-      throw new Error('Category not found');
-    }
-
-    const newItem: EquipmentItem = {
+    const newItem = {
       ...item,
-      id: `item-${uuidv4()}`,
-      order: category.items.length
+      id: `item-${uuidv4()}`
     };
 
-    const updatedCategories = categories.map(c =>
-      c.id === categoryId
-        ? { ...c, items: [...c.items, newItem] }
-        : c
-    );
-
-    const response = await api.put('/content/equipment', {
-      categories: updatedCategories
-    });
-
+    console.log('Adding item to category:', categoryId, newItem);
+    const response = await api.post(`/equipment/${categoryId}/items`, newItem);
+    
     if (!response) {
       throw new Error('Failed to add item');
     }
@@ -147,22 +120,9 @@ export async function addItem(categoryId: string, item: Omit<EquipmentItem, 'id'
 // Update item
 export async function updateItem(categoryId: string, itemId: string, updates: Partial<EquipmentItem>): Promise<void> {
   try {
-    const categories = await getAllCategories();
-    const updatedCategories = categories.map(category =>
-      category.id === categoryId
-        ? {
-            ...category,
-            items: category.items.map(item =>
-              item.id === itemId ? { ...item, ...updates } : item
-            )
-          }
-        : category
-    );
-
-    const response = await api.put('/content/equipment', {
-      categories: updatedCategories
-    });
-
+    console.log('Updating item:', categoryId, itemId, updates);
+    const response = await api.put(`/equipment/${categoryId}/items/${itemId}`, updates);
+    
     if (!response) {
       throw new Error('Failed to update item');
     }
@@ -175,22 +135,9 @@ export async function updateItem(categoryId: string, itemId: string, updates: Pa
 // Delete item
 export async function deleteItem(categoryId: string, itemId: string): Promise<void> {
   try {
-    const categories = await getAllCategories();
-    const updatedCategories = categories.map(category =>
-      category.id === categoryId
-        ? {
-            ...category,
-            items: category.items
-              .filter(item => item.id !== itemId)
-              .map((item, index) => ({ ...item, order: index }))
-          }
-        : category
-    );
-
-    const response = await api.put('/content/equipment', {
-      categories: updatedCategories
-    });
-
+    console.log('Deleting item:', categoryId, itemId);
+    const response = await api.delete(`/equipment/${categoryId}/items/${itemId}`);
+    
     if (!response) {
       throw new Error('Failed to delete item');
     }

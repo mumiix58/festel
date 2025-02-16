@@ -7,9 +7,9 @@ const storage = {
   getSettings: async (): Promise<Settings> => {
     try {
       // First try to get from API
-      const settings = await api.get('/settings');
-      if (settings) {
-        return settings;
+      const response = await api.get('/settings');
+      if (response) {
+        return response;
       }
       // Return default settings if API fails
       return defaultSettings;
@@ -23,9 +23,9 @@ const storage = {
   refreshSettings: async (): Promise<Settings> => {
     try {
       // First try to get from API
-      const settings = await api.get('/settings');
-      if (settings) {
-        return settings;
+      const response = await api.get('/settings');
+      if (response) {
+        return response;
       }
       // Return default settings if API fails
       return defaultSettings;
@@ -38,11 +38,11 @@ const storage = {
 
   updateSettings: async (settings: Settings): Promise<Settings> => {
     try {
-      const updatedSettings = await api.put('/settings', settings);
-      if (!updatedSettings) {
+      const response = await api.put('/settings', settings);
+      if (!response) {
         throw new Error('Failed to update settings');
       }
-      return updatedSettings;
+      return response;
     } catch (error) {
       console.error('Settings update error:', error);
       throw new Error('Failed to update settings');
@@ -71,9 +71,10 @@ const storage = {
     try {
       const response = await api.post('/auth/login', { email, password });
       
-      if (response?.success && response.user) {
-        localStorage.setItem('currentUser', JSON.stringify(response.user));
+      if (response?.user) {
+        // Store auth token and user data
         localStorage.setItem('authToken', response.user.token);
+        localStorage.setItem('currentUser', JSON.stringify(response.user));
         return { success: true, user: response.user };
       }
       

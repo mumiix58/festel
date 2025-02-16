@@ -1,4 +1,3 @@
-```typescript
 import { useEffect, useState } from 'react';
 import storage from '@/lib/storage';
 import { Settings } from '@/types';
@@ -32,4 +31,3 @@ export function useSocialMedia() {
 
   return { socialMedia, loading, error };
 }
-```

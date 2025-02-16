@@ -7,6 +7,7 @@ import { errorHandler } from './middleware/error.js';
 import connectDB from './config/db.js';
 import { initializeContent } from './scripts/initContent.js';
 import { initializeLegalContent } from './models/Legal.js';
+import { initializeEquipment } from './models/Equipment.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -14,6 +15,7 @@ import contentRoutes from './routes/content.js';
 import settingsRoutes from './routes/settings.js';
 import sliderRoutes from './routes/slider.js';
 import legalRoutes from './routes/legal.js';
+import equipmentRoutes from './routes/equipment.js';
 
 // Load environment variables
 dotenv.config();
@@ -43,7 +45,8 @@ const startServer = async () => {
     console.log('Initializing default content...');
     await Promise.all([
       initializeContent(),
-      initializeLegalContent()
+      initializeLegalContent(),
+      initializeEquipment()
     ]);
     console.log('Default content initialized');
 
@@ -57,19 +60,17 @@ const startServer = async () => {
       'https://cateringandmore.at',
       'https://festlmacher.netlify.app',
       'https://stackblitz.com',
-      /\.stackblitz\.io$/,  // Allow all stackblitz.io subdomains
-      /\.netlify\.app$/,    // Allow all netlify.app subdomains
-      /\.vercel\.app$/      // Allow all vercel.app subdomains
+      /\.stackblitz\.io$/,
+      /\.netlify\.app$/,
+      /\.vercel\.app$/
     ];
 
     app.use(cors({
       origin: function(origin, callback) {
-        // Allow requests with no origin (like mobile apps, curl requests)
         if (!origin) {
           return callback(null, true);
         }
 
-        // Check if the origin matches any of our allowed patterns
         const isAllowed = allowedOrigins.some(allowed => {
           if (allowed instanceof RegExp) {
             return allowed.test(origin);
@@ -106,6 +107,7 @@ const startServer = async () => {
     app.use('/api/settings', settingsRoutes);
     app.use('/api/slider', sliderRoutes);
     app.use('/api/legal', legalRoutes);
+    app.use('/api/equipment', equipmentRoutes);
 
     // Health check
     app.get('/api/health', (req, res) => {

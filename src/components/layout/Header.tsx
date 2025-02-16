@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
@@ -15,26 +15,30 @@ export function Header() {
   const [logoError, setLogoError] = useState(false);
   const [categories, setCategories] = useState<EquipmentCategory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     try {
       setLoading(true);
       const navCategories = await getNavigationCategories();
-      setCategories(navCategories || []);
-      setError(null);
+      setCategories(navCategories);
     } catch (err) {
       console.error('Error loading navigation categories:', err);
-      setError('Failed to load categories');
       setCategories([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadCategories();
+
+    // Listen for category updates
+    window.addEventListener('equipmentCategoriesUpdated', loadCategories);
+
+    return () => {
+      window.removeEventListener('equipmentCategoriesUpdated', loadCategories);
+    };
+  }, [loadCategories]);
 
   useEffect(() => {
     if (mobileMenuOpen) {
@@ -161,7 +165,7 @@ export function Header() {
                 >
                   {item.name}
                 </Link>
-                {item.submenu && activeDropdown === item.id && (
+                {item.submenu && activeDropdown === item.id && item.submenu.length > 0 && (
                   <div 
                     className="absolute left-0 mt-2 w-48 rounded-lg bg-white py-2 shadow-lg"
                     onMouseEnter={() => handleMouseEnter(item.id)}
@@ -210,7 +214,7 @@ export function Header() {
                 >
                   {item.name}
                 </Link>
-                {item.submenu && (
+                {item.submenu && item.submenu.length > 0 && (
                   <div className="ml-4 mt-1 space-y-1">
                     {item.submenu.map((subItem) => (
                       <Link
