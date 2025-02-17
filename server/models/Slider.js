@@ -13,7 +13,10 @@ const sliderSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  subtitle: String,
+  subtitle: {
+    type: String,
+    required: true
+  },
   buttonText: String,
   buttonLink: String,
   order: {

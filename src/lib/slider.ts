@@ -1,16 +1,29 @@
 import { SlideContent } from '@/types';
 import api from './api';
+import { uploadImageWithRetry } from './imageUtils';
 
-// Get all slides from MongoDB
+// Get all slides from backend
 export const getAllSlides = async (): Promise<SlideContent[]> => {
   try {
+    console.log('Fetching slides...');
     const response = await api.get('/slider');
+    
     if (Array.isArray(response)) {
+      console.log(`Found ${response.length} slides`);
       return response.map(slide => ({
-        ...slide,
-        id: slide._id // Map MongoDB _id to id
+        id: slide._id,
+        image: slide.image,
+        title: slide.title,
+        subtitle: slide.subtitle,
+        buttonText: slide.buttonText,
+        buttonLink: slide.buttonLink,
+        order: slide.order,
+        showLogo: slide.showLogo,
+        isActive: slide.isActive
       }));
     }
+    
+    console.log('No slides found, returning empty array');
     return [];
   } catch (error) {
     console.error('Error loading slides:', error);
@@ -30,13 +43,21 @@ export const addSlide = async (file: File): Promise<SlideContent> => {
     formData.append('showLogo', 'false');
 
     const response = await api.post('/slider', formData);
-    if (!response) {
+    
+    if (!response?.slide) {
       throw new Error('Failed to create slide');
     }
 
     return {
-      ...response,
-      id: response._id
+      id: response.slide._id,
+      image: response.slide.image,
+      title: response.slide.title,
+      subtitle: response.slide.subtitle,
+      buttonText: response.slide.buttonText,
+      buttonLink: response.slide.buttonLink,
+      order: response.slide.order,
+      showLogo: response.slide.showLogo,
+      isActive: response.slide.isActive
     };
   } catch (error) {
     console.error('Error adding slide:', error);

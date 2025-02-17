@@ -14,11 +14,11 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Get all active slides
+// Get all slides
 router.get('/', async (req, res) => {
   try {
     console.log('Fetching slides from database...');
-    const slides = await Slider.find({ isActive: true }).sort('order');
+    const slides = await Slider.find().sort('order');
     console.log(`Found ${slides.length} slides`);
     res.json(slides);
   } catch (error) {
@@ -85,7 +85,11 @@ router.put('/:id', authenticateToken, isAdmin, upload.single('image'), async (re
       // Delete old image from Cloudinary
       const oldSlide = await Slider.findById(req.params.id);
       if (oldSlide?.cloudinaryPublicId) {
-        await cloudinary.uploader.destroy(oldSlide.cloudinaryPublicId);
+        try {
+          await cloudinary.uploader.destroy(oldSlide.cloudinaryPublicId);
+        } catch (error) {
+          console.error('Error deleting old image:', error);
+        }
       }
 
       // Upload new image
@@ -135,7 +139,11 @@ router.delete('/:id', authenticateToken, isAdmin, async (req, res) => {
 
     // Delete image from Cloudinary
     if (slide.cloudinaryPublicId) {
-      await cloudinary.uploader.destroy(slide.cloudinaryPublicId);
+      try {
+        await cloudinary.uploader.destroy(slide.cloudinaryPublicId);
+      } catch (error) {
+        console.error('Error deleting image from Cloudinary:', error);
+      }
     }
 
     await slide.deleteOne();
