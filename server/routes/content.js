@@ -34,7 +34,6 @@ router.get('/:page', async (req, res) => {
 router.put('/:page', authenticateToken, isAdmin, async (req, res) => {
   try {
     console.log(`Updating content for page: ${req.params.page}`);
-    console.log('Update data:', req.body);
     
     // Validate request body
     if (!req.body || typeof req.body !== 'object') {
@@ -69,7 +68,6 @@ router.put('/:page', authenticateToken, isAdmin, async (req, res) => {
       metadata: { page: req.params.page }
     });
 
-    console.log('Updated content:', content);
     res.json({ 
       message: 'Content saved successfully',
       content: content.content
@@ -83,60 +81,62 @@ router.put('/:page', authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-// Update specific section
-router.put('/:page/:section', authenticateToken, isAdmin, async (req, res) => {
+// Gallery-specific endpoints
+router.get('/gallery/images', async (req, res) => {
   try {
-    console.log(`Updating section ${req.params.section} for page: ${req.params.page}`);
-    console.log('Update data:', req.body);
-    
-    // Validate request body
-    if (!req.body || typeof req.body !== 'object') {
-      return res.status(400).json({
-        message: 'Invalid request body'
-      });
-    }
-
-    // Create update query
-    const updateQuery = {};
-    updateQuery[`content.${req.params.section}`] = req.body;
-
-    // Update document
-    const content = await Content.findOneAndUpdate(
-      { page: req.params.page },
-      { 
-        $set: updateQuery,
-        lastModified: new Date()
-      },
-      { 
-        new: true, 
-        upsert: true,
-        runValidators: true
-      }
-    );
-
-    if (!content) {
-      throw new Error('Failed to update content');
-    }
-
-    // Log activity
-    await Activity.create({
-      type: 'content_update',
-      description: `Section ${req.params.section} updated for ${req.params.page}`,
-      userId: req.user._id,
-      metadata: { page: req.params.page, section: req.params.section }
-    });
-
-    console.log('Updated content:', content);
+    const content = await Content.findOne({ page: 'gallery' });
     res.json({ 
-      message: 'Content saved successfully',
-      content: content.content[req.params.section]
+      content: {
+        images: content?.content?.images || []
+      }
     });
   } catch (error) {
-    console.error('Error updating content:', error);
-    res.status(500).json({ 
-      message: 'Error saving content to database',
-      error: error.message 
+    console.error('Error fetching gallery images:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.post('/gallery/images', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const { image } = req.body;
+    let content = await Content.findOne({ page: 'gallery' });
+    
+    if (!content) {
+      content = await Content.create({
+        page: 'gallery',
+        content: { images: [image] }
+      });
+    } else {
+      content.content.images = [...(content.content.images || []), image];
+      await content.save();
+    }
+
+    res.json({ 
+      message: 'Image added successfully',
+      image 
     });
+  } catch (error) {
+    console.error('Error adding gallery image:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.delete('/gallery/images/:id', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const content = await Content.findOne({ page: 'gallery' });
+    if (!content) {
+      return res.status(404).json({ message: 'Gallery not found' });
+    }
+
+    content.content.images = content.content.images.filter(
+      img => img.id !== req.params.id
+    );
+    await content.save();
+
+    res.json({ message: 'Image deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting gallery image:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

@@ -18,9 +18,11 @@ export function PageEditor({ pageId, content, onSave, saving, saveMessage }: Pag
   const [editingContent, setEditingContent] = useState(content);
   const [history, setHistory] = useState([content]);
   const [historyIndex, setHistoryIndex] = useState(0);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const handleContentUpdate = useCallback((updatedContent: PageContent) => {
     setEditingContent(updatedContent);
+    setHasUnsavedChanges(true);
     // Add to history
     setHistory(prev => [...prev.slice(0, historyIndex + 1), updatedContent]);
     setHistoryIndex(prev => prev + 1);
@@ -30,6 +32,7 @@ export function PageEditor({ pageId, content, onSave, saving, saveMessage }: Pag
     if (historyIndex > 0) {
       setHistoryIndex(prev => prev - 1);
       setEditingContent(history[historyIndex - 1]);
+      setHasUnsavedChanges(true);
     }
   }, [history, historyIndex]);
 
@@ -37,12 +40,14 @@ export function PageEditor({ pageId, content, onSave, saving, saveMessage }: Pag
     if (historyIndex < history.length - 1) {
       setHistoryIndex(prev => prev + 1);
       setEditingContent(history[historyIndex + 1]);
+      setHasUnsavedChanges(true);
     }
   }, [history, historyIndex]);
 
   const handleSave = async () => {
-    if (saving) return;
+    if (saving || !hasUnsavedChanges) return;
     await onSave(editingContent);
+    setHasUnsavedChanges(false);
   };
 
   return (
@@ -76,8 +81,10 @@ export function PageEditor({ pageId, content, onSave, saving, saveMessage }: Pag
         </button>
         <button
           onClick={handleSave}
-          disabled={saving}
-          className="flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-white shadow-lg transition-colors hover:bg-accent-dark disabled:opacity-50"
+          disabled={saving || !hasUnsavedChanges}
+          className={`flex items-center gap-2 rounded-full px-6 py-3 text-white shadow-lg transition-colors ${
+            hasUnsavedChanges ? 'bg-accent hover:bg-accent-dark' : 'bg-gray-400'
+          } disabled:opacity-50`}
         >
           <Save className="h-4 w-4" />
           {saving ? 'Wird gespeichert...' : 'Änderungen speichern'}

@@ -1,4 +1,5 @@
 import imageCompression from 'browser-image-compression';
+import { uploadImage, getImageUrl } from './cloudinary';
 
 const MAX_IMAGE_SIZE = 2; // Maximum image size in MB
 const MAX_IMAGE_DIMENSION = 1920; // Maximum width/height in pixels
@@ -24,19 +25,29 @@ export async function optimizeImage(file: File): Promise<File> {
 }
 
 // Upload image to storage
-export async function uploadImageToStorage(file: File): Promise<string> {
+export async function uploadImageToStorage(file: File, folder: string = 'general'): Promise<string> {
   try {
     const optimizedFile = await optimizeImage(file);
-    
-    // Convert to base64
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(optimizedFile);
-    });
+    const imageUrl = await uploadImage(optimizedFile, folder);
+    return imageUrl;
   } catch (error) {
     console.error('Error uploading image:', error);
     throw new Error('Failed to upload image');
   }
 }
+
+// Get optimized image URL
+export function getOptimizedImageUrl(url: string, options: {
+  width?: number;
+  height?: number;
+  quality?: number;
+  format?: 'auto' | 'webp' | 'jpg' | 'png';
+} = {}): string {
+  return getImageUrl(url, options);
+}
+
+export default {
+  optimizeImage,
+  uploadImageToStorage,
+  getOptimizedImageUrl
+};

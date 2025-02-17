@@ -5,15 +5,19 @@ import { showToast } from '@/lib/toast';
 
 export function useAbout() {
   const [content, setContent] = useState<AboutContent | null>(null);
+  const [localContent, setLocalContent] = useState<AboutContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const loadContent = async () => {
     try {
       setLoading(true);
       const aboutContent = await api.get('/content/about');
       setContent(aboutContent);
+      setLocalContent(aboutContent);
       setError(null);
+      setHasUnsavedChanges(false);
     } catch (err) {
       console.error('Error loading about content:', err);
       setError('Failed to load about content');
@@ -27,14 +31,18 @@ export function useAbout() {
     loadContent();
   }, []);
 
-  const updateContent = async (newContent: AboutContent) => {
+  const updateContent = (newContent: AboutContent) => {
+    setLocalContent(newContent);
+    setHasUnsavedChanges(true);
+  };
+
+  const saveContent = async (): Promise<boolean> => {
+    if (!hasUnsavedChanges || !localContent) return false;
+
     try {
-      // Send update to backend
-      await api.put('/content/about', newContent);
-      
-      // Reload content from backend to ensure sync
-      await loadContent();
-      
+      await api.put('/content/about', localContent);
+      setContent(localContent);
+      setHasUnsavedChanges(false);
       showToast.success('Änderungen erfolgreich gespeichert');
       return true;
     } catch (err) {
@@ -46,10 +54,12 @@ export function useAbout() {
   };
 
   return {
-    content,
+    content: localContent,
     loading,
     error,
+    hasUnsavedChanges,
     updateContent,
+    saveContent,
     reloadContent: loadContent
   };
 }

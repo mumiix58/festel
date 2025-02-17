@@ -31,7 +31,16 @@ export function HeroSlider() {
     } catch (err) {
       console.error('Error loading slides:', err);
       setError('Failed to load slides');
-      setSlides([]);
+      setSlides([{
+        id: 'default',
+        image: 'https://images.unsplash.com/photo-1555244162-803834f70033',
+        title: 'Erstklassiges Catering',
+        subtitle: 'Für jeden Anlass die perfekte Lösung',
+        buttonText: 'Jetzt anfragen',
+        buttonLink: '/kontakt',
+        order: 0,
+        showLogo: true
+      }]);
     } finally {
       setLoading(false);
     }
@@ -103,7 +112,7 @@ export function HeroSlider() {
         className="hero-slider"
       >
         {slides.map((slide) => (
-          <SwiperSlide key={`slide-${slide.id}`}>
+          <SwiperSlide key={slide.id}>
             <div className="relative h-full">
               <img
                 src={slide.image}

@@ -1,36 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Save } from 'lucide-react';
 import { useLegal } from '@/hooks/useLegal';
+import ReactMarkdown from 'react-markdown';
 
 export function ImpressumAdmin() {
-  const { content, loading, error, updateContent } = useLegal();
-  const [localContent, setLocalContent] = useState('');
+  const { content, loading, error, updateContent, saveContent, hasUnsavedChanges } = useLegal();
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
     type: 'success' | 'error';
     text: string;
   } | null>(null);
 
-  // Initialize local content when content is loaded
-  useEffect(() => {
-    if (content) {
-      setLocalContent(content.impressum);
-    }
-  }, [content]);
-
   const handleSave = async () => {
-    if (!content) return;
-
+    if (!hasUnsavedChanges) return;
+    
     setSaving(true);
     setSaveMessage(null);
 
     try {
-      const success = await updateContent({
-        ...content,
-        impressum: localContent
-      });
-
+      const success = await saveContent();
       if (success) {
         setSaveMessage({
           type: 'success',
@@ -48,35 +37,11 @@ export function ImpressumAdmin() {
     }
   };
 
-  if (loading) {
+  if (loading || !content) {
     return (
       <div className="py-8">
         <Container>
           <div className="text-center">Laden...</div>
-        </Container>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="py-8">
-        <Container>
-          <div className="rounded-lg bg-red-50 p-4 text-red-700">
-            {error}
-          </div>
-        </Container>
-      </div>
-    );
-  }
-
-  if (!content) {
-    return (
-      <div className="py-8">
-        <Container>
-          <div className="rounded-lg bg-red-50 p-4 text-red-700">
-            Keine Inhalte verfügbar
-          </div>
         </Container>
       </div>
     );
@@ -89,8 +54,10 @@ export function ImpressumAdmin() {
           <h1 className="font-display text-3xl font-bold">Impressum bearbeiten</h1>
           <button
             onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-white transition-colors hover:bg-accent-dark disabled:opacity-50"
+            disabled={saving || !hasUnsavedChanges}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-white transition-colors ${
+              hasUnsavedChanges ? 'bg-accent hover:bg-accent-dark' : 'bg-gray-400'
+            } disabled:opacity-50`}
           >
             <Save className="h-4 w-4" />
             {saving ? 'Wird gespeichert...' : 'Änderungen speichern'}
@@ -111,11 +78,21 @@ export function ImpressumAdmin() {
 
         <div className="mt-8">
           <textarea
-            value={localContent}
-            onChange={(e) => setLocalContent(e.target.value)}
+            value={content.impressum}
+            onChange={(e) => updateContent({
+              ...content,
+              impressum: e.target.value
+            })}
             className="min-h-[600px] w-full rounded-lg border border-gray-300 p-4 font-mono text-sm shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
             placeholder="# Impressum Inhalt (Markdown)"
           />
+        </div>
+
+        <div className="mt-8">
+          <h2 className="font-display text-xl font-semibold">Vorschau</h2>
+          <div className="prose prose-lg mt-4 max-w-none rounded-lg bg-white p-6 shadow-lg">
+            <ReactMarkdown>{content.impressum}</ReactMarkdown>
+          </div>
         </div>
       </Container>
     </div>

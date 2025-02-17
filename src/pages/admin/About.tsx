@@ -1,17 +1,43 @@
 import { useState } from 'react';
 import { Container } from '@/components/ui/Container';
-import { Upload, Plus, Trash2 } from 'lucide-react';
+import { Upload, Plus, Trash2, Save } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAbout } from '@/hooks/useAbout';
 import { v4 as uuidv4 } from 'uuid';
 import { SectionSaveButton } from '@/components/admin/SectionSaveButton';
 
 export function About() {
-  const { content, loading, error, updateContent } = useAbout();
+  const { content, loading, error, updateContent, saveContent, hasUnsavedChanges } = useAbout();
+  const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
     type: 'success' | 'error';
     text: string;
   } | null>(null);
+
+  const handleSave = async () => {
+    if (!hasUnsavedChanges) return;
+    
+    setSaving(true);
+    setSaveMessage(null);
+
+    try {
+      const success = await saveContent();
+      if (success) {
+        setSaveMessage({
+          type: 'success',
+          text: 'Änderungen erfolgreich gespeichert'
+        });
+      }
+    } catch (error) {
+      console.error('Error saving content:', error);
+      setSaveMessage({
+        type: 'error',
+        text: 'Fehler beim Speichern der Änderungen'
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleImageUpload = async (file: File, section: string, id?: string) => {
     try {
@@ -120,6 +146,16 @@ export function About() {
       <Container>
         <div className="flex items-center justify-between">
           <h1 className="font-display text-3xl font-bold">Über Uns verwalten</h1>
+          <button
+            onClick={handleSave}
+            disabled={saving || !hasUnsavedChanges}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-white transition-colors ${
+              hasUnsavedChanges ? 'bg-accent hover:bg-accent-dark' : 'bg-gray-400'
+            } disabled:opacity-50`}
+          >
+            <Save className="h-4 w-4" />
+            {saving ? 'Wird gespeichert...' : 'Änderungen speichern'}
+          </button>
         </div>
 
         {saveMessage && (

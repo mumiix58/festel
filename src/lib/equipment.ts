@@ -2,21 +2,52 @@ import { EquipmentCategory, EquipmentItem } from '@/types';
 import api from '@/lib/api';
 import { v4 as uuidv4 } from 'uuid';
 
+// Default categories with items
+const defaultCategories: EquipmentCategory[] = [
+  {
+    id: 'equipment',
+    name: 'Equipment',
+    slug: 'equipment',
+    description: 'Professionelle Ausstattung für Ihre Veranstaltung',
+    items: [
+      {
+        id: 'geschirr',
+        title: 'Geschirr & Besteck',
+        description: 'Hochwertiges Porzellan und edles Besteck für jeden Anlass',
+        image: 'https://images.unsplash.com/photo-1603199506016-b9a594b593c0?w=800',
+        order: 0,
+        isActive: true
+      },
+      {
+        id: 'glaeser',
+        title: 'Gläser',
+        description: 'Verschiedene Gläserserien für Wein, Champagner und Cocktails',
+        image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800',
+        order: 1,
+        isActive: true
+      }
+    ],
+    order: 0,
+    isActive: true
+  }
+];
+
 // Get all categories with fallback
 export async function getAllCategories(): Promise<EquipmentCategory[]> {
   try {
     console.log('Fetching all equipment categories...');
-    const response = await api.get('/equipment');
-    console.log('Categories response:', response);
+    const response = await api.get('/content/equipment');
     
-    if (response && Array.isArray(response)) {
-      return response;
+    if (response?.categories && Array.isArray(response.categories)) {
+      console.log(`Found ${response.categories.length} categories`);
+      return response.categories;
     }
-    console.log('No categories found, returning empty array');
-    return [];
+    
+    console.log('No categories found, returning defaults');
+    return defaultCategories;
   } catch (error) {
     console.error('Error loading categories:', error);
-    return [];
+    return defaultCategories;
   }
 }
 
@@ -27,18 +58,35 @@ export async function getNavigationCategories(): Promise<EquipmentCategory[]> {
     return categories.filter(cat => cat.isActive);
   } catch (error) {
     console.error('Error loading navigation categories:', error);
-    return [];
+    return defaultCategories.filter(cat => cat.isActive);
   }
 }
 
 // Get category by slug
 export async function getCategoryBySlug(slug: string): Promise<EquipmentCategory | null> {
   try {
-    const response = await api.get(`/equipment/slug/${slug}`);
-    return response || null;
+    console.log('Fetching category by slug:', slug);
+    const response = await api.get(`/content/equipment/${slug}`);
+    
+    if (response?.category) {
+      console.log('Category found:', response.category.name);
+      return response.category;
+    }
+    
+    // Try to find in default categories
+    const defaultCategory = defaultCategories.find(cat => cat.slug === slug);
+    if (defaultCategory) {
+      console.log('Found category in defaults:', defaultCategory.name);
+      return defaultCategory;
+    }
+    
+    console.log('Category not found');
+    return null;
   } catch (error) {
     console.error('Error getting category by slug:', error);
-    return null;
+    // Try to find in default categories as fallback
+    const defaultCategory = defaultCategories.find(cat => cat.slug === slug);
+    return defaultCategory || null;
   }
 }
 
@@ -54,13 +102,13 @@ export async function addCategory(category: Omit<EquipmentCategory, 'id' | 'item
     };
 
     console.log('Adding new category:', newCategory);
-    const response = await api.post('/equipment', newCategory);
+    const response = await api.post('/content/equipment', newCategory);
     
-    if (!response) {
+    if (!response?.category) {
       throw new Error('Failed to add category');
     }
 
-    return response;
+    return response.category;
   } catch (error) {
     console.error('Error adding category:', error);
     throw error;
@@ -71,9 +119,9 @@ export async function addCategory(category: Omit<EquipmentCategory, 'id' | 'item
 export async function updateCategory(categoryId: string, updates: Partial<EquipmentCategory>): Promise<void> {
   try {
     console.log('Updating category:', categoryId, updates);
-    const response = await api.put(`/equipment/${categoryId}`, updates);
+    const response = await api.put(`/content/equipment/${categoryId}`, updates);
     
-    if (!response) {
+    if (!response?.success) {
       throw new Error('Failed to update category');
     }
   } catch (error) {
@@ -86,9 +134,9 @@ export async function updateCategory(categoryId: string, updates: Partial<Equipm
 export async function deleteCategory(categoryId: string): Promise<void> {
   try {
     console.log('Deleting category:', categoryId);
-    const response = await api.delete(`/equipment/${categoryId}`);
+    const response = await api.delete(`/content/equipment/${categoryId}`);
     
-    if (!response) {
+    if (!response?.success) {
       throw new Error('Failed to delete category');
     }
   } catch (error) {
@@ -106,9 +154,9 @@ export async function addItem(categoryId: string, item: Omit<EquipmentItem, 'id'
     };
 
     console.log('Adding item to category:', categoryId, newItem);
-    const response = await api.post(`/equipment/${categoryId}/items`, newItem);
+    const response = await api.post(`/content/equipment/${categoryId}/items`, newItem);
     
-    if (!response) {
+    if (!response?.success) {
       throw new Error('Failed to add item');
     }
   } catch (error) {
@@ -121,9 +169,9 @@ export async function addItem(categoryId: string, item: Omit<EquipmentItem, 'id'
 export async function updateItem(categoryId: string, itemId: string, updates: Partial<EquipmentItem>): Promise<void> {
   try {
     console.log('Updating item:', categoryId, itemId, updates);
-    const response = await api.put(`/equipment/${categoryId}/items/${itemId}`, updates);
+    const response = await api.put(`/content/equipment/${categoryId}/items/${itemId}`, updates);
     
-    if (!response) {
+    if (!response?.success) {
       throw new Error('Failed to update item');
     }
   } catch (error) {
@@ -136,9 +184,9 @@ export async function updateItem(categoryId: string, itemId: string, updates: Pa
 export async function deleteItem(categoryId: string, itemId: string): Promise<void> {
   try {
     console.log('Deleting item:', categoryId, itemId);
-    const response = await api.delete(`/equipment/${categoryId}/items/${itemId}`);
+    const response = await api.delete(`/content/equipment/${categoryId}/items/${itemId}`);
     
-    if (!response) {
+    if (!response?.success) {
       throw new Error('Failed to delete item');
     }
   } catch (error) {

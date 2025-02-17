@@ -3,7 +3,7 @@ import { Container } from '@/components/ui/Container';
 import { Upload, Trash2, Edit, Save, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ImageContent } from '@/types';
-import { getAllGalleryImages, addGalleryImage, deleteGalleryImage, replaceGalleryImage, updateImageMetadata } from '@/lib/gallery';
+import { getAllGalleryImages, addGalleryImage, deleteGalleryImage, updateImageMetadata } from '@/lib/gallery';
 
 export function Gallery() {
   const [images, setImages] = useState<ImageContent[]>([]);
@@ -21,7 +21,9 @@ export function Gallery() {
 
   const loadImages = async () => {
     try {
+      console.log('Loading gallery images...');
       const allImages = await getAllGalleryImages();
+      console.log(`Loaded ${allImages.length} images`);
       setImages(allImages);
     } catch (error) {
       console.error('Error loading images:', error);
@@ -40,6 +42,7 @@ export function Gallery() {
     setSaveMessage(null);
 
     try {
+      console.log(`Uploading ${files.length} images...`);
       const results = await Promise.allSettled(
         Array.from(files).map(file => addGalleryImage(file))
       );
@@ -114,23 +117,6 @@ export function Gallery() {
       setSaveMessage({
         type: 'error',
         text: 'Fehler beim Speichern der Änderungen'
-      });
-    }
-  };
-
-  const handleReplace = async (imageId: string, file: File) => {
-    try {
-      await replaceGalleryImage(imageId, file);
-      await loadImages();
-      setSaveMessage({
-        type: 'success',
-        text: 'Bild erfolgreich ersetzt'
-      });
-    } catch (error) {
-      console.error('Replace failed:', error);
-      setSaveMessage({
-        type: 'error',
-        text: 'Fehler beim Ersetzen des Bildes'
       });
     }
   };
@@ -228,18 +214,6 @@ export function Gallery() {
                   >
                     <Edit className="h-4 w-4" />
                   </button>
-                  <label className="rounded-full bg-white p-2 text-gray-700 hover:bg-gray-100">
-                    <Upload className="h-4 w-4" />
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleReplace(image.id, file);
-                      }}
-                    />
-                  </label>
                   <button
                     onClick={() => handleDelete(image.id)}
                     className="rounded-full bg-red-500 p-2 text-white hover:bg-red-600"

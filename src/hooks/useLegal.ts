@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react';
 import { LegalContent } from '@/types';
-import { getLegalContent, updateLegalContent } from '@/lib/legal';
+import api from '@/lib/api';
 import { showToast } from '@/lib/toast';
 
 export function useLegal() {
   const [content, setContent] = useState<LegalContent | null>(null);
+  const [localContent, setLocalContent] = useState<LegalContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadContent();
-  }, []);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const loadContent = async () => {
     try {
       setLoading(true);
       setError(null);
-      const legalContent = await getLegalContent();
+      const legalContent = await api.get('/content/legal');
       setContent(legalContent);
+      setLocalContent(legalContent);
+      setHasUnsavedChanges(false);
     } catch (err) {
       console.error('Error loading legal content:', err);
       setError('Failed to load legal content');
@@ -27,11 +27,22 @@ export function useLegal() {
     }
   };
 
-  const updateContent = async (newContent: LegalContent): Promise<boolean> => {
+  useEffect(() => {
+    loadContent();
+  }, []);
+
+  const updateContent = (newContent: LegalContent) => {
+    setLocalContent(newContent);
+    setHasUnsavedChanges(true);
+  };
+
+  const saveContent = async (): Promise<boolean> => {
+    if (!hasUnsavedChanges || !localContent) return false;
+
     try {
-      setError(null);
-      await updateLegalContent(newContent);
-      setContent(newContent);
+      await api.put('/content/legal', localContent);
+      setContent(localContent);
+      setHasUnsavedChanges(false);
       showToast.success('Rechtliche Inhalte erfolgreich gespeichert');
       return true;
     } catch (err) {
@@ -43,10 +54,12 @@ export function useLegal() {
   };
 
   return {
-    content,
+    content: localContent,
     loading,
     error,
+    hasUnsavedChanges,
     updateContent,
+    saveContent,
     reloadContent: loadContent
   };
 }

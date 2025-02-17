@@ -5,70 +5,6 @@ import { isAuthenticated, refreshToken, logoutUser } from './auth';
 const isAdminRoute = () => window.location.pathname.startsWith('/admin');
 const isDevelopment = import.meta.env.DEV;
 
-// Add retry functionality with exponential backoff
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-const fetchWithRetry = async (url: string, options: RequestInit, retries = 3, backoff = 1000) => {
-  let lastError: Error | null = null;
-  
-  for (let i = 0; i < retries; i++) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
-
-      const response = await fetch(url, {
-        ...options,
-        signal: controller.signal,
-        headers: {
-          ...options.headers,
-          'x-retry-count': String(i)
-        }
-      });
-      
-      clearTimeout(timeoutId);
-      
-      // Handle 401 Unauthorized
-      if (response.status === 401) {
-        const refreshed = await refreshToken();
-        if (refreshed) {
-          const newOptions = {
-            ...options,
-            headers: {
-              ...options.headers,
-              Authorization: `Bearer ${localStorage.getItem('authToken')}`
-            }
-          };
-          return await fetch(url, newOptions);
-        } else {
-          if (isAdminRoute()) {
-            logoutUser();
-          }
-          throw new Error('Authentication required');
-        }
-      }
-      
-      return response;
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error('Unknown error occurred');
-      
-      // Don't retry if we aborted or if it's an auth error
-      if (error instanceof Error && (error.name === 'AbortError' || error.message === 'Authentication required')) {
-        throw lastError;
-      }
-      
-      // Only retry if we have attempts left
-      if (i === retries - 1) break;
-      
-      // Wait with exponential backoff before retrying
-      await wait(backoff * Math.pow(2, i));
-      
-      console.log(`Retrying request (${i + 1}/${retries})`);
-    }
-  }
-  
-  throw lastError;
-};
-
 const api = {
   baseUrl: '/api',
 
@@ -133,16 +69,16 @@ const api = {
   async get(url: string) {
     try {
       if (isDevelopment) {
-        console.log(`Making GET request to: ${api.baseUrl}${url}`);
+        console.log(`Making GET request to: ${this.baseUrl}${url}`);
       }
 
-      const response = await fetchWithRetry(`${api.baseUrl}${url}`, {
+      const response = await fetch(`${this.baseUrl}${url}`, {
         method: 'GET',
-        headers: api.getAuthHeaders(),
+        headers: this.getAuthHeaders(),
         credentials: 'include'
-      }, 3, 1000);
+      });
 
-      const data = await api.handleResponse(response);
+      const data = await this.handleResponse(response);
       
       if (isDevelopment) {
         console.log(`GET response for ${url}:`, data);
@@ -153,7 +89,6 @@ const api = {
       if (isDevelopment) {
         console.error('API GET error:', error);
       }
-      // Return null instead of throwing for GET requests
       return null;
     }
   },
@@ -161,20 +96,19 @@ const api = {
   async post(url: string, data: any) {
     try {
       if (isDevelopment) {
-        console.log(`Making POST request to: ${api.baseUrl}${url}`, data);
+        console.log(`Making POST request to: ${this.baseUrl}${url}`, data);
       }
 
       const isFormData = data instanceof FormData;
       const options: RequestInit = {
         method: 'POST',
-        headers: api.getAuthHeaders({ body: data }),
+        headers: this.getAuthHeaders({ body: data }),
         credentials: 'include',
         body: isFormData ? data : JSON.stringify(data)
       };
 
-      const response = await fetchWithRetry(`${api.baseUrl}${url}`, options, 3, 2000);
-
-      const result = await api.handleResponse(response);
+      const response = await fetch(`${this.baseUrl}${url}`, options);
+      const result = await this.handleResponse(response);
       
       if (isDevelopment) {
         console.log(`POST response for ${url}:`, result);
@@ -196,20 +130,19 @@ const api = {
   async put(url: string, data: any) {
     try {
       if (isDevelopment) {
-        console.log(`Making PUT request to: ${api.baseUrl}${url}`, data);
+        console.log(`Making PUT request to: ${this.baseUrl}${url}`, data);
       }
 
       const isFormData = data instanceof FormData;
       const options: RequestInit = {
         method: 'PUT',
-        headers: api.getAuthHeaders({ body: data }),
+        headers: this.getAuthHeaders({ body: data }),
         credentials: 'include',
         body: isFormData ? data : JSON.stringify(data)
       };
 
-      const response = await fetchWithRetry(`${api.baseUrl}${url}`, options, 3, 2000);
-
-      const result = await api.handleResponse(response);
+      const response = await fetch(`${this.baseUrl}${url}`, options);
+      const result = await this.handleResponse(response);
       
       if (isDevelopment) {
         console.log(`PUT response for ${url}:`, result);
@@ -230,13 +163,13 @@ const api = {
 
   async delete(url: string) {
     try {
-      const response = await fetchWithRetry(`${api.baseUrl}${url}`, {
+      const response = await fetch(`${this.baseUrl}${url}`, {
         method: 'DELETE',
-        headers: api.getAuthHeaders(),
+        headers: this.getAuthHeaders(),
         credentials: 'include'
-      }, 3, 1000);
+      });
 
-      return api.handleResponse(response);
+      return this.handleResponse(response);
     } catch (error) {
       if (isDevelopment) {
         console.error('API DELETE error:', error);
@@ -247,14 +180,14 @@ const api = {
 
   async patch(url: string, data: any) {
     try {
-      const response = await fetchWithRetry(`${api.baseUrl}${url}`, {
+      const response = await fetch(`${this.baseUrl}${url}`, {
         method: 'PATCH',
-        headers: api.getAuthHeaders(),
+        headers: this.getAuthHeaders(),
         credentials: 'include',
         body: JSON.stringify(data)
-      }, 3, 1000);
+      });
 
-      return api.handleResponse(response);
+      return this.handleResponse(response);
     } catch (error) {
       if (isDevelopment) {
         console.error('API PATCH error:', error);

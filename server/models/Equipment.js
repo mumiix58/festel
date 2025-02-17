@@ -43,8 +43,7 @@ const equipmentSchema = new mongoose.Schema({
   },
   slug: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   description: {
     type: String,
@@ -62,7 +61,6 @@ const equipmentSchema = new mongoose.Schema({
 });
 
 // Add indexes for better performance
-equipmentSchema.index({ slug: 1 });
 equipmentSchema.index({ order: 1 });
 equipmentItemSchema.index({ order: 1 });
 

@@ -1,29 +1,28 @@
 import { useState, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { BarChart, Mail, Eye, Calendar } from 'lucide-react';
-import { getContactMessages, getPageViews, getLatestActivities } from '@/lib/analytics';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
-
-interface ContactMessage {
-  id: string;
-  email: string;
-  subject: string;
-  message: string;
-  date: string;
-}
+import api from '@/lib/api';
 
 interface Activity {
   id: string;
   type: string;
   description: string;
+  user: string;
   timestamp: string;
+  metadata?: any;
+}
+
+interface Stats {
+  totalMessages: number;
+  pageViews: number;
+  uniqueVisitors: number;
 }
 
 export function Dashboard() {
-  const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<Stats>({
     totalMessages: 0,
     pageViews: 0,
     uniqueVisitors: 0
@@ -38,24 +37,17 @@ export function Dashboard() {
     try {
       setLoading(true);
 
-      // Load contact messages
-      const messagesData = await getContactMessages();
-      setMessages(messagesData || []);
-      setStats(prev => ({ ...prev, totalMessages: messagesData?.length || 0 }));
-
-      // Load page views
-      const viewsData = await getPageViews();
-      if (viewsData) {
-        setStats(prev => ({
-          ...prev,
-          pageViews: viewsData.pageViews || 0,
-          uniqueVisitors: viewsData.uniqueVisitors || 0
-        }));
+      // Load activities
+      const activitiesResponse = await api.get('/analytics/activities');
+      if (Array.isArray(activitiesResponse)) {
+        setActivities(activitiesResponse);
       }
 
-      // Load activities
-      const activitiesData = await getLatestActivities();
-      setActivities(activitiesData || []);
+      // Load stats
+      const statsResponse = await api.get('/analytics/stats');
+      if (statsResponse) {
+        setStats(statsResponse);
+      }
 
     } catch (error) {
       console.error('Error loading dashboard data:', error);
@@ -128,78 +120,41 @@ export function Dashboard() {
           })}
         </div>
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-2">
-          {/* Latest Activities */}
-          <div className="rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="font-display text-xl font-semibold">
-              Letzte Aktivitäten
-            </h2>
-            <div className="mt-4 space-y-4">
-              {activities.length > 0 ? (
-                activities.map((activity) => (
-                  <div
-                    key={activity.id}
-                    className="flex items-start gap-4 border-b border-gray-100 pb-4 last:border-0"
-                  >
-                    <div className="rounded-full bg-accent/10 p-2">
-                      <Calendar className="h-4 w-4 text-accent" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm text-gray-900">{activity.description}</p>
-                      <p className="mt-1 text-xs text-gray-500">
+        {/* Latest Activities */}
+        <div className="mt-8 rounded-lg bg-white p-6 shadow-lg">
+          <h2 className="font-display text-xl font-semibold">
+            Letzte Aktivitäten
+          </h2>
+          <div className="mt-4 space-y-4">
+            {activities.length > 0 ? (
+              activities.map((activity) => (
+                <div
+                  key={activity.id}
+                  className="flex items-start gap-4 border-b border-gray-100 pb-4 last:border-0"
+                >
+                  <div className="rounded-full bg-accent/10 p-2">
+                    <Calendar className="h-4 w-4 text-accent" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-900">{activity.description}</p>
+                    <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+                      <span>{activity.user}</span>
+                      <span>•</span>
+                      <span>
                         {formatDistanceToNow(new Date(activity.timestamp), {
                           addSuffix: true,
                           locale: de
                         })}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-center text-gray-500">
-                  Keine Aktivitäten vorhanden
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Recent Messages */}
-          <div className="rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="font-display text-xl font-semibold">
-              Letzte Nachrichten
-            </h2>
-            <div className="mt-4 space-y-4">
-              {messages.length > 0 ? (
-                messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className="rounded-lg border border-gray-200 p-4"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-accent">
-                        {message.email}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        {formatDistanceToNow(new Date(message.date), {
-                          addSuffix: true,
-                          locale: de
-                        })}
                       </span>
                     </div>
-                    <p className="mt-2 font-medium">{message.subject}</p>
-                    <p className="mt-1 text-sm text-gray-600">
-                      {message.message.length > 100
-                        ? `${message.message.slice(0, 100)}...`
-                        : message.message}
-                    </p>
                   </div>
-                ))
-              ) : (
-                <p className="text-center text-gray-500">
-                  Keine Nachrichten vorhanden
-                </p>
-              )}
-            </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-500">
+                Keine Aktivitäten vorhanden
+              </p>
+            )}
           </div>
         </div>
       </Container>

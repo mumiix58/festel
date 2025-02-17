@@ -1,15 +1,25 @@
 import express from 'express';
+import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
 import Slider from '../models/Slider.js';
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
-// Get all slides
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Get all active slides
 router.get('/', async (req, res) => {
   try {
     console.log('Fetching slides from database...');
     const slides = await Slider.find({ isActive: true }).sort('order');
-    console.log('Found slides:', slides);
+    console.log(`Found ${slides.length} slides`);
     res.json(slides);
   } catch (error) {
     console.error('Error fetching slides:', error);
@@ -21,21 +31,34 @@ router.get('/', async (req, res) => {
 });
 
 // Add new slide (protected route)
-router.post('/', authenticateToken, isAdmin, async (req, res) => {
+router.post('/', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
   try {
-    const { image, title, subtitle, buttonText, buttonLink, showLogo } = req.body;
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image provided' });
+    }
+
+    // Upload image to Cloudinary
+    const b64 = Buffer.from(req.file.buffer).toString('base64');
+    const dataURI = `data:${req.file.mimetype};base64,${b64}`;
     
+    const uploadResponse = await cloudinary.uploader.upload(dataURI, {
+      folder: 'slider',
+      resource_type: 'image'
+    });
+
     // Get highest order
     const highestOrder = await Slider.findOne().sort('-order');
     const newOrder = (highestOrder?.order ?? -1) + 1;
 
+    // Create slide
     const slide = await Slider.create({
-      image,
-      title: title || 'New Slide',
-      subtitle: subtitle || 'Slide Description',
-      buttonText,
-      buttonLink,
-      showLogo,
+      image: uploadResponse.secure_url,
+      cloudinaryPublicId: uploadResponse.public_id,
+      title: req.body.title || 'New Slide',
+      subtitle: req.body.subtitle || 'Slide Description',
+      buttonText: req.body.buttonText,
+      buttonLink: req.body.buttonLink,
+      showLogo: req.body.showLogo === 'true',
       order: newOrder,
       isActive: true
     });
@@ -54,11 +77,33 @@ router.post('/', authenticateToken, isAdmin, async (req, res) => {
 });
 
 // Update slide (protected route)
-router.put('/:id', authenticateToken, isAdmin, async (req, res) => {
+router.put('/:id', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
   try {
+    let updates = { ...req.body };
+    
+    if (req.file) {
+      // Delete old image from Cloudinary
+      const oldSlide = await Slider.findById(req.params.id);
+      if (oldSlide?.cloudinaryPublicId) {
+        await cloudinary.uploader.destroy(oldSlide.cloudinaryPublicId);
+      }
+
+      // Upload new image
+      const b64 = Buffer.from(req.file.buffer).toString('base64');
+      const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+      
+      const uploadResponse = await cloudinary.uploader.upload(dataURI, {
+        folder: 'slider',
+        resource_type: 'image'
+      });
+
+      updates.image = uploadResponse.secure_url;
+      updates.cloudinaryPublicId = uploadResponse.public_id;
+    }
+
     const slide = await Slider.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updates,
       { new: true }
     );
 
@@ -88,7 +133,20 @@ router.delete('/:id', authenticateToken, isAdmin, async (req, res) => {
       return res.status(404).json({ message: 'Slide not found' });
     }
 
+    // Delete image from Cloudinary
+    if (slide.cloudinaryPublicId) {
+      await cloudinary.uploader.destroy(slide.cloudinaryPublicId);
+    }
+
     await slide.deleteOne();
+
+    // Reorder remaining slides
+    const remainingSlides = await Slider.find().sort('order');
+    for (let i = 0; i < remainingSlides.length; i++) {
+      remainingSlides[i].order = i;
+      await remainingSlides[i].save();
+    }
+
     res.json({ message: 'Slide successfully deleted' });
   } catch (error) {
     console.error('Error deleting slide:', error);

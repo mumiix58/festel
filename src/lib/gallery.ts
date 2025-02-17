@@ -1,13 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ImageContent } from '@/types';
-import localforage from 'localforage';
 import { optimizeImage } from './imageUtils';
-
-// Initialize localforage instance for gallery
-const galleryStore = localforage.createInstance({
-  name: 'gallery',
-  storeName: 'images'
-});
+import { uploadImage, deleteImage } from './cloudinary';
+import api from './api';
 
 // Default gallery images with SEO-friendly names and descriptions
 const defaultGalleryImages: ImageContent[] = [
@@ -31,81 +26,43 @@ const defaultGalleryImages: ImageContent[] = [
     alt: 'Business Event Catering Wien für Firmenveranstaltungen',
     title: 'Business Event Catering Wien',
     isDefault: true
-  },
-  {
-    id: `gala-dinner-catering-service-${uuidv4()}`,
-    url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed',
-    alt: 'Gala Dinner Catering Service mit eleganter Präsentation',
-    title: 'Gala Dinner Catering Service',
-    isDefault: true
-  },
-  {
-    id: `outdoor-event-catering-wien-${uuidv4()}`,
-    url: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d',
-    alt: 'Outdoor Event Catering Wien für Veranstaltungen',
-    title: 'Outdoor Event Catering Wien',
-    isDefault: true
-  },
-  {
-    id: `premium-buffet-service-wien-${uuidv4()}`,
-    url: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3',
-    alt: 'Premium Buffet Service Wien für besondere Anlässe',
-    title: 'Premium Buffet Service Wien',
-    isDefault: true
   }
 ];
 
-// Generate SEO-friendly ID for images
-function generateImageId(title: string): string {
-  const timestamp = Date.now();
-  const uuid = uuidv4().split('-')[0];
-  const sanitizedTitle = title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .substring(0, 30);
-  return `catering-${sanitizedTitle}-${timestamp}-${uuid}`;
-}
-
-// Get all gallery images including defaults
+// Get all gallery images from backend
 export async function getAllGalleryImages(): Promise<ImageContent[]> {
   try {
-    const customImages = await getCustomGalleryImages();
-    return [...defaultGalleryImages, ...customImages];
+    console.log('Fetching gallery images...');
+    const response = await api.get('/content/gallery/images');
+    
+    // If we have a valid response with images, return them
+    if (response?.content?.images && Array.isArray(response.content.images)) {
+      console.log(`Found ${response.content.images.length} gallery images`);
+      return response.content.images;
+    }
+    
+    console.log('No gallery images found, returning defaults');
+    return defaultGalleryImages;
   } catch (error) {
     console.error('Error loading gallery images:', error);
     return defaultGalleryImages;
   }
 }
 
-// Get only custom uploaded images
-export async function getCustomGalleryImages(): Promise<ImageContent[]> {
-  try {
-    const keys = await galleryStore.keys();
-    const images: ImageContent[] = [];
-
-    for (const key of keys) {
-      if (key.startsWith('image_')) {
-        const image = await galleryStore.getItem<ImageContent>(key);
-        if (image) {
-          images.push(image);
-        }
-      }
-    }
-
-    return images;
-  } catch (error) {
-    console.error('Error loading custom images:', error);
-    return [];
-  }
-}
-
 // Add new image to gallery
 export async function addGalleryImage(file: File): Promise<ImageContent> {
   try {
-    const optimizedFile = await optimizeImage(file);
+    console.log('Adding new gallery image...');
     
-    // Generate SEO-friendly title from filename
+    // 1. Optimize image
+    const optimizedFile = await optimizeImage(file);
+    console.log('Image optimized');
+    
+    // 2. Upload to Cloudinary
+    const imageUrl = await uploadImage(optimizedFile, 'gallery');
+    console.log('Image uploaded to Cloudinary:', imageUrl);
+    
+    // 3. Generate SEO-friendly title from filename
     const baseTitle = file.name
       .replace(/\.[^/.]+$/, '')
       .replace(/[^a-zA-Z0-9\s-]/g, '')
@@ -113,60 +70,85 @@ export async function addGalleryImage(file: File): Promise<ImageContent> {
       .toLowerCase();
     
     const title = `Catering Wien - ${baseTitle}`;
-    const id = generateImageId(title);
+    const id = `gallery-${uuidv4()}`;
 
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      
-      reader.onload = async () => {
-        try {
-          const image: ImageContent = {
-            id,
-            url: reader.result as string,
-            alt: `Catering Service Wien - ${title}`,
-            title
-          };
-          
-          await galleryStore.setItem(`image_${id}`, image);
-          resolve(image);
-        } catch (error) {
-          reject(new Error('Fehler beim Speichern des Bildes'));
-        }
-      };
-      
-      reader.onerror = () => reject(new Error('Fehler beim Lesen des Bildes'));
-      reader.readAsDataURL(optimizedFile);
-    });
+    // 4. Create image content
+    const image: ImageContent = {
+      id,
+      url: imageUrl,
+      alt: `Catering Service Wien - ${title}`,
+      title
+    };
+
+    // 5. Save to backend
+    const response = await api.post('/content/gallery/images', { image });
+    
+    if (!response) {
+      throw new Error('Failed to save image metadata');
+    }
+
+    console.log('Gallery image added successfully');
+    return image;
   } catch (error) {
-    throw new Error('Fehler beim Verarbeiten des Bildes');
+    console.error('Error adding gallery image:', error);
+    throw new Error('Failed to add image to gallery');
   }
-}
-
-// Replace existing image
-export async function replaceGalleryImage(id: string, file: File): Promise<ImageContent> {
-  await deleteGalleryImage(id);
-  return addGalleryImage(file);
 }
 
 // Delete image from gallery
 export async function deleteGalleryImage(id: string): Promise<void> {
   try {
-    await galleryStore.removeItem(`image_${id}`);
+    console.log('Deleting gallery image:', id);
+    
+    // 1. Get image details
+    const images = await getAllGalleryImages();
+    const image = images.find(img => img.id === id);
+    
+    if (!image) {
+      throw new Error('Image not found');
+    }
+
+    // 2. Delete from Cloudinary if it's a Cloudinary URL
+    if (image.url.includes('cloudinary.com')) {
+      const publicId = image.url.split('/').pop()?.split('.')[0];
+      if (publicId) {
+        await deleteImage(`gallery/${publicId}`);
+      }
+    }
+
+    // 3. Delete from backend
+    const response = await api.delete(`/content/gallery/images/${id}`);
+    
+    if (!response) {
+      throw new Error('Failed to delete image');
+    }
+    
+    console.log('Gallery image deleted successfully');
   } catch (error) {
-    console.error('Error deleting image:', error);
-    throw new Error('Fehler beim Löschen des Bildes');
+    console.error('Error deleting gallery image:', error);
+    throw new Error('Failed to delete image from gallery');
   }
 }
 
 // Update image metadata
 export async function updateImageMetadata(id: string, updates: Partial<ImageContent>): Promise<void> {
   try {
-    const image = await galleryStore.getItem<ImageContent>(`image_${id}`);
-    if (image) {
-      await galleryStore.setItem(`image_${id}`, { ...image, ...updates });
+    console.log('Updating image metadata:', id);
+    const response = await api.put(`/content/gallery/images/${id}`, updates);
+    
+    if (!response) {
+      throw new Error('Failed to update image metadata');
     }
+    console.log('Image metadata updated successfully');
   } catch (error) {
     console.error('Error updating image metadata:', error);
-    throw new Error('Fehler beim Aktualisieren der Bildinformationen');
+    throw new Error('Failed to update image information');
   }
 }
+
+export default {
+  getAllGalleryImages,
+  addGalleryImage,
+  deleteGalleryImage,
+  updateImageMetadata
+};

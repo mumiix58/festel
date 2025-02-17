@@ -1,7 +1,10 @@
 import mongoose from 'mongoose';
 
 const settingsSchema = new mongoose.Schema({
-  logo: String,
+  logo: {
+    url: String,
+    cloudinaryPublicId: String
+  },
   company: {
     name: {
       type: String,

@@ -4,15 +4,19 @@ import { showToast } from '@/lib/toast';
 
 export function useContent(pageId: string) {
   const [content, setContent] = useState<any>(null);
+  const [localContent, setLocalContent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const loadContent = async () => {
     try {
       setLoading(true);
       const data = await api.get(`/content/${pageId}`);
       setContent(data);
+      setLocalContent(data);
       setError(null);
+      setHasUnsavedChanges(false);
     } catch (err) {
       console.error('Error loading content:', err);
       setError('Failed to load content');
@@ -25,10 +29,18 @@ export function useContent(pageId: string) {
     loadContent();
   }, [pageId]);
 
-  const updateContent = async (newContent: any) => {
+  const updateLocalContent = (newContent: any) => {
+    setLocalContent(newContent);
+    setHasUnsavedChanges(true);
+  };
+
+  const saveContent = async () => {
+    if (!hasUnsavedChanges) return;
+
     try {
-      await api.put(`/content/${pageId}`, newContent);
-      await loadContent(); // Reload to ensure sync
+      await api.put(`/content/${pageId}`, localContent);
+      setContent(localContent);
+      setHasUnsavedChanges(false);
       showToast.success('Content saved successfully');
       return true;
     } catch (err) {
@@ -52,10 +64,12 @@ export function useContent(pageId: string) {
   };
 
   return {
-    content,
+    content: localContent,
     loading,
     error,
-    updateContent,
+    hasUnsavedChanges,
+    updateContent: updateLocalContent,
+    saveContent,
     updateSection,
     reloadContent: loadContent
   };

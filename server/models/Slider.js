@@ -5,6 +5,10 @@ const sliderSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  cloudinaryPublicId: {
+    type: String,
+    required: true
+  },
   title: {
     type: String,
     required: true
@@ -24,10 +28,6 @@ const sliderSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
-  isDefault: {
-    type: Boolean,
-    default: false
-  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -40,5 +40,9 @@ sliderSchema.pre('save', function(next) {
   this.updatedAt = new Date();
   next();
 });
+
+// Add indexes for better performance
+sliderSchema.index({ order: 1 });
+sliderSchema.index({ isActive: 1 });
 
 export default mongoose.model('Slider', sliderSchema);

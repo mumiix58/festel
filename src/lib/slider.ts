@@ -1,14 +1,15 @@
 import { SlideContent } from '@/types';
-import api from '@/lib/api';
-import { optimizeImage } from './imageUtils';
-import { v4 as uuidv4 } from 'uuid';
+import api from './api';
 
-// Get all slides from backend with fallback
+// Get all slides from MongoDB
 export const getAllSlides = async (): Promise<SlideContent[]> => {
   try {
-    const response = await api.get('/content/slider');
-    if (response?.content?.slides) {
-      return response.content.slides;
+    const response = await api.get('/slider');
+    if (Array.isArray(response)) {
+      return response.map(slide => ({
+        ...slide,
+        id: slide._id // Map MongoDB _id to id
+      }));
     }
     return [];
   } catch (error) {
@@ -20,39 +21,23 @@ export const getAllSlides = async (): Promise<SlideContent[]> => {
 // Add new slide
 export const addSlide = async (file: File): Promise<SlideContent> => {
   try {
-    const optimizedFile = await optimizeImage(file);
-    const reader = new FileReader();
-    
-    const imageUrl = await new Promise<string>((resolve, reject) => {
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(optimizedFile);
-    });
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('title', 'New Slide');
+    formData.append('subtitle', 'Slide Description');
+    formData.append('buttonText', 'Learn More');
+    formData.append('buttonLink', '/contact');
+    formData.append('showLogo', 'false');
 
-    const slides = await getAllSlides();
-    
-    const newSlide: SlideContent = {
-      id: `slide-${uuidv4()}`,
-      image: imageUrl,
-      title: 'Neuer Slide',
-      subtitle: 'Slide Beschreibung',
-      buttonText: 'Jetzt anfragen',
-      buttonLink: '/kontakt',
-      order: slides.length,
-      showLogo: false
-    };
-
-    const updatedSlides = [...slides, newSlide];
-    
-    const response = await api.put('/content/slider', {
-      slides: updatedSlides
-    });
-
+    const response = await api.post('/slider', formData);
     if (!response) {
-      throw new Error('Failed to add slide');
+      throw new Error('Failed to create slide');
     }
 
-    return newSlide;
+    return {
+      ...response,
+      id: response._id
+    };
   } catch (error) {
     console.error('Error adding slide:', error);
     throw error;
@@ -62,18 +47,7 @@ export const addSlide = async (file: File): Promise<SlideContent> => {
 // Update slide
 export const updateSlide = async (slideId: string, updates: Partial<SlideContent>): Promise<void> => {
   try {
-    const slides = await getAllSlides();
-    const updatedSlides = slides.map(slide =>
-      slide.id === slideId ? { ...slide, ...updates } : slide
-    );
-
-    const response = await api.put('/content/slider', {
-      slides: updatedSlides
-    });
-
-    if (!response) {
-      throw new Error('Failed to update slide');
-    }
+    await api.put(`/slider/${slideId}`, updates);
   } catch (error) {
     console.error('Error updating slide:', error);
     throw error;
@@ -83,18 +57,7 @@ export const updateSlide = async (slideId: string, updates: Partial<SlideContent
 // Delete slide
 export const deleteSlide = async (slideId: string): Promise<void> => {
   try {
-    const slides = await getAllSlides();
-    const updatedSlides = slides
-      .filter(slide => slide.id !== slideId)
-      .map((slide, index) => ({ ...slide, order: index }));
-
-    const response = await api.put('/content/slider', {
-      slides: updatedSlides
-    });
-
-    if (!response) {
-      throw new Error('Failed to delete slide');
-    }
+    await api.delete(`/slider/${slideId}`);
   } catch (error) {
     console.error('Error deleting slide:', error);
     throw error;
@@ -104,30 +67,7 @@ export const deleteSlide = async (slideId: string): Promise<void> => {
 // Reorder slides
 export const reorderSlides = async (slideId: string, direction: 'up' | 'down'): Promise<void> => {
   try {
-    const slides = await getAllSlides();
-    const currentIndex = slides.findIndex(s => s.id === slideId);
-    if (currentIndex === -1) return;
-
-    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    if (newIndex < 0 || newIndex >= slides.length) return;
-
-    const updatedSlides = [...slides];
-    const [movedSlide] = updatedSlides.splice(currentIndex, 1);
-    updatedSlides.splice(newIndex, 0, movedSlide);
-
-    // Update order values
-    const reorderedSlides = updatedSlides.map((slide, index) => ({
-      ...slide,
-      order: index
-    }));
-
-    const response = await api.put('/content/slider', {
-      slides: reorderedSlides
-    });
-
-    if (!response) {
-      throw new Error('Failed to reorder slides');
-    }
+    await api.patch(`/slider/${slideId}/reorder`, { direction });
   } catch (error) {
     console.error('Error reordering slides:', error);
     throw error;
