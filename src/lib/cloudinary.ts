@@ -14,10 +14,10 @@ export const uploadImage = async (file: File, folder: string = 'general'): Promi
     console.log('Uploading to Cloudinary...', { folder });
     
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', uploadPreset);
-    formData.append('folder', folder);
-    formData.append('api_key', apiKey);
+    formData.append('file', file as Blob);
+    formData.append('upload_preset', uploadPreset as string);
+    formData.append('folder', folder as string);
+    formData.append('api_key', apiKey as string);
 
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
@@ -101,10 +101,10 @@ export const deleteImage = async (publicId: string): Promise<void> => {
     const signature = await generateSignature(publicId, timestamp);
 
     const formData = new FormData();
-    formData.append('public_id', publicId);
-    formData.append('api_key', apiKey);
+    formData.append('public_id', publicId as string);
+    formData.append('api_key', apiKey as string);
     formData.append('timestamp', timestamp.toString());
-    formData.append('signature', signature);
+    formData.append('signature', signature as string);
 
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`,
