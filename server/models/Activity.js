@@ -4,7 +4,7 @@ const activitySchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['contact', 'login', 'content_update', 'settings_update', 'profile_update', 'equipment_update']
+    enum: ['page_view', 'contact', 'login', 'content_update', 'settings_update', 'profile_update']
   },
   description: {
     type: String,
@@ -30,17 +30,5 @@ activitySchema.index({ type: 1 });
 activitySchema.index({ userId: 1 });
 
 const Activity = mongoose.model('Activity', activitySchema);
-
-// Helper function to create activity
-export async function createActivity(data) {
-  try {
-    const activity = await Activity.create(data);
-    console.log('Activity created:', activity);
-    return activity;
-  } catch (error) {
-    console.error('Error creating activity:', error);
-    throw error;
-  }
-}
 
 export default Activity;

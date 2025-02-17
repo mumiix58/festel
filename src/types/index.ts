@@ -58,7 +58,8 @@ export interface SlideContent {
   buttonLink?: string;
   order: number;
   showLogo?: boolean;
-  isDefault?: boolean;
+  isActive?: boolean;
+  cloudinaryPublicId?: string;
 }
 
 // Settings Types

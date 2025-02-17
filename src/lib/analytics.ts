@@ -1,10 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-
-// Custom type for request config
-interface RequestConfig {
-  retry?: number;
-  retryDelay?: number;
-}
+import api from './api';
 
 // Get visitor ID from cookie or create new one
 const getVisitorId = () => {
@@ -21,41 +16,36 @@ const getVisitorId = () => {
   }
 };
 
-// Record page view with retry mechanism
+// Record page view
 export const incrementPageViews = async () => {
   try {
     const visitorId = getVisitorId();
-    
-    // Get current counts
-    const currentViews = parseInt(localStorage.getItem('pageViews') || '0', 10);
-    const currentVisitors = parseInt(localStorage.getItem('uniqueVisitors') || '0', 10);
-    const visitorIds = JSON.parse(localStorage.getItem('visitorIds') || '[]');
-
-    // Update page views
-    localStorage.setItem('pageViews', (currentViews + 1).toString());
-    
-    // Update unique visitors if new
-    if (!visitorIds.includes(visitorId)) {
-      visitorIds.push(visitorId);
-      localStorage.setItem('visitorIds', JSON.stringify(visitorIds));
-      localStorage.setItem('uniqueVisitors', (currentVisitors + 1).toString());
-    }
+    await api.post('/analytics/pageview', { visitorId });
   } catch (error) {
     // Silently handle error to avoid disrupting user experience
-    console.error('Error recording page view:', error instanceof Error ? error.message : 'Unknown error');
+    console.error('Error recording page view:', error);
   }
 };
 
-// Get page views and visitor stats
-export const getPageViews = async () => {
+// Get analytics data
+export const getAnalytics = async () => {
   try {
-    return {
-      pageViews: parseInt(localStorage.getItem('pageViews') || '0', 10),
-      uniqueVisitors: parseInt(localStorage.getItem('uniqueVisitors') || '0', 10)
-    };
+    const response = await api.get('/analytics/stats');
+    return response || { pageViews: 0, uniqueVisitors: 0 };
   } catch (error) {
-    console.error('Error loading page views:', error instanceof Error ? error.message : 'Unknown error');
+    console.error('Error loading analytics:', error);
     return { pageViews: 0, uniqueVisitors: 0 };
+  }
+};
+
+// Get latest activities
+export const getLatestActivities = async () => {
+  try {
+    const response = await api.get('/analytics/activities');
+    return Array.isArray(response) ? response : [];
+  } catch (error) {
+    console.error('Error loading activities:', error);
+    return [];
   }
 };
 
@@ -66,59 +56,9 @@ export const saveContactMessage = async (message: {
   message: string;
 }) => {
   try {
-    const messages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
-    const newMessage = {
-      id: Date.now().toString(),
-      ...message,
-      date: new Date().toISOString()
-    };
-    messages.unshift(newMessage);
-    localStorage.setItem('contactMessages', JSON.stringify(messages.slice(0, 50)));
-
-    // Record activity
-    const activities = JSON.parse(localStorage.getItem('activities') || '[]');
-    activities.unshift({
-      id: Date.now().toString(),
-      type: 'contact',
-      description: `New contact message from ${message.email}`,
-      timestamp: new Date().toISOString()
-    });
-    localStorage.setItem('activities', JSON.stringify(activities.slice(0, 50)));
+    await api.post('/analytics/contact', message);
   } catch (error) {
-    console.error('Error saving contact message:', error instanceof Error ? error.message : 'Unknown error');
+    console.error('Error saving contact message:', error);
     throw new Error('Failed to send message. Please try again later.');
-  }
-};
-
-// Get analytics data
-export const getAnalytics = async () => {
-  try {
-    return {
-      pageViews: parseInt(localStorage.getItem('pageViews') || '0', 10),
-      uniqueVisitors: parseInt(localStorage.getItem('uniqueVisitors') || '0', 10)
-    };
-  } catch (error) {
-    console.error('Error loading analytics:', error instanceof Error ? error.message : 'Unknown error');
-    return { pageViews: 0, uniqueVisitors: 0 };
-  }
-};
-
-// Get latest activities
-export const getLatestActivities = async () => {
-  try {
-    return JSON.parse(localStorage.getItem('activities') || '[]');
-  } catch (error) {
-    console.error('Error loading activities:', error instanceof Error ? error.message : 'Unknown error');
-    return [];
-  }
-};
-
-// Get contact messages
-export const getContactMessages = async () => {
-  try {
-    return JSON.parse(localStorage.getItem('contactMessages') || '[]');
-  } catch (error) {
-    console.error('Error loading contact messages:', error instanceof Error ? error.message : 'Unknown error');
-    return [];
   }
 };

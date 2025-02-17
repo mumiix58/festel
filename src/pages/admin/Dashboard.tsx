@@ -4,6 +4,7 @@ import { BarChart, Mail, Eye, Calendar } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
 import api from '@/lib/api';
+import { showToast } from '@/lib/toast';
 
 interface Activity {
   id: string;
@@ -11,7 +12,7 @@ interface Activity {
   description: string;
   user: string;
   timestamp: string;
-  metadata?: any;
+  metadata?: Record<string, any>;
 }
 
 interface Stats {
@@ -37,20 +38,22 @@ export function Dashboard() {
     try {
       setLoading(true);
 
-      // Load activities
-      const activitiesResponse = await api.get('/analytics/activities');
+      // Load activities and stats in parallel
+      const [activitiesResponse, statsResponse] = await Promise.all([
+        api.get('/analytics/activities'),
+        api.get('/analytics/stats')
+      ]);
+
       if (Array.isArray(activitiesResponse)) {
         setActivities(activitiesResponse);
       }
 
-      // Load stats
-      const statsResponse = await api.get('/analytics/stats');
       if (statsResponse) {
         setStats(statsResponse);
       }
-
     } catch (error) {
       console.error('Error loading dashboard data:', error);
+      showToast.error('Fehler beim Laden der Dashboard-Daten');
     } finally {
       setLoading(false);
     }

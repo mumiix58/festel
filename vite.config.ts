@@ -16,8 +16,40 @@ export default defineConfig({
         target: 'https://festlmacher-api-nucz.onrender.com',
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '/api')
+        ws: true,
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, res) => {
+            console.log('proxy error', err);
+            if (!res.headersSent) {
+              res.writeHead(500, {
+                'Content-Type': 'application/json',
+              });
+              res.end(JSON.stringify({ error: 'Proxy error' }));
+            }
+          });
+          
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            // Keep connection alive
+            proxyReq.setHeader('Connection', 'keep-alive');
+            proxyReq.setHeader('Keep-Alive', 'timeout=120');
+            
+            // Add request ID for tracking
+            const requestId = Math.random().toString(36).substring(7);
+            proxyReq.setHeader('X-Request-ID', requestId);
+            
+            console.log(`[${requestId}] Sending Request:`, req.method, req.url);
+          });
+          
+          proxy.on('proxyRes', (proxyRes, req, _res) => {
+            const requestId = proxyRes.req.getHeader('X-Request-ID');
+            console.log(`[${requestId}] Received Response:`, proxyRes.statusCode, req.url);
+          });
+        }
       }
+    },
+    hmr: {
+      timeout: 120000 // 2 minutes
     }
   },
   build: {

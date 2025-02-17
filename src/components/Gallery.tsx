@@ -4,6 +4,7 @@ import { Gallery as PhotoSwipeGallery } from 'react-photoswipe-gallery';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getAllGalleryImages } from '@/lib/gallery';
 import { ImageContent } from '@/types';
+import { showToast } from '@/lib/toast';
 import 'photoswipe/dist/photoswipe.css';
 
 export function Gallery() {
@@ -18,23 +19,40 @@ export function Gallery() {
     desktop: 6
   };
 
-  useEffect(() => {
-    loadImages();
-  }, []);
-
   const loadImages = async () => {
     try {
+      console.log('Loading gallery images...');
       setLoading(true);
       setError(null);
+      
       const images = await getAllGalleryImages();
+      console.log(`Loaded ${images.length} images:`, images);
+      
       setGalleryImages(images);
     } catch (error) {
       console.error('Error loading gallery images:', error);
       setError('Fehler beim Laden der Bilder');
+      showToast.error('Fehler beim Laden der Bilder');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadImages();
+
+    // Listen for gallery updates
+    const handleGalleryUpdate = () => {
+      console.log('Gallery update event received');
+      loadImages();
+    };
+
+    window.addEventListener('galleryUpdated', handleGalleryUpdate);
+    
+    return () => {
+      window.removeEventListener('galleryUpdated', handleGalleryUpdate);
+    };
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -57,7 +75,7 @@ export function Gallery() {
     }
   };
 
-  // Calculate pagination based on screen size
+  // Calculate pagination
   const getImagesPerPage = () => {
     if (typeof window === 'undefined') return imagesPerPage.desktop;
     if (window.innerWidth < 640) return imagesPerPage.mobile;
@@ -89,6 +107,14 @@ export function Gallery() {
         >
           Erneut versuchen
         </button>
+      </div>
+    );
+  }
+
+  if (galleryImages.length === 0) {
+    return (
+      <div className="text-center text-gray-500">
+        <p>Keine Bilder vorhanden</p>
       </div>
     );
   }

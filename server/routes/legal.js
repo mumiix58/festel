@@ -1,5 +1,5 @@
 import express from 'express';
-import Legal from '../models/Legal.js';
+import Content from '../models/Content.js';
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
 import Activity from '../models/Activity.js';
 
@@ -8,20 +8,13 @@ const router = express.Router();
 // Get all legal content
 router.get('/', async (req, res) => {
   try {
-    const legalContent = await Legal.find();
+    const legalContent = await Content.findOne({ page: 'legal' });
     
-    // Transform to expected format
-    const content = legalContent.reduce((acc, item) => {
-      acc[item.type] = item.content;
-      return acc;
-    }, {});
-
-    // Ensure all required fields exist
-    if (!content.impressum || !content.datenschutz || !content.agb) {
-      return res.status(404).json({ message: 'Legal content incomplete' });
+    if (!legalContent?.content) {
+      return res.status(404).json({ message: 'Legal content not found' });
     }
 
-    res.json(content);
+    res.json(legalContent.content);
   } catch (error) {
     console.error('Error fetching legal content:', error);
     res.status(500).json({ message: 'Server error' });
@@ -31,11 +24,11 @@ router.get('/', async (req, res) => {
 // Get specific legal content
 router.get('/:type', async (req, res) => {
   try {
-    const legal = await Legal.findOne({ type: req.params.type });
-    if (!legal) {
+    const legalContent = await Content.findOne({ page: 'legal' });
+    if (!legalContent?.content?.[req.params.type]) {
       return res.status(404).json({ message: 'Content not found' });
     }
-    res.json(legal);
+    res.json({ content: legalContent.content[req.params.type] });
   } catch (error) {
     console.error('Error fetching legal content:', error);
     res.status(500).json({ message: 'Server error' });
@@ -52,20 +45,15 @@ router.put('/', authenticateToken, isAdmin, async (req, res) => {
       return res.status(400).json({ message: 'All legal content fields are required' });
     }
 
-    // Update each type of legal content
-    const updates = [
-      { type: 'impressum', content: impressum },
-      { type: 'datenschutz', content: datenschutz },
-      { type: 'agb', content: agb }
-    ];
-
-    for (const update of updates) {
-      await Legal.findOneAndUpdate(
-        { type: update.type },
-        { content: update.content, lastModified: new Date() },
-        { upsert: true, new: true }
-      );
-    }
+    // Update content in Content collection
+    const legalContent = await Content.findOneAndUpdate(
+      { page: 'legal' },
+      {
+        content: { impressum, datenschutz, agb },
+        lastModified: new Date()
+      },
+      { upsert: true, new: true }
+    );
 
     // Record activity
     await Activity.create({
@@ -74,7 +62,7 @@ router.put('/', authenticateToken, isAdmin, async (req, res) => {
       userId: req.user._id
     });
 
-    res.json({ message: 'Legal content updated successfully' });
+    res.json(legalContent.content);
   } catch (error) {
     console.error('Error updating legal content:', error);
     res.status(500).json({ message: 'Server error' });
@@ -97,11 +85,20 @@ router.put('/:type', authenticateToken, isAdmin, async (req, res) => {
       return res.status(400).json({ message: 'Invalid legal content type' });
     }
 
-    const legal = await Legal.findOneAndUpdate(
-      { type },
-      { content, lastModified: new Date() },
-      { upsert: true, new: true }
-    );
+    // Get existing content
+    let legalContent = await Content.findOne({ page: 'legal' });
+    
+    if (!legalContent) {
+      legalContent = new Content({
+        page: 'legal',
+        content: {}
+      });
+    }
+
+    // Update specific content type
+    legalContent.content[type] = content;
+    legalContent.lastModified = new Date();
+    await legalContent.save();
 
     // Record activity
     await Activity.create({
@@ -110,7 +107,7 @@ router.put('/:type', authenticateToken, isAdmin, async (req, res) => {
       userId: req.user._id
     });
 
-    res.json(legal);
+    res.json(legalContent.content);
   } catch (error) {
     console.error('Error updating legal content:', error);
     res.status(500).json({ message: 'Server error' });

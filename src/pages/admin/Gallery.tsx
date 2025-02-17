@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
-import { Upload, Trash2, Edit, Save, X } from 'lucide-react';
+import { Upload, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ImageContent } from '@/types';
-import { getAllGalleryImages, addGalleryImage, deleteGalleryImage, updateImageMetadata } from '@/lib/gallery';
+import { getAllGalleryImages, addGalleryImage, deleteGalleryImage } from '@/lib/gallery';
+import { showToast } from '@/lib/toast';
 
 export function Gallery() {
   const [images, setImages] = useState<ImageContent[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [editingImage, setEditingImage] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<{ title: string; alt: string }>({ title: '', alt: '' });
   const [saveMessage, setSaveMessage] = useState<{
     type: 'success' | 'error';
     text: string;
@@ -27,10 +26,7 @@ export function Gallery() {
       setImages(allImages);
     } catch (error) {
       console.error('Error loading images:', error);
-      setSaveMessage({
-        type: 'error',
-        text: 'Fehler beim Laden der Bilder'
-      });
+      showToast.error('Fehler beim Laden der Bilder');
     }
   };
 
@@ -60,10 +56,7 @@ export function Gallery() {
       await loadImages();
     } catch (error) {
       console.error('Upload failed:', error);
-      setSaveMessage({
-        type: 'error',
-        text: 'Fehler beim Hochladen der Bilder'
-      });
+      showToast.error('Fehler beim Hochladen der Bilder');
     } finally {
       setUploading(false);
       event.target.value = '';
@@ -76,48 +69,10 @@ export function Gallery() {
     try {
       await deleteGalleryImage(imageId);
       await loadImages();
-      setSaveMessage({
-        type: 'success',
-        text: 'Bild erfolgreich gelöscht'
-      });
+      showToast.success('Bild erfolgreich gelöscht');
     } catch (error) {
       console.error('Delete failed:', error);
-      setSaveMessage({
-        type: 'error',
-        text: 'Fehler beim Löschen des Bildes'
-      });
-    }
-  };
-
-  const handleEdit = (image: ImageContent) => {
-    setEditingImage(image.id);
-    setEditForm({
-      title: image.title || '',
-      alt: image.alt
-    });
-  };
-
-  const handleSaveEdit = async () => {
-    if (!editingImage) return;
-
-    try {
-      await updateImageMetadata(editingImage, {
-        title: editForm.title,
-        alt: editForm.alt
-      });
-      
-      await loadImages();
-      setEditingImage(null);
-      setSaveMessage({
-        type: 'success',
-        text: 'Änderungen gespeichert'
-      });
-    } catch (error) {
-      console.error('Update failed:', error);
-      setSaveMessage({
-        type: 'error',
-        text: 'Fehler beim Speichern der Änderungen'
-      });
+      showToast.error('Fehler beim Löschen des Bildes');
     }
   };
 
@@ -164,64 +119,14 @@ export function Gallery() {
                 alt={image.alt}
                 className="h-full w-full object-cover"
               />
-              
-              {editingImage === image.id ? (
-                <div className="absolute inset-0 bg-white p-4">
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Titel
-                      </label>
-                      <input
-                        type="text"
-                        value={editForm.title}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Alt Text
-                      </label>
-                      <input
-                        type="text"
-                        value={editForm.alt}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, alt: e.target.value }))}
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
-                      />
-                    </div>
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={handleSaveEdit}
-                        className="rounded-md bg-accent p-2 text-white hover:bg-accent-dark"
-                      >
-                        <Save className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => setEditingImage(null)}
-                        className="rounded-md bg-gray-200 p-2 text-gray-700 hover:bg-gray-300"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-                  <button
-                    onClick={() => handleEdit(image)}
-                    className="rounded-full bg-white p-2 text-gray-700 hover:bg-gray-100"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(image.id)}
-                    className="rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              )}
+              <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                <button
+                  onClick={() => handleDelete(image.id)}
+                  className="rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
             </motion.div>
           ))}
         </div>

@@ -1,266 +1,125 @@
-import { config } from './config';
+import axios from 'axios';
 import { showToast } from './toast';
 import { isAuthenticated, refreshToken, logoutUser } from './auth';
 
 const isAdminRoute = () => window.location.pathname.startsWith('/admin');
 const isDevelopment = import.meta.env.DEV;
 
-// Add retry functionality with exponential backoff
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-const fetchWithRetry = async (url: string, options: RequestInit, retries = 5, backoff = 2000) => {
-  let lastError: Error | null = null;
-  
-  for (let i = 0; i < retries; i++) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
-
-      const response = await fetch(url, {
-        ...options,
-        signal: controller.signal,
-        headers: {
-          ...options.headers,
-          'x-retry-count': String(i),
-          'Connection': 'keep-alive',
-          'Keep-Alive': 'timeout=120, max=1000'
-        }
-      });
-      
-      clearTimeout(timeoutId);
-      
-      // Handle 401 Unauthorized
-      if (response.status === 401) {
-        const refreshed = await refreshToken();
-        if (refreshed) {
-          const newOptions = {
-            ...options,
-            headers: {
-              ...options.headers,
-              Authorization: `Bearer ${localStorage.getItem('authToken')}`
-            }
-          };
-          return await fetch(url, newOptions);
-        } else {
-          if (isAdminRoute()) {
-            logoutUser();
-          }
-          throw new Error('Authentication required');
-        }
-      }
-      
-      return response;
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error('Unknown error occurred');
-      
-      // Don't retry if we aborted or if it's an auth error
-      if (error instanceof Error && (error.name === 'AbortError' || error.message === 'Authentication required')) {
-        throw lastError;
-      }
-      
-      // Only retry if we have attempts left
-      if (i === retries - 1) break;
-      
-      // Wait with exponential backoff before retrying
-      await wait(backoff * Math.pow(2, i));
-      
-      console.log(`Retrying request (${i + 1}/${retries})`);
-    }
+// Create axios instance
+const axiosInstance = axios.create({
+  baseURL: '/api',
+  timeout: 120000, // 2 minutes
+  headers: {
+    'Accept': 'application/json',
+    'Cache-Control': 'no-cache',
+    'Pragma': 'no-cache'
   }
-  
-  throw lastError;
-};
+});
 
-const api = {
-  baseUrl: '/api',
-
-  getAuthHeaders(options?: RequestInit): Record<string, string> {
-    const headers: Record<string, string> = {
-      'Accept': 'application/json',
-      'Cache-Control': 'no-cache',
-      'Pragma': 'no-cache'
-    };
-    
-    // Only add Content-Type for non-FormData requests
-    if (!(options?.body instanceof FormData)) {
-      headers['Content-Type'] = 'application/json';
-    }
-    
-    // Add auth token for admin routes or if authenticated
+// Add request interceptor
+axiosInstance.interceptors.request.use(
+  (config) => {
+    // Add auth token if needed
     if (isAdminRoute() || isAuthenticated()) {
       const token = localStorage.getItem('authToken');
       if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+        config.headers.Authorization = `Bearer ${token}`;
       }
     }
-    
-    return headers;
-  },
 
-  async handleResponse(response: Response) {
+    // Add request ID for tracking
+    config.headers['X-Request-ID'] = Math.random().toString(36).substring(7);
+
+    if (isDevelopment) {
+      console.log(`[${config.headers['X-Request-ID']}] Making ${config.method?.toUpperCase()} request to: ${config.url}`, config.data);
+    }
+
+    return config;
+  },
+  (error) => {
+    console.error('Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor
+axiosInstance.interceptors.response.use(
+  (response) => {
+    if (isDevelopment) {
+      console.log(`[${response.config.headers['X-Request-ID']}] Response:`, response.data);
+    }
+    return response.data?.content || response.data;
+  },
+  async (error) => {
     // Handle 401 Unauthorized
-    if (response.status === 401) {
+    if (error.response?.status === 401) {
       const refreshed = await refreshToken();
-      if (!refreshed && isAdminRoute()) {
+      if (refreshed) {
+        // Retry the original request
+        const originalRequest = error.config;
+        originalRequest.headers.Authorization = `Bearer ${localStorage.getItem('authToken')}`;
+        return axiosInstance(originalRequest);
+      } else if (isAdminRoute()) {
         logoutUser();
       }
-      throw new Error('Authentication required');
     }
 
-    // Return null for 404s instead of throwing
-    if (response.status === 404) {
-      return null;
+    // Log error details
+    console.error('API error:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
+
+    // Show error toast in admin routes
+    if (isAdminRoute()) {
+      showToast.error(error.response?.data?.message || 'An error occurred');
     }
 
-    if (!response.ok) {
-      let errorMessage = 'An error occurred';
-      try {
-        const error = await response.json();
-        errorMessage = error.message || `HTTP error! status: ${response.status}`;
-      } catch {
-        errorMessage = `HTTP error! status: ${response.status}`;
-      }
-      throw new Error(errorMessage);
-    }
+    return Promise.reject(error);
+  }
+);
 
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      return null;
-    }
-
-    const data = await response.json();
-    return data?.content || data;
-  },
-
+const api = {
   async get(url: string) {
     try {
-      if (isDevelopment) {
-        console.log(`Making GET request to: ${api.baseUrl}${url}`);
-      }
-
-      const response = await fetchWithRetry(`${api.baseUrl}${url}`, {
-        method: 'GET',
-        headers: api.getAuthHeaders(),
-        credentials: 'include'
-      }, 5, 2000);
-
-      const data = await api.handleResponse(response);
-      
-      if (isDevelopment) {
-        console.log(`GET response for ${url}:`, data);
-      }
-
-      return data;
+      return await axiosInstance.get(url);
     } catch (error) {
       if (isDevelopment) {
         console.error('API GET error:', error);
       }
-      // Return null instead of throwing for GET requests
       return null;
     }
   },
 
   async post(url: string, data: any) {
     try {
-      if (isDevelopment) {
-        console.log(`Making POST request to: ${api.baseUrl}${url}`, data);
-      }
-
-      const isFormData = data instanceof FormData;
-      const options: RequestInit = {
-        method: 'POST',
-        headers: api.getAuthHeaders({ body: data }),
-        credentials: 'include',
-        body: isFormData ? data : JSON.stringify(data)
-      };
-
-      const response = await fetchWithRetry(`${api.baseUrl}${url}`, options, 5, 2000);
-
-      const result = await api.handleResponse(response);
-      
-      if (isDevelopment) {
-        console.log(`POST response for ${url}:`, result);
-      }
-
+      const response = await axiosInstance.post(url, data);
       if (isAdminRoute()) {
         showToast.success('Successfully saved');
       }
-      
-      return result;
+      return response;
     } catch (error) {
-      if (isDevelopment) {
-        console.error('API POST error:', error);
-      }
       throw error;
     }
   },
 
   async put(url: string, data: any) {
     try {
-      if (isDevelopment) {
-        console.log(`Making PUT request to: ${api.baseUrl}${url}`, data);
-      }
-
-      const isFormData = data instanceof FormData;
-      const options: RequestInit = {
-        method: 'PUT',
-        headers: api.getAuthHeaders({ body: data }),
-        credentials: 'include',
-        body: isFormData ? data : JSON.stringify(data)
-      };
-
-      const response = await fetchWithRetry(`${api.baseUrl}${url}`, options, 5, 2000);
-
-      const result = await api.handleResponse(response);
-      
-      if (isDevelopment) {
-        console.log(`PUT response for ${url}:`, result);
-      }
-
+      const response = await axiosInstance.put(url, data);
       if (isAdminRoute()) {
         showToast.success('Successfully saved');
       }
-      
-      return result;
+      return response;
     } catch (error) {
-      if (isDevelopment) {
-        console.error('API PUT error:', error);
-      }
       throw error;
     }
   },
 
   async delete(url: string) {
     try {
-      const response = await fetchWithRetry(`${api.baseUrl}${url}`, {
-        method: 'DELETE',
-        headers: api.getAuthHeaders(),
-        credentials: 'include'
-      }, 5, 2000);
-
-      return api.handleResponse(response);
+      return await axiosInstance.delete(url);
     } catch (error) {
-      if (isDevelopment) {
-        console.error('API DELETE error:', error);
-      }
-      throw error;
-    }
-  },
-
-  async patch(url: string, data: any) {
-    try {
-      const response = await fetchWithRetry(`${api.baseUrl}${url}`, {
-        method: 'PATCH',
-        headers: api.getAuthHeaders(),
-        credentials: 'include',
-        body: JSON.stringify(data)
-      }, 5, 2000);
-
-      return api.handleResponse(response);
-    } catch (error) {
-      if (isDevelopment) {
-        console.error('API PATCH error:', error);
-      }
       throw error;
     }
   }

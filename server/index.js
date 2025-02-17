@@ -2,12 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-import { v2 as cloudinary } from 'cloudinary';
 import { errorHandler } from './middleware/error.js';
 import connectDB from './config/db.js';
-import { initializeContent } from './scripts/initContent.js';
-import { initializeLegalContent } from './models/Legal.js';
-import { initializeEquipment } from './models/Equipment.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -16,39 +12,19 @@ import settingsRoutes from './routes/settings.js';
 import sliderRoutes from './routes/slider.js';
 import legalRoutes from './routes/legal.js';
 import equipmentRoutes from './routes/equipment.js';
+import imageRoutes from './routes/image.js';
+import analyticsRoutes from './routes/analytics.js';
 
 // Load environment variables
 dotenv.config();
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-});
-
 const startServer = async () => {
   try {
     console.log('Starting server...');
-    console.log('Environment:', process.env.NODE_ENV);
-    console.log('MongoDB URI:', process.env.MONGODB_URI ? 'Set' : 'Not set');
-    console.log('Frontend URL:', process.env.FRONTEND_URL);
-
     const app = express();
 
-    // Connect to MongoDB first
-    console.log('Connecting to database...');
+    // Connect to MongoDB
     await connectDB();
-    console.log('Database connection established');
-
-    // Initialize default content
-    console.log('Initializing default content...');
-    await Promise.all([
-      initializeContent(),
-      initializeLegalContent(),
-      initializeEquipment()
-    ]);
-    console.log('Default content initialized');
 
     // CORS configuration
     const allowedOrigins = [
@@ -67,9 +43,7 @@ const startServer = async () => {
 
     app.use(cors({
       origin: function(origin, callback) {
-        if (!origin) {
-          return callback(null, true);
-        }
+        if (!origin) return callback(null, true);
 
         const isAllowed = allowedOrigins.some(allowed => {
           if (allowed instanceof RegExp) {
@@ -81,25 +55,18 @@ const startServer = async () => {
         if (isAllowed) {
           callback(null, true);
         } else {
-          console.warn('CORS blocked request from:', origin);
           callback(new Error('Not allowed by CORS'));
         }
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Cache-Control']
+      allowedHeaders: ['Content-Type', 'Authorization']
     }));
 
     // Middleware
-    app.use(express.json({ limit: '10mb' }));
-    app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+    app.use(express.json({ limit: '50mb' }));
+    app.use(express.urlencoded({ extended: true, limit: '50mb' }));
     app.use(cookieParser());
-
-    // Debug middleware
-    app.use((req, res, next) => {
-      console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-      next();
-    });
 
     // Routes
     app.use('/api/auth', authRoutes);
@@ -108,13 +75,14 @@ const startServer = async () => {
     app.use('/api/slider', sliderRoutes);
     app.use('/api/legal', legalRoutes);
     app.use('/api/equipment', equipmentRoutes);
+    app.use('/api/images', imageRoutes);
+    app.use('/api/analytics', analyticsRoutes);
 
     // Health check
     app.get('/api/health', (req, res) => {
       res.json({ 
         status: 'ok',
         environment: process.env.NODE_ENV,
-        database: 'connected',
         timestamp: new Date().toISOString()
       });
     });

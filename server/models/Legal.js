@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Content from './Content.js';
 
 const legalSchema = new mongoose.Schema({
   type: {
@@ -28,17 +29,39 @@ const Legal = mongoose.model('Legal', legalSchema);
 // Initialize default legal content if none exists
 export async function initializeLegalContent() {
   try {
-    const types = ['impressum', 'datenschutz', 'agb'];
+    // Check if content exists in Content collection
+    const legalContent = await Content.findOne({ page: 'legal' });
     
-    for (const type of types) {
-      const exists = await Legal.findOne({ type });
-      if (!exists) {
-        await Legal.create({
-          type,
-          content: `# ${type.charAt(0).toUpperCase() + type.slice(1)}\n\nDefault content for ${type}`
-        });
-        console.log(`Default ${type} content initialized`);
-      }
+    if (!legalContent) {
+      // Create default content in Content collection
+      await Content.create({
+        page: 'legal',
+        content: {
+          impressum: `# Impressum
+
+FEST'LMACHER Gastronomie
+DDSG, Handelskai 265
+1220 Wien
+Österreich
+
+**Kontakt:**
+Tel: +43 (0)699 – 1600 2800
+E-Mail: catering@festlmacher.at`,
+
+          datenschutz: `# Datenschutzerklärung
+
+## 1. Datenschutz auf einen Blick
+
+### Allgemeine Hinweise
+Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie diese Website besuchen.`,
+
+          agb: `# Allgemeine Geschäftsbedingungen
+
+## 1. Geltungsbereich
+Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für alle Geschäftsbeziehungen zwischen FEST'LMACHER Gastronomie und unseren Kunden.`
+        }
+      });
+      console.log('Default legal content initialized in Content collection');
     }
   } catch (error) {
     console.error('Error initializing legal content:', error);
