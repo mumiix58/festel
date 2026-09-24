@@ -1,48 +1,31 @@
-import emailjs from 'emailjs-com';
+export interface EmailParams {
+  from_name: string;
+  from_email: string;
+  subject?: string;
+  message: string;
+  phone?: string;
+  eventType?: string;
+  date?: string;
+  start_time?: string;
+  end_time?: string;
+  guests?: string;
+}
 
-// EmailJS configuration
-const EMAIL_CONFIG = {
-  serviceId: 'service_rr4ht3u',  // EmailJS service ID
-  templateIds: {
-    contact: 'template_g60lad1',  // New contact form template
-    booking: 'template_p8czqvd'   // Booking form template
-  },
-  userId: 'GkoX3Rw1QXFuJol9f'    // EmailJS user ID
-};
-
-export const sendEmail = async (templateParams: any, type: 'contact' | 'booking' = 'contact') => {
+export const sendEmail = async (templateParams: EmailParams, type: 'contact' | 'booking' = 'contact') => {
   try {
-    // Initialize EmailJS with user ID
-    emailjs.init(EMAIL_CONFIG.userId);
-
-    // Add default recipient email if not provided
-    const params = {
-      ...templateParams,
-      to_email: templateParams.to_email || 'catering@festlmacher.at'
-    };
-
-    // Select the appropriate template based on the type
-    const templateId = EMAIL_CONFIG.templateIds[type];
-
-    // Send email using EmailJS
-    const response = await emailjs.send(
-      EMAIL_CONFIG.serviceId,
-      templateId,
-      params
-    );
-
-    if (response.status !== 200) {
-      throw new Error('Failed to send email');
-    }
-
-    return response;
-  } catch (error: any) {
-    console.error('Email sending error:', error);
-    
-    // Provide a user-friendly error message
+    const response = await fetch('/.netlify/functions/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...templateParams, type }),
+      signal: AbortSignal.timeout(20000)
+    });
+    const result = await response.json();
+    if (!response.ok || result?.success !== true) throw new Error('Email not accepted');
+    return result;
+  } catch {
     throw new Error(
       'Es gab einen Fehler beim Senden der Nachricht. ' +
-      'Bitte kontaktieren Sie uns telefonisch unter +43 (0)699 – 1600 2800.'
+      'Bitte versuchen Sie es später erneut oder kontaktieren Sie uns telefonisch unter +43 (0)699 – 1600 2800.'
     );
   }
 };

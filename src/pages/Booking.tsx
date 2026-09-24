@@ -70,6 +70,7 @@ export function Booking() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     setIsSubmitting(true);
     setFormStatus({ type: null, message: '' });
 
@@ -84,14 +85,13 @@ export function Booking() {
         start_time: formData.startTime,
         end_time: formData.endTime,
         guests: formData.guests,
-        message: formData.message || 'Keine Nachricht',
-        to_email: 'catering@festlmacher.at'
+        message: formData.message || 'Keine Nachricht'
       };
 
       await sendEmail(templateParams, 'booking');
 
-      // Save contact message for dashboard
-      await saveContactMessage({
+      // Dashboard availability must not change the email delivery result.
+      void saveContactMessage({
         email: formData.email,
         subject: `Terminanfrage: ${selectedService?.title || selectedType}`,
         message: `Name: ${formData.firstName} ${formData.lastName}
@@ -101,7 +101,7 @@ export function Booking() {
                  Ende: ${formData.endTime}
                  Gäste: ${formData.guests}
                  Nachricht: ${formData.message || 'Keine Nachricht'}`
-      });
+      }).catch(() => console.warn('Dashboard copy could not be saved.'));
 
       setFormStatus({
         type: 'success',

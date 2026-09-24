@@ -79,6 +79,7 @@ export function Contact() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
     setIsSubmitting(true);
     setFormStatus({ type: null, message: '' });
 
@@ -98,12 +99,12 @@ export function Contact() {
     try {
       await sendEmail(templateParams);
 
-      // Save contact message for dashboard
-      await saveContactMessage({
+      // Dashboard availability must not change the email delivery result.
+      void saveContactMessage({
         email: templateParams.from_email,
         subject: templateParams.subject,
         message: `${templateParams.message}\n\nDatum: ${templateParams.date}\nBeginn: ${templateParams.start_time}\nEnde: ${templateParams.end_time}`
-      });
+      }).catch(() => console.warn('Dashboard copy could not be saved.'));
 
       setFormStatus({
         type: 'success',
