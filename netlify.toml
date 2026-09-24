@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "npm run sync:content && npm run build"
   publish = "dist"
   base = "."
   functions = "netlify/functions"
@@ -7,7 +7,7 @@
 [build.environment]
   NODE_VERSION = "22"
   NPM_VERSION = "9"
-  VITE_API_URL = "https://festlmacher-api-nucz.onrender.com/api"
+
 
 
 [[headers]]
@@ -28,3 +28,6 @@
   for = "/404.html"
   [headers.values]
     X-Robots-Tag = "noindex, follow"
+
+[functions]
+  node_bundler = "esbuild"

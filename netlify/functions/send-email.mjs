@@ -1,4 +1,4 @@
-import { renderContactEmail } from './email-template.mjs';
+import { renderContactEmail } from '../lib/email-template.mjs';
 const failureMessage = 'Es gab einen Fehler beim Senden der Nachricht. Bitte versuchen Sie es später erneut oder kontaktieren Sie uns telefonisch.';
 const json = (status, body, headers = {}) => new Response(JSON.stringify(body), {
   status,

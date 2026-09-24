@@ -8,10 +8,13 @@
     "build": "tsc --noEmit && vite build && node scripts/build-seo.mjs",
     "preview": "vite preview",
     "test:email": "node --test tests/email.test.mjs",
-    "test:seo": "node --test tests/seo.test.mjs"
+    "test:seo": "node --test tests/seo.test.mjs",
+    "sync:content": "node scripts/sync-content.mjs",
+    "test:site": "node --test tests/site.test.mjs"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.6",
+    "@supabase/supabase-js": "^2.117.1",
     "axios": "^1.6.7",
     "browser-image-compression": "^2.0.2",
     "clsx": "^2.1.0",

@@ -1,0 +1,967 @@
+{
+  "about_content": [
+    {
+      "id": "4e8fabad-2813-4d36-a0af-fd8ebf1ffa41",
+      "section": "mission",
+      "title": "Unsere Mission",
+      "content": "Wir schaffen unvergessliche kulinarische Erlebnisse und sorgen dafür, dass Ihre Veranstaltung ein voller Erfolg wird. Qualität, Kreativität und Zuverlässigkeit stehen bei uns an erster Stelle.",
+      "image_url": null,
+      "order": 2,
+      "created_at": "2025-02-18T19:43:48.877163+00:00"
+    },
+    {
+      "id": "5264dda0-084a-441c-91ef-91f7dc9fc030",
+      "section": "values",
+      "title": "Unsere Werte",
+      "content": "Nachhaltigkeit, Regionalität und höchste Qualität sind die Grundpfeiler unserer Arbeit. Wir legen großen Wert auf persönlichen Service und individuelle Betreuung.",
+      "image_url": null,
+      "order": 3,
+      "created_at": "2025-02-18T19:43:48.877163+00:00"
+    },
+    {
+      "id": "e46d8895-bf9e-40e0-a953-c749117743c7",
+      "section": "history",
+      "title": "Unsere Geschichte",
+      "content": "Seit über 30 Jahren sind wir Ihr verlässlicher Partner für erstklassiges Catering und professionelles Eventmanagement in Wien. \nWas als kleine Familienunternehmung begann, hat sich zu einem der führenden Catering-Unternehmen der Region entwickelt.",
+      "image_url": "https://images.unsplash.com/photo-1555244162-803834f70033",
+      "order": 1,
+      "created_at": "2025-02-18T19:43:48.877163+00:00"
+    }
+  ],
+  "equipment": [
+    {
+      "id": "f57aefe9-4e29-4382-9efc-811ff249c74c",
+      "name": "Runde Tische",
+      "description": "Elegante runde Tische für 8-10 Personen",
+      "image_url": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678",
+      "category": "Möbel",
+      "created_at": "2025-02-18T19:44:50.400559+00:00"
+    },
+    {
+      "id": "9fd73657-4c5a-43cb-890e-44137ca3ca16",
+      "name": "Stehtische",
+      "description": "Hochwertige Stehtische inkl. Hussen",
+      "image_url": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3",
+      "category": "Möbel",
+      "created_at": "2025-02-18T19:44:50.400559+00:00"
+    },
+    {
+      "id": "de0474a9-0d3b-459c-8ea0-41a096c96319",
+      "name": "Chafing Dishes",
+      "description": "Professionelle Warmhaltebehälter",
+      "image_url": "https://images.unsplash.com/photo-1555244162-803834f70033",
+      "category": "Catering Equipment",
+      "created_at": "2025-02-18T19:44:50.400559+00:00"
+    },
+    {
+      "id": "c731a241-b395-45ce-95ba-b2d3ee59d0fc",
+      "name": "Porzellan-Set",
+      "description": "Hochwertiges Porzellan für bis zu 100 Personen",
+      "image_url": "https://images.unsplash.com/photo-1511578314322-379afb476865",
+      "category": "Geschirr",
+      "created_at": "2025-02-18T19:44:50.400559+00:00"
+    },
+    {
+      "id": "83bba7e4-9351-436a-9587-f6be699ed4e0",
+      "name": "Gläser-Set",
+      "description": "Verschiedene Gläser für alle Getränkearten",
+      "image_url": "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6",
+      "category": "Geschirr",
+      "created_at": "2025-02-18T19:44:50.400559+00:00"
+    },
+    {
+      "id": "19dc8cee-f2df-4d8b-8726-cb8da7222850",
+      "name": "LED Beleuchtung",
+      "description": "Stimmungsvolle LED Beleuchtungssysteme",
+      "image_url": "https://images.unsplash.com/photo-1519225421980-715cb0215aed",
+      "category": "Beleuchtung",
+      "created_at": "2025-02-18T19:44:50.400559+00:00"
+    }
+  ],
+  "gallery": [
+    {
+      "id": "71ca6baa-8907-475c-99f6-80a21dc2ae26",
+      "title": "Hochzeitsempfang",
+      "image_url": "https://images.unsplash.com/photo-1519225421980-715cb0215aed",
+      "category": "Hochzeiten",
+      "created_at": "2025-02-18T19:43:00.964944+00:00"
+    },
+    {
+      "id": "258fcf74-3a0f-4c31-b8fa-3a3be66334f2",
+      "title": "Firmenevent",
+      "image_url": "https://images.unsplash.com/photo-1511578314322-379afb476865",
+      "category": "Business",
+      "created_at": "2025-02-18T19:43:00.964944+00:00"
+    },
+    {
+      "id": "c388815d-81e1-4b1a-8d45-c75d9dddbf17",
+      "title": "Sommerfest",
+      "image_url": "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6",
+      "category": "Events",
+      "created_at": "2025-02-18T19:43:00.964944+00:00"
+    },
+    {
+      "id": "748b4b0b-4254-469e-b58f-717d19b9f330",
+      "title": "Gourmet Buffet",
+      "image_url": "https://images.unsplash.com/photo-1555244162-803834f70033",
+      "category": "Catering",
+      "created_at": "2025-02-18T19:43:00.964944+00:00"
+    },
+    {
+      "id": "15891246-77e7-4f4e-b874-8e4cbd04c5c8",
+      "title": "Cocktail Party",
+      "image_url": "https://images.unsplash.com/photo-1470337458703-46ad1756a187",
+      "category": "Events",
+      "created_at": "2025-02-18T19:43:00.964944+00:00"
+    },
+    {
+      "id": "1cf74503-0fec-4578-9917-6d3469cb914f",
+      "title": "Konferenz Catering",
+      "image_url": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678",
+      "category": "Business",
+      "created_at": "2025-02-18T19:43:00.964944+00:00"
+    },
+    {
+      "id": "fa41e188-876f-481e-a783-1e6c25cb5318",
+      "title": "Fest`lmacher",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/iiuylbb869.jpg",
+      "category": "Catering",
+      "created_at": "2025-02-23T11:18:11.958142+00:00"
+    },
+    {
+      "id": "36f94960-5c94-455d-a183-c07fa94ec701",
+      "title": "Krebsforschungslauf",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1761912744647-u240z8vdx0g.jpg",
+      "category": "Sponsoring",
+      "created_at": "2025-10-31T12:13:27.792429+00:00"
+    },
+    {
+      "id": "282f3508-0077-4c46-803b-ff5dd6c8b912",
+      "title": "Krebsforschungslauf",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1761912770390-avnp94o6ssf.jpg",
+      "category": "Sponsoring",
+      "created_at": "2025-10-31T12:13:27.792429+00:00"
+    },
+    {
+      "id": "94229aee-b660-4599-8664-893b08315bd7",
+      "title": "Krebsforschungslauf",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1761912654964-v32a7hbv90r.jpg",
+      "category": "Sponsoring",
+      "created_at": "2025-10-31T12:11:03.984818+00:00"
+    },
+    {
+      "id": "a7b76c4a-f8ae-44d0-baf5-4b5dc9e9d0cc",
+      "title": "Krebsforschungslauf",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1761913302548-zcw4cymp9r.jpg",
+      "category": "Sponsoring",
+      "created_at": "2025-10-31T12:30:33.066191+00:00"
+    },
+    {
+      "id": "187f3875-a583-4078-ba88-bb1e514ab1df",
+      "title": "Krebsforschungslauf",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1761913337182-qribi8fldx8.jpg",
+      "category": "Sponsoring",
+      "created_at": "2025-10-31T12:30:33.066191+00:00"
+    },
+    {
+      "id": "d03493bb-c7fe-4c59-89ad-90883f810aa8",
+      "title": "Krebsforschungslauf",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1761913399065-2v1i1p4efsu.jpg",
+      "category": "Sponsoring",
+      "created_at": "2025-10-31T12:30:33.066191+00:00"
+    },
+    {
+      "id": "c4a86fe6-ba90-498b-a8d2-c50bb455d4b6",
+      "title": "Krebsforschungslauf",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1761914082690-4ju431vmcx6.JPG",
+      "category": "Sponsoring",
+      "created_at": "2025-10-31T12:34:50.991504+00:00"
+    },
+    {
+      "id": "66647050-bcd7-42f0-96da-5c94a8763454",
+      "title": "FIVERS",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788180042668-3s038rr48xy.png",
+      "category": "Sponsoring",
+      "created_at": "2026-08-31T12:40:59.87751+00:00"
+    },
+    {
+      "id": "a7ed6193-6163-499c-af7d-9c30db524dbf",
+      "title": "Fivers",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788180191797-4nfx44emj9w.JPG",
+      "category": "Sponsoring",
+      "created_at": "2026-08-31T12:43:18.292164+00:00"
+    },
+    {
+      "id": "32e0db99-0d86-4a79-96d6-2e7144959f22",
+      "title": "ECKARTSAU",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788180326223-8ptxm1yvifs.jpg",
+      "category": "Hochzeiten",
+      "created_at": "2026-08-31T12:46:02.677464+00:00"
+    },
+    {
+      "id": "fe2f70b5-5c5e-4ce9-914d-39018e9193dd",
+      "title": "Tafel",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788180406127-szlkxm7ynr.jpg",
+      "category": "Hochzeiten",
+      "created_at": "2026-08-31T12:47:18.857466+00:00"
+    },
+    {
+      "id": "b51cdab0-cd3a-42b3-96c9-b969ae16bb62",
+      "title": "Tafel",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788180475781-xey6dxocklh.jpg",
+      "category": "Hochzeiten",
+      "created_at": "2026-08-31T12:48:41.031769+00:00"
+    },
+    {
+      "id": "99c28409-ffaf-4aee-a2ed-098031f5052d",
+      "title": "Tanz",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788180583269-qqnmzjd2izl.jpg",
+      "category": "Hochzeiten",
+      "created_at": "2026-08-31T12:50:09.672828+00:00"
+    },
+    {
+      "id": "3def3cb3-6f8f-4714-86f4-04aa19da7c8a",
+      "title": "Zur Hochzeit",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788180779770-doq0pqdefzf.jpg",
+      "category": "Hochzeiten",
+      "created_at": "2026-08-31T12:53:08.735419+00:00"
+    },
+    {
+      "id": "b54186a1-f961-4d4a-9598-96583ec67269",
+      "title": "Weihnachten",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788180813279-sztoq8ek5b.JPG",
+      "category": "Weihnachten",
+      "created_at": "2026-08-31T12:53:58.790207+00:00"
+    },
+    {
+      "id": "68a2f06f-74ae-456c-9d49-1fe562fc6f8b",
+      "title": "Buffet",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788180899249-zn9ir2k1tzl.jpg",
+      "category": "Outdoor",
+      "created_at": "2026-08-31T12:55:10.197725+00:00"
+    },
+    {
+      "id": "f284f913-bf20-4f70-a32d-c3a4f3912575",
+      "title": "Galatische",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788180931686-neiexgpo1om.jpg",
+      "category": "Hochzeiten",
+      "created_at": "2026-08-31T12:55:35.319518+00:00"
+    },
+    {
+      "id": "415cacdd-bf71-4a76-814f-11267d703deb",
+      "title": "Galatische",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788180973591-kaxaxm5vry.jpg",
+      "category": "Galatische",
+      "created_at": "2026-08-31T12:56:18.105203+00:00"
+    },
+    {
+      "id": "1ed2f93f-9b71-44a2-9853-3100021604b5",
+      "title": "Galatische",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788180657523-7bozz0lrf2h.jpg",
+      "category": "Galatische",
+      "created_at": "2026-08-31T12:51:40.268195+00:00"
+    },
+    {
+      "id": "f84da891-db66-4794-92fa-3e3eea09a8fe",
+      "title": "Galatische",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788180635163-sl6kax53eg.jpg",
+      "category": "Galatische",
+      "created_at": "2026-08-31T12:50:41.461722+00:00"
+    },
+    {
+      "id": "09a13a35-f085-4f11-b67f-b23dd82ed738",
+      "title": "Buffet",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788181062168-rid1cs77q0n.jpg",
+      "category": "Buffet",
+      "created_at": "2026-08-31T12:58:23.414454+00:00"
+    },
+    {
+      "id": "25c970f0-0f87-4650-8372-fca4d90a544b",
+      "title": "Buffet",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788181125370-1pty27eknd6.jpg",
+      "category": "Buffet",
+      "created_at": "2026-08-31T12:58:49.005198+00:00"
+    },
+    {
+      "id": "e9f78311-7679-4b6f-ac06-ec9904310175",
+      "title": "Buffet",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/gallery/1788181149712-ukhvjs839mq.jpg",
+      "category": "Buffet",
+      "created_at": "2026-08-31T12:59:24.49107+00:00"
+    }
+  ],
+  "menu_categories": [
+    {
+      "id": "d96d5135-8e0b-4cb1-ba0d-6d8cc7b4b3bb",
+      "title": "Hauptgerichte",
+      "description": "Exquisite Hauptspeisen für Ihren Anlass",
+      "image_url": "https://images.unsplash.com/photo-1504674900247-0877df9cc836",
+      "order": 2,
+      "created_at": "2025-02-23T11:21:47.317593+00:00"
+    },
+    {
+      "id": "44470b1b-32af-444a-81ac-bbac589d47c7",
+      "title": "Desserts",
+      "description": "Süße Versuchungen zum Abschluss",
+      "image_url": "https://images.unsplash.com/photo-1488477181946-6428a0291777",
+      "order": 3,
+      "created_at": "2025-02-23T11:21:47.317593+00:00"
+    },
+    {
+      "id": "f01e3471-9acb-4b38-9f5f-919003272012",
+      "title": "Fingerfood & Canapés 11",
+      "description": "Kleine Köstlichkeiten für jeden Geschmack",
+      "image_url": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543",
+      "order": 1,
+      "created_at": "2025-02-23T11:21:47.317593+00:00"
+    }
+  ],
+  "menu_items": [
+    {
+      "id": "390994f5-403b-4ea5-8b3e-4b833e6338bf",
+      "category_id": "f01e3471-9acb-4b38-9f5f-919003272012",
+      "name": "Bruschetta mit Tomate und Basilikum",
+      "description": "Geröstetes Ciabatta mit frischen Tomaten und Basilikum",
+      "price": null,
+      "order": 1,
+      "created_at": "2025-02-23T11:21:47.317593+00:00"
+    },
+    {
+      "id": "c8305875-907f-4e1b-9ffb-76ceb535b729",
+      "category_id": "d96d5135-8e0b-4cb1-ba0d-6d8cc7b4b3bb",
+      "name": "Rinderfilet mit Rotweinsauce",
+      "description": "Zartes Rinderfilet mit hausgemachter Rotweinsauce",
+      "price": null,
+      "order": 1,
+      "created_at": "2025-02-23T11:21:47.317593+00:00"
+    },
+    {
+      "id": "b10351ea-a822-4790-87c4-d38f2609c81e",
+      "category_id": "44470b1b-32af-444a-81ac-bbac589d47c7",
+      "name": "Crème Brûlée",
+      "description": "Klassische französische Vanille-Crème mit karamellisierter Zuckerkruste",
+      "price": null,
+      "order": 1,
+      "created_at": "2025-02-23T11:21:47.317593+00:00"
+    }
+  ],
+  "slides": [
+    {
+      "id": "1ca518d8-6a4b-4729-8b64-2f7790ad35c3",
+      "title": "Exquisites Catering",
+      "subtitle": "Kulinarische Höhepunkte für jeden Anlass",
+      "image_url": "https://images.unsplash.com/photo-1555244162-803834f70033",
+      "order": 5,
+      "created_at": "2025-02-18T19:42:56.179897+00:00"
+    },
+    {
+      "id": "592f4e62-b2f8-41ee-a7bd-d282f895ade4",
+      "title": "Professionelle Eventplanung",
+      "subtitle": "Von der Idee bis zur Umsetzung",
+      "image_url": "https://images.unsplash.com/photo-1519225421980-715cb0215aed",
+      "order": 6,
+      "created_at": "2025-02-18T19:42:56.179897+00:00"
+    },
+    {
+      "id": "b7bd2c5b-0d89-4cdb-923d-39582b9f5d4a",
+      "title": "Willkommen bei FEST'LMACHER",
+      "subtitle": "Ihr Partner für unvergessliche Events",
+      "image_url": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3",
+      "order": 4,
+      "created_at": "2025-02-18T19:42:56.179897+00:00"
+    },
+    {
+      "id": "ec906a57-a535-4229-bc0e-8e68b55949c0",
+      "title": "30 Jahre FEST'LMACHER",
+      "subtitle": "Drei Jahrzehnte Erfahrung in der Gastronomie",
+      "image_url": "https://images.unsplash.com/photo-1530062845289-9109b2c9c868?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      "order": 4,
+      "created_at": "2025-02-23T16:18:32.272304+00:00"
+    },
+    {
+      "id": "233dfcdd-0ea6-4eee-a9ef-28b239517412",
+      "title": "30 Jahre Erfahrung",
+      "subtitle": "Professionelles Catering für jeden Anlass",
+      "image_url": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      "order": 5,
+      "created_at": "2025-02-23T16:18:32.272304+00:00"
+    },
+    {
+      "id": "72d9f279-ea67-4a72-bec7-cd3f724794bb",
+      "title": "30 Jahre zufriedene Kunden",
+      "subtitle": "Ihr verlässlicher Partner für unvergessliche Events",
+      "image_url": "https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      "order": 6,
+      "created_at": "2025-02-23T16:18:32.272304+00:00"
+    }
+  ],
+  "stats": [
+    {
+      "id": "d91a6e02-d59b-4a15-96d4-e5b72773e9da",
+      "icon": "Calendar",
+      "value": "500+",
+      "label": "Events pro Jahr",
+      "order": 2,
+      "created_at": "2025-02-23T16:20:26.312806+00:00"
+    },
+    {
+      "id": "ee596d02-7de0-42d1-9087-c539b19c0854",
+      "icon": "Award",
+      "value": "30+",
+      "label": "Jahre Erfahrung",
+      "order": 3,
+      "created_at": "2025-02-23T16:20:26.312806+00:00"
+    },
+    {
+      "id": "6059f70a-191c-4afa-b013-c1340e016eef",
+      "icon": "Users",
+      "value": "1.000.000+",
+      "label": "Zufriedene Kunden",
+      "order": 1,
+      "created_at": "2025-02-23T16:20:26.312806+00:00"
+    },
+    {
+      "id": "dd66919e-a8a2-400c-90ef-68cc700242ca",
+      "icon": "Heart",
+      "value": "120%",
+      "label": "Leidenschaft",
+      "order": 4,
+      "created_at": "2025-02-23T16:20:26.312806+00:00"
+    }
+  ],
+  "sustainability_content": [
+    {
+      "id": "4123f20b-1c32-4dcd-b115-30070e7ee0ae",
+      "section": "intro",
+      "title": "Nachhaltig genießen",
+      "content": "Nachhaltigkeit ist für uns nicht nur ein Trend, sondern eine Herzensangelegenheit. Wir setzen auf regionale Produkte, umweltfreundliche Prozesse und soziale Verantwortung.",
+      "image_url": "https://images.unsplash.com/photo-1470685983317-0084951ce1ca",
+      "order": 1,
+      "created_at": "2025-02-18T19:43:48.877163+00:00"
+    },
+    {
+      "id": "a209fb81-b001-4ca1-bc83-94d3be13bedb",
+      "section": "local",
+      "title": "Regionale Partnerschaften",
+      "content": "Wir arbeiten eng mit lokalen Produzenten zusammen und beziehen unsere Zutaten vorwiegend aus der Region. So unterstützen wir die lokale Wirtschaft und minimieren Transportwege.",
+      "image_url": null,
+      "order": 2,
+      "created_at": "2025-02-18T19:43:48.877163+00:00"
+    },
+    {
+      "id": "4499f0fc-f79d-4910-9d53-1936151d9a83",
+      "section": "waste",
+      "title": "Zero Waste Konzept",
+      "content": "Durch sorgfältige Planung und innovative Lösungen reduzieren wir Lebensmittelverschwendung auf ein Minimum. Unvermeidbare Reste werden kompostiert oder an soziale Einrichtungen gespendet.",
+      "image_url": null,
+      "order": 3,
+      "created_at": "2025-02-18T19:43:48.877163+00:00"
+    },
+    {
+      "id": "853c2e41-3564-4711-a7f7-60ed89a30fc2",
+      "section": "bio",
+      "title": "Bio ",
+      "content": "Derzeit verwenden wir Bio-Produkte dort wo es Sinn macht., damit wir höchste Qualität und Nachhaltigkeit erziehlen.\nAuf Wunsch können wir gerne nur Bio-Produkte garantieren. \nWir verwenden ausschließlich Produkte aus kontrolliert Anbau und Aufzucht.",
+      "image_url": null,
+      "order": 4,
+      "created_at": "2025-02-18T19:43:48.877163+00:00"
+    }
+  ],
+  "blog_posts": [
+    {
+      "id": "095abf0a-2e00-44dd-90a1-195d1a818289",
+      "slug": "tune-into-best-live-radio-megaradio",
+      "title": "Tune Into the Best of Live Radio with Megaradio.live",
+      "content": "# Tune Into the Best of Live Radio with Megaradio.live\n\nAre you a fan of music, talk shows, news, or just love the excitement of live radio broadcasts? [Megaradio.live](<https://megaradio.live/de>) is your go-to platform for streaming free radio stations online, offering an incredible variety of genres, local stations, and international hits. Whether you're into rock, pop, schlager, or 90s classics, there's something here for everyone!\n\n## Listen to Popular Radio Stations\n\nMegaradio.live is home to some of the best radio stations, including well-known names like ORF HitRadio Ö3, Kronehit Digital, and Radio 88.6 Hard Rock. You can stream a variety of stations offering non-stop music, entertainment, and news. From ORF Radio Wien to Austrian Rock Radio, Megaradio.live brings the finest live radio shows to your fingertips.\n\nWant to catch up on your favorite hits? Check out the ORF HitRadio Ö3 stream, offering the latest tunes and exciting radio events. Love rock music? Tune in to Radio 88.6 Hard Rock and enjoy the best rock classics, fresh hits, and live DJ shows. For something more local, listen to Antenne Steiermark, where you can hear the latest updates from the region.\n\n## Explore [Multiple Genres](<https://megaradio.live/de/genre>s)\n\nMegaradio.live also offers genre-based stations to cater to every listener's preferences. Dive into the sounds of pop with stations like Kronehit Digital or experience the magic of classic rock with Austrian Rock Radio. You can also tune in to Radio Flamingo for a refreshing blend of music or experience the perfect fusion of Schlager hits at [Radio Ö3 Neu](<https://megaradio.live/d>e).![image](<https://cdn.megaradio.live/stations/radio-oe3-neu.web>p)\n\n## Stream Live Radio and Enjoy Exciting Features ![image](url)\n\nMegaradio.live isn't just about music – it's about community. You can listen to live radio broadcasts and even catch radio show guests, DJ shows, or live competitions. The platform offers on-demand radio shows, so if you missed that exciting interview or live event, you can always catch up! Whether you're listening to sports radio, comedy, talk shows, or news radio, the diverse options available make it the ultimate destination for radio lovers.\n\n## Why Choose Megaradio.live?\n\n* **Free Radio Stations:** You get access to hundreds of live and internet radio stations without any subscription.\n* **Multiple Genres:** From pop to rock, talk shows to live sports broadcasts, there's a station for every listener.\n* **On-Demand Shows:** Never miss a radio show again! Megaradio.live lets you stream radio shows whenever you want.\n* **Live Events:** Tune in to live events, concerts, and DJ performances in real-time.\n* **Local Radio:** Stream local stations from across Europe and hear news and updates from your city or region.\n\nReady to start listening? Visit [Megaradio.live](<https://megaradio.live>) to discover the best live radio experience, all for free!",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/blog/xkxvusqgv5q.png",
+      "published": true,
+      "created_at": "2025-02-23T14:08:34.567843+00:00",
+      "updated_at": "2025-02-23T16:08:10.801+00:00",
+      "meta_title": "Best Online Radio Streaming | Free Live Radio Stations | Megaradio.live",
+      "meta_description": "Discover 100,000+ free radio stations at Megaradio.live. Stream live radio online, including ORF, Kronehit, and international stations. Listen to rock, pop, news & more!",
+      "meta_keywords": "online radio, live radio, radio streaming, free radio, internet radio, ORF radio, Kronehit, Radio 88.6, Austrian radio, live music streaming, online radio stations, radio online, radio stream, internet radio stations"
+    },
+    {
+      "id": "1ff6a32f-9091-45dd-b50f-52e87d8dc045",
+      "slug": "megaradio-live-your-global-radio-destination",
+      "title": "Megaradio.live – Your Global Radio Streaming Hub",
+      "content": "# Megaradio.live – Your Global Radio Streaming Hub\n\nAre you ready to embark on a musical journey around the world? We're excited to introduce you to [Megaradio.live](https://megaradio.live/de/genres) – your ultimate destination for global radio streaming, featuring over 100,000 stations from every corner of the planet!\n\n## A World of Music at Your Fingertips\n\nImagine having access to radio stations from Paris to Tokyo, New York to Sydney, all in one place. Megaradio.live makes this possible with its extensive collection of over 100,000 radio stations from around the globe. Whether you're into pop, rock, classical, jazz, or local folk music, you'll find stations that match your taste.\n\n## Why Choose Megaradio.live?\n\n* **Massive Selection:** Access to more than 100,000 radio stations worldwide\n* **Easy Navigation:** User-friendly interface to find your favorite stations quickly\n* **Global Reach:** Listen to stations from virtually every country\n* **Cultural Discovery:** Explore music and content from different cultures\n* **Free Access:** No subscription required - just click and listen!\n\n## Features That Set Megaradio.live Apart\n\nWhat makes [Megaradio.live](https://megaradio.live/de/radios) special isn't just its vast collection of stations, but also its commitment to providing an exceptional listening experience:\n\n* High-quality streaming for crystal-clear audio\n* Station categorization by genre, country, and language\n* Easy-to-use search functionality\n* Mobile-friendly design for listening on the go\n* Regular updates with new stations\n\n## Perfect for Every Listener\n\nWhether you're:\n* An expat missing your hometown radio stations\n* A music enthusiast exploring new genres\n* A language learner seeking immersion\n* Someone who loves discovering new music and content\n\nMegaradio.live has something special for you!\n\n## Popular Stations\n\nDiscover some of our most-listened stations:\n\n* **[ORF Ö1](https://megaradio.live/de/orf-o1)** - Austria's premier cultural radio \n* **[FM4](https://megaradio.live/de/orf-o1)** - Alternative music and culture\n* **[Kronehit](https://megaradio.live/de/kronehitradio)** - Top hits and entertainment\n* **[Radio Wien](https://megaradio.live/de/radio-wien-neu)** - Local news and music\n* **[Antenne Steiermark](https://megaradio.live/de/antennesteiermark)** - Regional favorites\n\n## Music Genres for Every Taste\n\nBrowse through our extensive collection of genres:\n\n* [Pop and Contemporary Hits](https://megaradio.live/de/genres/pop)\n* [Rock and Alternative](https://megaradio.live/de/genres/rock)\n* [Classical and Jazz](https://megaradio.live/de/genres/classic-rock)\n* [Electronic and Dance](https://megaradio.live/de/genres/dance)\n* [Folk and Traditional](https://megaradio.live/de/genres/volksmusik)\n* [News and Talk Radio](https://megaradio.live/de/genres/news)\n\n## Start Your Global Radio Journey Today\n\nReady to explore the world through radio? Visit [Megaradio.live](https://megaradio.live) today and start your journey through the global airwaves. With over 100,000 stations waiting to be discovered, your next favorite radio station could be just a click away!\n\n### Quick Start Guide\n\n1. Visit [Megaradio.live](https://megaradio.live)\n2. Browse stations by country, genre, or use the search function\n3. Click on any station to start listening\n4. Enjoy your worldwide radio experience!\n\n\n![image](https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/blog/61uviqc5nuh.png)\n\n---\n\n_Keywords: radio streaming, online radio, free radio, live radio, international radio, music streaming, radio stations, internet radio, web radio, global radio, ORF radio, FM4, Kronehit_",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/blog/61uviqc5nuh.png",
+      "published": true,
+      "created_at": "2025-02-23T14:20:27.274731+00:00",
+      "updated_at": "2025-02-23T14:28:52.508+00:00",
+      "meta_title": "Megaradio.live | Free Online Radio Streaming | 100,000+ Global Stations",
+      "meta_description": "Discover 100,000+ radio stations worldwide on Megaradio.live. Stream live radio for free, including ORF, FM4, international stations, and more. Start listening now!",
+      "meta_keywords": "radio streaming, online radio, free radio, live radio, ORF radio, FM4, international radio, internet radio, radio online, music streaming, radio stations, web radio"
+    },
+    {
+      "id": "c6a5a84c-ef8d-4cb2-9018-bfe409983ac4",
+      "slug": "radio",
+      "title": "Megaradio.live – Your Global Radio Streaming Hub",
+      "content": "# Megaradio.live – Your Global Radio Streaming Hub\n\nAre you ready to embark on a musical journey around the world? We're excited to introduce you to [Megaradio.live](https://megaradio.live/de/genres) – your ultimate destination for global radio streaming, featuring over 100,000 stations from every corner of the planet!\n\n## A World of Music at Your Fingertips\n\nImagine having access to radio stations from Paris to Tokyo, New York to Sydney, all in one place. Megaradio.live makes this possible with its extensive collection of over 100,000 radio stations from around the globe. Whether you're into pop, rock, classical, jazz, or local folk music, you'll find stations that match your taste.\n\n## Why Choose Megaradio.live?\n\n* **Massive Selection:** Access to more than 100,000 radio stations worldwide\n* **Easy Navigation:** User-friendly interface to find your favorite stations quickly\n* **Global Reach:** Listen to stations from virtually every country\n* **Cultural Discovery:** Explore music and content from different cultures\n* **Free Access:** No subscription required - just click and listen!\n\n## Features That Set Megaradio.live Apart\n\nWhat makes [Megaradio.live](https://megaradio.live/de/radios) special isn't just its vast collection of stations, but also its commitment to providing an exceptional listening experience:\n\n* High-quality streaming for crystal-clear audio\n* Station categorization by genre, country, and language\n* Easy-to-use search functionality\n* Mobile-friendly design for listening on the go\n* Regular updates with new stations\n\n## Perfect for Every Listener\n\nWhether you're:\n* An expat missing your hometown radio stations\n* A music enthusiast exploring new genres\n* A language learner seeking immersion\n* Someone who loves discovering new music and content\n\nMegaradio.live has something special for you!\n\n## Popular Stations\n\nDiscover some of our most-listened stations:\n\n* **[ORF Ö1](https://megaradio.live/de/orf-o1)** - Austria's premier cultural radio \n* **[FM4](https://megaradio.live/de/orf-o1)** - Alternative music and culture\n* **[Kronehit](https://megaradio.live/de/kronehitradio)** - Top hits and entertainment\n* **[Radio Wien](https://megaradio.live/de/radio-wien-neu)** - Local news and music\n* **[Antenne Steiermark](https://megaradio.live/de/antennesteiermark)** - Regional favorites\n\n## Music Genres for Every Taste\n\nBrowse through our extensive collection of genres:\n\n* [Pop and Contemporary Hits](https://megaradio.live/de/genres/pop)\n* [Rock and Alternative](https://megaradio.live/de/genres/rock)\n* [Classical and Jazz](https://megaradio.live/de/genres/classic-rock)\n* [Electronic and Dance](https://megaradio.live/de/genres/dance)\n* [Folk and Traditional](https://megaradio.live/de/genres/volksmusik)\n* [News and Talk Radio](https://megaradio.live/de/genres/news)\n\n## Start Your Global Radio Journey Today\n\nReady to explore the world through radio? Visit [Megaradio.live](https://megaradio.live) today and start your journey through the global airwaves. With over 100,000 stations waiting to be discovered, your next favorite radio station could be just a click away!\n\n### Quick Start Guide\n\n1. Visit [Megaradio.live](https://megaradio.live)\n2. Browse stations by country, genre, or use the search function\n3. Click on any station to start listening\n4. Enjoy your worldwide radio experience!\n\n![image](https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/blog/61uviqc5nuh.png)",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T14:43:21.172+00:00",
+      "updated_at": "2025-02-23T14:43:50.041+00:00",
+      "meta_title": "",
+      "meta_description": "",
+      "meta_keywords": ""
+    },
+    {
+      "id": "896572e1-9935-4031-b391-c4cfd89b81d8",
+      "slug": "fm4orf",
+      "title": "Experience the Best of Austrian Radio – ORF, FM4 & More",
+      "content": "Step into the heart of Austria’s radio scene with Megaradio.live! Discover the iconic sounds of Austrian broadcasting—from cultural classics to modern beats.\n\n## A Journey Through Austrian Airwaves\n\nAustria is known for its rich musical heritage and innovative radio shows. With stations like ORF Ö1 and FM4, you’re always just a click away from authentic Austrian culture.\n\n## Why Austrian Radio?\n\n* **Heritage & Innovation:** Tradition meets modern music\n* **Diverse Content:** From news and talk to experimental sounds\n* **Local Flavors:** Experience regional hits and cultural gems\n\n## Featured Austrian Stations\n\nExplore our top Austrian picks:\n* **[ORF Ö1](https://megaradio.live/de/orf-o1)**\n  ![ORF Ö1](https://cdn.megaradio.live/stations/orf-o1.webp)\n* **[FM4 ORF128](https://megaradio.live/de/fm4orf128)**\n  ![FM4 ORF128](https://cdn.megaradio.live/stations/fm4-orf-128.webp)\n* **[ORF Radio Wien](https://megaradio.live/de/orf-radio-wien-pzq)**\n  ![ORF Radio Wien](https://cdn.megaradio.live/stations/orf-radio-wien.webp)\n* **[ORF Radio Kärnten](https://megaradio.live/de/orf-radio-karnten-xp9)**\n  ![ORF Radio Kärnten](https://cdn.megaradio.live/stations/orf-radio-karnten.webp)\n* **[Antenne Steiermark](https://megaradio.live/de/antennesteiermark)**\n  ![Antenne Steiermark](https://cdn.megaradio.live/stations/antenne-steiermark.svg)\n\n## Explore More Austrian Flavors\n\nVisit our [Austrian genres](https://megaradio.live/de/genres) section to discover everything from pop and rock to traditional Schlager.\n\n## Start Your Austrian Radio Journey\n\nTune in and enjoy the best of Austrian radio right now!\n\n### Quick Start Guide\n\n1. Visit [Megaradio.live](https://megaradio.live)\n2. Select the Austrian category or use the search tool\n3. Click your favorite station to listen live\n4. Experience the rich sounds of Austria!\n\n![Austrian Radio](https://cdn.megaradio.live/stations/orf-o1.webp)\nBlog Post 3\nmarkdown\nCopy\n# Rock On with Megaradio.live – Your Ultimate Rock Experience\n\nIf rock is your passion, Megaradio.live is your go-to hub for the best rock and hard rock stations from across Europe and beyond.\n\n## Crank Up the Volume\n\nRock music’s raw energy and attitude come alive on Megaradio.live. Enjoy everything from classic rock anthems to the latest alternative sounds.\n\n## Why Rock Radio?\n\n* **Unmatched Energy:** Feel the pulse of powerful guitar riffs and electrifying vocals\n* **Diverse Rock Genres:** From hard rock to indie and alternative\n* **Continuous Play:** Stream your favorite rock tracks 24/7\n\n## Top Rock Stations\n\nGet your rock fix with these favorites:\n* **[Austrian Rock Radio PPW](https://megaradio.live/de/austrian-rock-radio-ppw)**\n  ![Austrian Rock Radio](https://cdn.megaradio.live/stations/austrian-rock-radio.webp)\n* **[Arabella Rock](https://megaradio.live/de/arabellarock)**\n  ![Arabella Rock](https://cdn.megaradio.live/stations/arabella-rock.webp)\n* **[886 Hard Rock](https://megaradio.live/de/886hardrock)**\n  ![886 Hard Rock](https://cdn.megaradio.live/stations/886-hard-rock.webp)\n* **[Radio 886](https://megaradio.live/de/radio-886)**\n  ![Radio 886](https://cdn.megaradio.live/stations/radio-886.webp)\n\n## Rock Genres for Every Mood\n\nExplore more rock vibes:\n* [Rock & Alternative](https://megaradio.live/de/genres/rock)\n* [Hits & 90s Rock](https://megaradio.live/de/genres/hits)\n\n## Join the Rock Revolution\n\nDive into a world of dynamic rock and let Megaradio.live be your soundtrack!\n\n### Quick Start Guide\n\n1. Head over to [Megaradio.live](https://megaradio.live)\n2. Choose the Rock genre or search for a station\n3. Hit play and rock out!\n4. Let the music fuel your day\n\n![Rock On](https://cdn.megaradio.live/stations/886-hard-rock.webp)\nBlog Post 4\nmarkdown\nCopy\n# Pop Hits & 90s Vibes – Nostalgia Meets Modern Streaming\n\nRelive the golden era of pop and 90s hits while enjoying today’s digital streaming—only on Megaradio.live.\n\n## A Blast from the Past\n\nStep back into the 90s and groove to pop classics that defined a generation. With our curated stations, nostalgia is only a click away.\n\n## Why Tune into Pop & 90s?\n\n* **Unforgettable Beats:** Enjoy iconic hits and chart-toppers\n* **Timeless Classics:** Experience the best of past and present\n* **Dynamic Playlists:** Perfect for every mood and moment\n\n## Featured Pop & 90s Stations\n\nGet started with these top picks:\n* **[Kronehit Digital](https://megaradio.live/de/kronehitdigital)**\n  ![Kronehit Digital](https://cdn.megaradio.live/stations/kronehit-digital.webp)\n* **[RadioFlamingo TMU](https://megaradio.live/de/radioflamingo-tmu)**\n  ![RadioFlamingo TMU](https://cdn.megaradio.live/stations/wiRpzWAgZkFZXUnh0KXY58DVmRrqhdgPCPJCPQVb.png)\n* **[Radio 886](https://megaradio.live/de/radio-886)**\n  ![Radio 886](https://cdn.megaradio.live/stations/radio-886.webp)\n\n## Explore the Genres\n\nBrowse our genre sections for more:\n* [Pop](https://megaradio.live/de/genres/pop)\n* [Hits](https://megaradio.live/de/genres/hits)\n* [90s Classics](https://megaradio.live/de/genres/90s)\n\n## Relive & Rejoice\n\nWhether you’re seeking a trip down memory lane or a fresh pop hit, Megaradio.live has it all.\n\n### Quick Start Guide\n\n1. Visit [Megaradio.live](https://megaradio.live)\n2. Navigate to the Pop or 90s section\n3. Select your favorite station and press play\n4. Enjoy a seamless blend of nostalgia and modern beats\n\n![Pop & 90s Vibes](https://cdn.megaradio.live/stations/kronehit-digital.webp)\n",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T14:46:29.549+00:00",
+      "updated_at": "2025-02-23T14:46:36.779+00:00",
+      "meta_title": "",
+      "meta_description": "",
+      "meta_keywords": ""
+    },
+    {
+      "id": "78d5ccc4-cd91-4cae-a951-4c9bb5502ff8",
+      "slug": "megaradios",
+      "title": "Dive into Digital Beats – Explore Cutting-Edge Radio Streaming",
+      "content": "Step into the future of radio with Megaradio.live. Experience digital beats and innovative streaming technology that make listening easier than ever.\n\n## Embrace the Digital Revolution\n\nModern radio isn’t just about sound—it’s an immersive digital experience. From high-quality streaming to smart categorization, we’re redefining how you listen.\n\n## Why Digital Radio?\n\n* **State-of-the-Art Streaming:** Crystal-clear audio without interruptions\n* **Innovative Interface:** Intuitive design for effortless navigation\n* **24/7 Access:** Always on, always streaming\n\n## Top Digital Stations\n\nExperience the future with these forward-thinking stations:\n* **[Radio OE3 Neu](https://megaradio.live/de/radio-oe3-neu)**\n  ![Radio OE3 Neu](https://cdn.megaradio.live/stations/radio-oe3-neu.webp)\n* **[RadioFlamingo TMU](https://megaradio.live/de/radioflamingo-tmu)**\n  ![RadioFlamingo TMU](https://cdn.megaradio.live/stations/wiRpzWAgZkFZXUnh0KXY58DVmRrqhdgPCPJCPQVb.png)\n\n## Explore the Digital Difference\n\nDiscover how our platform brings digital innovation to your fingertips—whether you’re at home or on the move.\n\n## The Future Is Now\n\nJoin the digital revolution and redefine your radio experience with Megaradio.live.\n\n### Quick Start Guide\n\n1. Visit [Megaradio.live](https://megaradio.live)\n2. Explore our digital and modern radio categories\n3. Click on a station and enjoy seamless streaming\n4. Experience the future of radio today\n\n![Digital Beats](https://cdn.megaradio.live/stations/wiRpzWAgZkFZXUnh0KXY58DVmRrqhdgPCPJCPQVb.png)",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T14:47:53.35+00:00",
+      "updated_at": "2025-02-23T14:47:53.35+00:00",
+      "meta_title": "",
+      "meta_description": "",
+      "meta_keywords": ""
+    },
+    {
+      "id": "63144591-2604-4cd7-9d5d-9e8bbc1ab9be",
+      "slug": "stations",
+      "title": "Local Flavor, Global Reach – Discover European Radio Stations",
+      "content": "Connect with the local vibe while enjoying a global listening experience. Megaradio.live brings Europe’s best radio stations right to your device.\n\n## A Taste of Europe\n\nFrom the bustling streets of Vienna to the cozy corners of regional towns, European radio offers a rich mix of culture, news, and music.\n\n## Why European Radio?\n\n* **Local Charm:** Authentic, region-specific programming\n* **Global Accessibility:** Stream local stations from anywhere in the world\n* **Cultural Diversity:** Discover music and talk shows that reflect Europe’s heritage\n\n## Must-Listen European Stations\n\nExperience local flavor with these top picks:\n* **[ORF Radio Wien](https://megaradio.live/de/orf-radio-wien-pzq)**\n  ![ORF Radio Wien](https://cdn.megaradio.live/stations/orf-radio-wien.webp)\n* **[ORF Radio Kärnten](https://megaradio.live/de/orf-radio-karnten-xp9)**\n  ![ORF Radio Kärnten](https://cdn.megaradio.live/stations/orf-radio-karnten.webp)\n* **[Antenne Steiermark](https://megaradio.live/de/antennesteiermark)**\n  ![Antenne Steiermark](https://cdn.megaradio.live/stations/antenne-steiermark.svg)\n\n## Explore European Genres\n\nBrowse our European genres for more local and international mixes:\n* [Pop](https://megaradio.live/de/genres/pop)\n* [Rock](https://megaradio.live/de/genres/rock)\n\n## Experience Local & Global\n\nEnjoy the best of local European radio with a worldwide reach—only on Megaradio.live.\n\n### Quick Start Guide\n\n1. Head to [Megaradio.live](https://megaradio.live)\n2. Select your region or favorite European genre\n3. Click a station to listen live\n4. Savor the blend of local flavor and global access\n\n![European Radio](https://cdn.megaradio.live/stations/orf-radio-wien.webp)\n",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T14:48:41.455+00:00",
+      "updated_at": "2025-02-23T14:48:47.253+00:00",
+      "meta_title": "",
+      "meta_description": "",
+      "meta_keywords": ""
+    },
+    {
+      "id": "0b7c478f-10ff-4a80-ab08-74b0fc9ad102",
+      "slug": "genres",
+      "title": "Niche Genres on Megaradio.live – From Schlager to Indie",
+      "content": "# Niche Genres on Megaradio.live – From Schlager to Indie\n\nDiscover a world beyond the mainstream. Megaradio.live offers niche genres that cater to every unique taste—from traditional Schlager to cutting-edge indie sounds.\n\n## Embrace the Unconventional\n\nNiche genres let you explore music that defies the ordinary. Whether you’re in the mood for heartwarming Schlager or fresh indie beats, we’ve got you covered.\n\n## Why Go Niche?\n\n* **Unique Sounds:** Experience music beyond the top 40\n* **Diverse Programming:** Find hidden gems and underground artists\n* **Community & Culture:** Connect with like-minded listeners\n\n## Featured Niche Stations & Genres\n\nUnearth your new favorites:\n* **Discover traditional vibes with our [Schlager](https://megaradio.live/de/genres/schlager) selection**\n* **Explore indie and alternative sounds with curated station lists**\n* **[RadioFlamingo TMU](https://megaradio.live/de/radioflamingo-tmu)** for a taste of unconventional programming  \n  ![RadioFlamingo TMU](https://cdn.megaradio.live/stations/wiRpzWAgZkFZXUnh0KXY58DVmRrqhdgPCPJCPQVb.png)\n\n## More Unique Genres\n\nExpand your musical horizons:\n* [Pop](https://megaradio.live/de/genres/pop) for modern twists\n* [90s Classics](https://megaradio.live/de/genres/90s) for nostalgic journeys\n\n## Go Niche, Go Bold\n\nStep off the beaten path and explore niche genres on Megaradio.live.\n\n### Quick Start Guide\n\n1. Visit [Megaradio.live](https://megaradio.live)\n2. Browse the niche genre sections\n3. Select a station that sparks your interest\n4. Enjoy an exclusive musical adventure\n\n![Niche Genres](https://cdn.megaradio.live/stations/antenne-steiermark.svg)\n",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T14:49:10.125+00:00",
+      "updated_at": "2025-02-23T14:49:10.125+00:00",
+      "meta_title": "",
+      "meta_description": "",
+      "meta_keywords": ""
+    },
+    {
+      "id": "ab0b1eca-0629-4a3e-9516-1887e325b395",
+      "slug": "orf1",
+      "title": "Seamless Streaming Experience – Redefining Radio Listening",
+      "content": "At Megaradio.live, we believe that great music deserves a flawless streaming experience. Discover how we’re redefining radio listening with cutting-edge technology and an intuitive interface.\n\n## Effortless Listening\n\nEnjoy uninterrupted, high-quality audio wherever you are. Our platform is designed to make radio streaming as seamless as possible.\n\n## What Sets Us Apart?\n\n* **Superior Audio Quality:** Enjoy crystal-clear streams\n* **User-Friendly Interface:** Find your favorite stations in seconds\n* **Mobile-Optimized:** Listen on the go, anytime, anywhere\n* **Constant Innovation:** We’re always updating with new stations\n\n## Top Stations for a Flawless Experience\n\nExperience seamless streaming with these picks:\n* **[Radio OE3 Neu](https://megaradio.live/de/radio-oe3-neu)**\n  ![Radio OE3 Neu](https://cdn.megaradio.live/stations/radio-oe3-neu.webp)\n* **[ORF Ö1](https://megaradio.live/de/orf-o1)**\n  ![ORF Ö1](https://cdn.megaradio.live/stations/orf-o1.webp)\n* **[FM4 ORF128](https://megaradio.live/de/fm4orf128)**\n  ![FM4 ORF128](https://cdn.megaradio.live/stations/fm4-orf-128.webp)\n\n## Explore More Features\n\nBrowse our diverse genres:\n* [Pop](https://megaradio.live/de/genres/pop)\n* [Rock](https://megaradio.live/de/genres/rock)\n* [News](https://megaradio.live/de/genres/hits)\n\n## Redefine Your Listening Experience\n\nJoin the millions of users enjoying a seamless radio experience on Megaradio.live.\n\n### Quick Start Guide\n\n1. Visit [Megaradio.live](https://megaradio.live)\n2. Use our simple search or browse by genre\n3. Click to start streaming\n4. Enjoy radio like never before!\n\n![Seamless Streaming](https://cdn.megaradio.live/stations/radio-oe3-neu.webp)\n",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T14:49:43.183+00:00",
+      "updated_at": "2025-02-23T14:49:43.184+00:00",
+      "meta_title": "Seamless Streaming Experience – Redefining Radio Listening",
+      "meta_description": "",
+      "meta_keywords": ""
+    },
+    {
+      "id": "9f0046ec-9974-4f85-92bf-8042cd2e3923",
+      "slug": "arabella",
+      "title": "Connect, Discover & Listen – The Future of Radio is Here",
+      "content": "Step into a new era of radio with Megaradio.live, where connectivity meets discovery. Our platform makes it easy to connect with global cultures and enjoy live broadcasts from around the world.\n\n## The Future of Radio Listening\n\nWe’re not just streaming radio—we’re creating a community. Discover live DJ shows, exclusive interviews, and curated playlists that bring people together.\n\n## Why Connect on Megaradio.live?\n\n* **Instant Access:** Over 100,000 stations at your fingertips\n* **Community Focused:** Engage with live events and radio competitions\n* **Always Evolving:** Regular updates with fresh content and features\n\n## Featured Stations to Get You Started\n\nConnect with these dynamic stations:\n* **[ORF Radio Wien](https://megaradio.live/de/orf-radio-wien-pzq)**\n  ![ORF Radio Wien](https://cdn.megaradio.live/stations/orf-radio-wien.webp)\n* **[Radio 886](https://megaradio.live/de/radio-886)**\n  ![Radio 886](https://cdn.megaradio.live/stations/radio-886.webp)\n* **[Arabella Rock](https://megaradio.live/de/arabellarock)**\n  ![Arabella Rock](https://cdn.megaradio.live/stations/arabella-rock.webp)\n\n## Discover More & Connect\n\nExplore our full range of genres:\n* [Pop](https://megaradio.live/de/genres/pop)\n* [Rock](https://megaradio.live/de/genres/rock)\n* [Schlager](https://megaradio.live/de/genres/schlager)\n\n## Your Radio Journey Begins Now\n\nJoin us on Megaradio.live to connect, discover, and listen—because the future of radio is already here.\n\n### Quick Start Guide\n\n1. Visit [Megaradio.live](https://megaradio.live)\n2. Browse stations or use the search function\n3. Click on a station to start listening\n4. Connect with a global community of radio enthusiasts\n\n![Future of Radio](https://cdn.megaradio.live/stations/orf-radio-wien.webp)\n",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T14:51:10.64+00:00",
+      "updated_at": "2025-02-23T14:51:10.64+00:00",
+      "meta_title": "Connect, Discover & Listen – The Future of Radio is Here",
+      "meta_description": "The Future of Radio Listening\n\nWe’re not just streaming radio—we’re creating a community. Discover live DJ shows, exclusive interviews, and curated playlists that bring people together.",
+      "meta_keywords": ""
+    },
+    {
+      "id": "c5610d51-24f4-455f-a328-8f8cad64c8cf",
+      "slug": "austrianradio",
+      "title": "Austrian Radio Excellence on Megaradio.live – Must Listen",
+      "content": "Immerse yourself in the rich cultural heritage and innovative programming of Austrian radio on [Megaradio.live](https://megaradio.live/de). Discover a selection of stations that capture the essence of Austria’s musical and cultural landscape.\n\n## Experience the Best of Austrian Radio\n\nTune into these iconic stations:\n* **[ORF Ö1](https://megaradio.live/de/orf-o1)**  \n  ![ORF Ö1](https://cdn.megaradio.live/stations/orf-o1.webp)  \n  Austria’s premier cultural and talk radio station.\n* **[FM4 ORF128](https://megaradio.live/de/fm4orf128)**  \n  ![FM4 ORF128](https://cdn.megaradio.live/stations/fm4-orf-128.webp)  \n  Alternative music and creative programming.\n* **[ORF Radio Wien](https://megaradio.live/de/orf-radio-wien-pzq)**  \n  ![ORF Radio Wien](https://cdn.megaradio.live/stations/orf-radio-wien.webp)  \n  Local news, music, and engaging talk shows.\n* **[ORF Radio Kärnten](https://megaradio.live/de/orf-radio-karnten-xp9)**  \n  ![ORF Radio Kärnten](https://cdn.megaradio.live/stations/orf-radio-karnten.webp)  \n  Bringing regional flavor and vibrant content to your airwaves.\n* **[Antenne Steiermark](https://megaradio.live/de/antennesteiermark)**  \n  ![Antenne Steiermark](https://cdn.megaradio.live/stations/antenne-steiermark.svg)  \n  The go-to station for regional favorites and lively discussions.\n\n## Why Listen to Austrian Radio?\n\n* **Cultural Richness:** Discover a blend of tradition and modernity.\n* **Local Insights:** Stay updated with local news and community events.\n* **Innovative Content:** Enjoy unique programming tailored to every taste.\n\n## Start Your Austrian Radio Journey\n\nVisit [Megaradio.live](https://megaradio.live) to tune in and experience the best of Austrian radio today.\n\n### Quick Start Guide\n\n1. Visit [Megaradio.live](https://megaradio.live)\n2. Select the Austrian category or search for a station.\n3. Click on your chosen station to start listening.\n4. Immerse yourself in Austria’s cultural soundscape!\n\n![Austrian Radio](https://cdn.megaradio.live/stations/orf-o1.webp)\n",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T14:54:19.87+00:00",
+      "updated_at": "2025-02-23T14:54:19.87+00:00",
+      "meta_title": "Austrian Radio Excellence on Megaradio.live – Must Listen",
+      "meta_description": "Immerse yourself in the rich cultural heritage and innovative programming of Austrian radio on [Megaradio.live](https://megaradio.live/de). Discover a selection of stations that capture the essence of Austria’s musical and cultural landscape.",
+      "meta_keywords": "radio streaming, online radio, free radio, live radio, ORF radio, FM4, international radio, internet radio, radio online, music streaming, radio stations, web radio"
+    },
+    {
+      "id": "04d42930-e1ae-4ae3-ba48-bafe32e8e97e",
+      "slug": "austrianrock1",
+      "title": "Rock & Roll Unleashed on Megaradio.live – Your Rock Station Guide",
+      "content": "If you’re a rock music enthusiast, Megaradio.live offers a stellar selection of rock stations that deliver raw energy and timeless tunes. Discover the best rock stations streaming live right now.\n\n## Top Rock Stations to Crank Up the Volume\n\nExperience the power of rock with these standout stations:\n* **[886 Hard Rock](https://megaradio.live/de/886hardrock)**  \n  ![886 Hard Rock](https://cdn.megaradio.live/stations/886-hard-rock.webp)  \n  Get ready for an electrifying mix of hard rock anthems.\n* **[Austrian Rock Radio PPW](https://megaradio.live/de/austrian-rock-radio-ppw)**  \n  ![Austrian Rock Radio PPW](https://cdn.megaradio.live/stations/austrian-rock-radio.webp)  \n  Your destination for pure rock energy and classic riffs.\n* **[Arabella Rock](https://megaradio.live/de/arabellarock)**  \n  ![Arabella Rock](https://cdn.megaradio.live/stations/arabella-rock.webp)  \n  Stream the best rock tracks and stay on top of the latest hits.\n* **[Radio 886](https://megaradio.live/de/radio-886)**  \n  ![Radio 886](https://cdn.megaradio.live/stations/radio-886.webp)  \n  Enjoy a robust lineup of rock music from legendary to new artists.\n\n## Why Rock on Megaradio.live?\n\n* **High Energy:** Rock stations that keep you pumped all day.\n* **Diverse Rock Genres:** From hard rock to alternative and indie.\n* **Continuous Play:** Never miss a beat with 24/7 streaming.\n\n## Start Your Rock Journey Today\n\nVisit [Megaradio.live](https://megaradio.live) to explore these and more rock stations that fuel your passion for rock & roll.\n\n### Quick Start Guide\n\n1. Head over to [Megaradio.live](https://megaradio.live)\n2. Browse the Rock category or search for a station.\n3. Click your favorite station and start rocking out.\n4. Let the music power your day!\n\n![Rock & Roll](https://cdn.megaradio.live/stations/886-hard-rock.webp)\n",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T14:55:09.892+00:00",
+      "updated_at": "2025-02-23T14:55:09.892+00:00",
+      "meta_title": "Rock & Roll Unleashed on Megaradio.live – Your Rock Station Guide",
+      "meta_description": "",
+      "meta_keywords": ""
+    },
+    {
+      "id": "590294d5-3916-480c-83e3-4db567a75453",
+      "slug": "popularglobal",
+      "title": "Top Popular Stations on Megaradio.live – Global Hits",
+      "content": "# Top Popular Stations on Megaradio.live – Global Hits\n\nDiscover the best of live radio streaming on [Megaradio.live](https://megaradio.live). Our platform offers an extensive collection of over 100,000 stations, and here are some of the most popular ones streaming from around the globe!\n\n## Global Hits to Keep You Tuned In\n\nFrom cultural radio to modern pop and rock, our top stations include:\n* **[ORF Hitradio O3](https://megaradio.live/de/orfhitradioo3)**  \n  ![ORF Hitradio O3](https://cdn.megaradio.live/stations/orf-hitradio-o3.webp)  \n  Experience Austria’s energetic hit tunes that keep you in the groove.\n* **[ORF Ö1](https://megaradio.live/de/orf-o1)**  \n  ![ORF Ö1](https://cdn.megaradio.live/stations/orf-o1.webp)  \n  Dive into cultural programming and insightful talk shows.\n* **[FM4 ORF128](https://megaradio.live/de/fm4orf128)**  \n  ![FM4 ORF128](https://cdn.megaradio.live/stations/fm4-orf-128.webp)  \n  Enjoy a blend of alternative music and modern culture.\n* **[Kronehit Digital](https://megaradio.live/de/kronehitdigital)**  \n  ![Kronehit Digital](https://cdn.megaradio.live/stations/kronehit-digital.webp)  \n  Stream top hits and entertainment from one of Austria’s favorite stations.\n\n## Why Choose Megaradio.live?\n\n* **Massive Selection:** Listen to over 100,000 radio stations worldwide.\n* **User-Friendly:** Easily navigate and find your favorite stations.\n* **Free Streaming:** Enjoy live radio without any subscriptions.\n\n## Start Your Global Radio Journey\n\nReady to explore the world of music and talk shows? Visit [Megaradio.live](https://megaradio.live) and tune into these popular stations for an unforgettable listening experience.\n\n### Quick Start Guide\n\n1. Go to [Megaradio.live](https://megaradio.live)\n2. Browse or search for your favorite station.\n3. Click on the station to start streaming live.\n4. Enjoy your global radio journey!\n\n![Global Hits](https://cdn.megaradio.live/stations/orf-o1.webp)\n",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T14:53:42.647+00:00",
+      "updated_at": "2025-02-23T16:09:45.339+00:00",
+      "meta_title": "Top Popular Stations on Megaradio.live – Global Hits",
+      "meta_description": "Discover the best of live radio streaming on [Megaradio.live](https://megaradio.live). Our platform offers an extensive collection of over 100,000 stations, and here are some of the most popular ones streaming from around the globe!",
+      "meta_keywords": ""
+    },
+    {
+      "id": "9fc591a2-3b5c-415e-ba3c-00c5cd883793",
+      "slug": "globalstations",
+      "title": "Worldwide Radio Journey – Explore Global Live Stations",
+      "content": "# Worldwide Radio Journey – Explore Global Live Stations\n\nEmbark on a musical adventure with [Megaradio.live](https://megaradio.live), where you can tune in to some of the world's most popular radio stations—all in one place. From Europe to North America and Asia, here’s a collection of top stations representing different countries.\n\n## Popular Stations from Around the Globe\n\n* **[ORF Ö1 (Austria)](https://megaradio.live/de/orf-o1)**  \n  ![ORF Ö1](https://cdn.megaradio.live/stations/orf-o1.webp)  \n  Dive into cultural insights, news, and engaging talk shows from Austria's premier station.\n\n* **[Radio France Internationale (RFI) – France](https://megaradio.live/fr/rfi)**  \n  ![RFI](https://cdn.megaradio.live/stations/rfi.webp)  \n  Enjoy international news and cultural programs with a French flair.\n\n* **[TRT FM – Turkey](https://megaradio.live/tr/trt-fm)**  \n  ![TRT FM](https://cdn.megaradio.live/stations/trt-fm.webp)  \n  Experience dynamic programming blending music, news, and Turkish culture.\n\n* **[RAI Radio 1 – Italy](https://megaradio.live/it/rai-radio1)**  \n  ![RAI Radio 1](https://cdn.megaradio.live/stations/rai-radio1.webp)  \n  Listen to a mix of news, talk shows, and classic Italian hits.\n\n* **[NPR – United States](https://megaradio.live/us/npr)**  \n  ![NPR](https://cdn.megaradio.live/stations/npr.webp)  \n  Tune into thought-provoking news and storytelling that shape American culture.\n\n* **[CBC Radio One – Canada](https://megaradio.live/ca/cbc-radio-one)**  \n  ![CBC Radio One](https://cdn.megaradio.live/stations/cbc-radio-one.webp)  \n  Stay updated with quality news and regional programming from Canada.\n\n* **[NHK Radio – Japan](https://megaradio.live/jp/nhk-radio)**  \n  ![NHK Radio](https://cdn.megaradio.live/stations/nhk-radio.webp)  \n  Enjoy a blend of news, culture, and entertainment from Japan’s public broadcaster.\n\n* **[All India Radio – India](https://megaradio.live/in/air)**  \n  ![All India Radio](https://cdn.megaradio.live/stations/all-india-radio.webp)  \n  Discover diverse programming that celebrates India’s rich heritage.\n\n* **[Cool FM Nigeria – Nigeria](https://megaradio.live/ng/cool-fm)**  \n  ![Cool FM Nigeria](https://cdn.megaradio.live/stations/cool-fm-nigeria.webp)  \n  Jam to the latest hits and lively talk shows from Nigeria’s top station.\n\n* **[SAfm – South Africa](https://megaradio.live/za/safm)**  \n  ![SAfm](https://cdn.megaradio.live/stations/safm.webp)  \n  Experience quality programming that combines music, news, and cultural insights.\n\n* **[BBC Radio 1 – United Kingdom](https://megaradio.live/uk/bbc-radio1)**  \n  ![BBC Radio 1](https://cdn.megaradio.live/stations/bbc-radio1.webp)  \n  Get into the groove with the latest chart-toppers and eclectic mixes from the UK.\n\n## Quick Start Guide\n\n1. Visit [Megaradio.live](https://megaradio.live)\n2. Use the country selector or search tool to explore.\n3. Click on a station to start streaming live.\n4. Enjoy your global radio journey!\n\n![Worldwide Radio](https://cdn.megaradio.live/stations/orf-o1.webp)\n",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T14:59:40.763+00:00",
+      "updated_at": "2025-02-23T14:59:46.119+00:00",
+      "meta_title": "Worldwide Radio Journey – Explore Global Live Stations",
+      "meta_description": "",
+      "meta_keywords": "radio streaming, online radio, free radio, live radio, ORF radio, FM4, international radio, internet radio, radio online, music streaming, radio stations, web radio, radyo, radyo dinle, canli dinle, höre radio, radio hören, beste radios, beste radio, beste app, radio app,"
+    },
+    {
+      "id": "0b053aae-6da1-4b65-b30e-06e9da950d93",
+      "slug": "turkey",
+      "title": "Ultimate Guide to Turkish Radio – 30 Must-Listen Stations from Turkey",
+      "content": "# Ultimate Guide to Turkish Radio – 30 Must-Listen Stations from Turkey\n\nExperience the vibrant sounds of Turkey with [Megaradio.live](https://megaradio.live). We’ve curated a list of 30 top Turkish radio stations that offer everything from news and talk shows to pop, rock, and cultural tunes—all in one place!\n\n## Popular Turkish Radio Stations\n\n* **[TRT FM](https://megaradio.live/tr/trt-fm)**  \n  ![TRT FM](https://cdn.megaradio.live/stations/trt-fm.webp)  \n  Enjoy a mix of news, music, and cultural programming from Turkey’s national broadcaster.\n\n* **[TRT Radyo 1](https://megaradio.live/tr/trt-radyo1)**  \n  ![TRT Radyo 1](https://cdn.megaradio.live/stations/trt-radyo1.webp)  \n  Tune in for insightful talk shows and comprehensive news coverage.\n\n* **[TRT Türkü](https://megaradio.live/tr/trt-turku)**  \n  ![TRT Türkü](https://cdn.megaradio.live/stations/trt-turku.webp)  \n  Experience traditional Turkish folk music and cultural narratives.\n\n* **[TRT Radyo 2](https://megaradio.live/tr/trt-radyo2)**  \n  ![TRT Radyo 2](https://cdn.megaradio.live/stations/trt-radyo2.webp)  \n  Get your daily dose of news, debates, and music.\n\n* **[Kral FM](https://megaradio.live/tr/kral-fm)**  \n  ![Kral FM](https://cdn.megaradio.live/stations/kral-fm.webp)  \n  Listen to Turkey’s top hits and pop music mix.\n\n* **[Kral Pop](https://megaradio.live/tr/kral-pop)**  \n  ![Kral Pop](https://cdn.megaradio.live/stations/kral-pop.webp)  \n  Enjoy a nonstop stream of the latest pop tracks.\n\n* **[Power Türk](https://megaradio.live/tr/power-turk)**  \n  ![Power Türk](https://cdn.megaradio.live/stations/power-turk.webp)  \n  Experience dynamic urban beats and chart-topping hits.\n\n* **[Show Radyo](https://megaradio.live/tr/show-radyo)**  \n  ![Show Radyo](https://cdn.megaradio.live/stations/show-radyo.webp)  \n  Dive into a lively blend of entertainment, talk shows, and music.\n\n* **[Fenomen Radyo](https://megaradio.live/tr/fenomen-radyo)**  \n  ![Fenomen Radyo](https://cdn.megaradio.live/stations/fenomen-radyo.webp)  \n  Enjoy a contemporary mix of trending tunes and engaging programs.\n\n* **[Best FM](https://megaradio.live/tr/best-fm)**  \n  ![Best FM](https://cdn.megaradio.live/stations/best-fm.webp)  \n  Listen to a wide variety of music and popular talk segments.\n\n* **[Joy Türk](https://megaradio.live/tr/joy-turk)**  \n  ![Joy Türk](https://cdn.megaradio.live/stations/joy-turk.webp)  \n  Get into the groove with upbeat music and lively shows.\n\n* **[Alem FM](https://megaradio.live/tr/alem-fm)**  \n  ![Alem FM](https://cdn.megaradio.live/stations/alem-fm.webp)  \n  Experience a mix of international and Turkish hits.\n\n* **[Metro FM](https://megaradio.live/tr/metro-fm)**  \n  ![Metro FM](https://cdn.megaradio.live/stations/metro-fm.webp)  \n  Enjoy urban rhythms and contemporary music.\n\n* **[Radyo Viva](https://megaradio.live/tr/radyo-viva)**  \n  ![Radyo Viva](https://cdn.megaradio.live/stations/radyo-viva.webp)  \n  Tune in for an energetic blend of music and entertainment.\n\n* **[Radyo D](https://megaradio.live/tr/radyo-d)**  \n  ![Radyo D](https://cdn.megaradio.live/stations/radyo-d.webp)  \n  Enjoy a diverse mix of genres and engaging programming.\n\n* **[Süper FM](https://megaradio.live/tr/super-fm)**  \n  ![Süper FM](https://cdn.megaradio.live/stations/super-fm.webp)  \n  Listen to a vibrant selection of Turkish and international hits.\n\n* **[Radyo 3](https://megaradio.live/tr/radyo-3)**  \n  ![Radyo 3](https://cdn.megaradio.live/stations/radyo-3.webp)  \n  Experience fresh music and interactive talk shows.\n\n* **[Radyo Dünya](https://megaradio.live/tr/radyo-dunya)**  \n  ![Radyo Dünya](https://cdn.megaradio.live/stations/radyo-dunya.webp)  \n  Get a global perspective with local flavor in every broadcast.\n\n* **[Radyo Mix](https://megaradio.live/tr/radyo-mix)**  \n  ![Radyo Mix](https://cdn.megaradio.live/stations/radyo-mix.webp)  \n  Enjoy an eclectic mix of songs across genres.\n\n* **[Radyo Müzik](https://megaradio.live/tr/radyo-muzik)**  \n  ![Radyo Müzik](https://cdn.megaradio.live/stations/radyo-muzik.webp)  \n  Dive into a continuous stream of musical masterpieces.\n\n* **[Radyo Pop](https://megaradio.live/tr/radyo-pop)**  \n  ![Radyo Pop](https://cdn.megaradio.live/stations/radyo-pop.webp)  \n  Listen to the best of pop music from Turkey and beyond.\n\n* **[Radyo Sevgi](https://megaradio.live/tr/radyo-sevgi)**  \n  ![Radyo Sevgi](https://cdn.megaradio.live/stations/radyo-sevgi.webp)  \n  Experience heartwarming programs and classic love songs.\n\n* **[Radyo Hayat](https://megaradio.live/tr/radyo-hayat)**  \n  ![Radyo Hayat](https://cdn.megaradio.live/stations/radyo-hayat.webp)  \n  Enjoy a lively mix of talk, music, and news that brings life to your day.\n\n* **[Radyo Ritim](https://megaradio.live/tr/radyo-ritim)**  \n  ![Radyo Ritim](https://cdn.megaradio.live/stations/radyo-ritim.webp)  \n  Keep the beat going with rhythmic tunes and upbeat shows.\n\n* **[Radyo Enstrümantal](https://megaradio.live/tr/radyo-enstrumantal)**  \n  ![Radyo Enstrümantal](https://cdn.megaradio.live/stations/radyo-enstrumantal.webp)  \n  Relax with soothing instrumental music and ambient sounds.\n\n* **[Radyo Duygu](https://megaradio.live/tr/radyo-duygu)**  \n  ![Radyo Duygu](https://cdn.megaradio.live/stations/radyo-duygu.webp)  \n  Feel the emotions with programming that touches the heart.\n\n* **[Radyo Anadolu](https://megaradio.live/tr/radyo-anadolu)**  \n  ![Radyo Anadolu](https://cdn.megaradio.live/stations/radyo-anadolu.webp)  \n  Discover the rich sounds and traditions of the Anatolian region.\n\n* **[Radyo İstanbul](https://megaradio.live/tr/radyo-istanbul)**  \n  ![Radyo İstanbul](https://cdn.megaradio.live/stations/radyo-istanbul.webp)  \n  Stay connected with the pulse of Turkey’s largest city.\n\n* **[Radyo Bursa](https://megaradio.live/tr/radyo-bursa)**  \n  ![Radyo Bursa](https://cdn.megaradio.live/stations/radyo-bursa.webp)  \n  Enjoy regional programming and local hits from Bursa.\n\n* **[Radyo Antalya](https://megaradio.live/tr/radyo-antalya)**  \n  ![Radyo Antalya](https://cdn.megaradio.live/stations/radyo-antalya.webp)  \n  Bask in the sounds of the Mediterranean with programs from Antalya.\n\n## Quick Start Guide\n\n1. Visit [Megaradio.live](https://megaradio.live)  \n2. Navigate to the Turkish section or use the search function.  \n3. Click on any station to start streaming live.  \n4. Enjoy the diverse and dynamic sounds of Turkey!\n\n![Turkish Radio Extravaganza](https://cdn.megaradio.live/stations/trt-fm.webp)\n",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T15:03:01.56+00:00",
+      "updated_at": "2025-02-23T15:03:01.56+00:00",
+      "meta_title": "Ultimate Guide to Turkish Radio – 30 Must-Listen Stations from Turkey",
+      "meta_description": "Experience the vibrant sounds of Turkey with [Megaradio.live](https://megaradio.live). We’ve curated a list of 30 top Turkish radio stations that offer everything from news and talk shows to pop, rock, and cultural tunes—all in one place!\n",
+      "meta_keywords": "radio streaming, online radio, free radio, live radio, ORF radio, FM4, international radio, internet radio, radio online, music streaming, radio stations, web radio, radyo, radyo dinle, canli dinle, höre radio, radio hören, beste radios, beste radio, beste app, radio app,"
+    },
+    {
+      "id": "504f3670-84cb-496f-ad55-e1979302d464",
+      "slug": "europeradio",
+      "title": "Global Vibes – Diverse Stations from the Americas, Europe, & Beyond",
+      "content": "# Global Vibes – Diverse Stations from the Americas, Europe, & Beyond\n\nExplore a rich mix of radio stations from different regions on [Megaradio.live](https://megaradio.live). This curated list features unique stations from various countries, offering a taste of local culture, news, and music from every corner of the globe.\n\n## Discover Diverse Radio Sounds\n\n* **[FM4 ORF128 – Austria](https://megaradio.live/de/fm4orf128)**  \n  ![FM4 ORF128](https://cdn.megaradio.live/stations/fm4-orf-128.webp)  \n  Enjoy a blend of alternative music and modern cultural programming from Austria.\n\n* **[Cadena SER – Spain](https://megaradio.live/es/cadena-ser)**  \n  ![Cadena SER](https://cdn.megaradio.live/stations/cadena-ser.webp)  \n  Listen to Spain's flagship news and talk station with in-depth analysis and vibrant discussions.\n\n* **[Radio Russia – Russia](https://megaradio.live/ru/radio-russia)**  \n  ![Radio Russia](https://cdn.megaradio.live/stations/radio-russia.webp)  \n  Tune into a mix of news, music, and cultural programming from Russia.\n\n* **[Triple J – Australia](https://megaradio.live/au/triple-j)**  \n  ![Triple J](https://cdn.megaradio.live/stations/triple-j.webp)  \n  Discover the latest in alternative and independent music from Australia’s iconic station.\n\n* **[Newstalk ZB – New Zealand](https://megaradio.live/nz/newstalk-zb)**  \n  ![Newstalk ZB](https://cdn.megaradio.live/stations/newstalk-zb.webp)  \n  Stay updated with lively news and talk shows from New Zealand.\n\n* **[Radio Fórmula – Mexico](https://megaradio.live/mx/radio-formula)**  \n  ![Radio Fórmula](https://cdn.megaradio.live/stations/radio-formula.webp)  \n  Experience a mix of news, sports, and entertainment on one of Mexico’s most popular stations.\n\n* **[Nogoum FM – Egypt](https://megaradio.live/eg/nogoum-fm)**  \n  ![Nogoum FM](https://cdn.megaradio.live/stations/nogoum-fm.webp)  \n  Enjoy top hits and dynamic programming from Egypt’s leading radio network.\n\n* **[Radio Mitre – Argentina](https://megaradio.live/ar/radio-mitre)**  \n  ![Radio Mitre](https://cdn.megaradio.live/stations/radio-mitre.webp)  \n  Tune into engaging talk shows and music that capture the Argentine spirit.\n\n* **[Antenne Bayern – Germany](https://megaradio.live/de/antenne-bayern)**  \n  ![Antenne Bayern](https://cdn.megaradio.live/stations/antenne-bayern.webp)  \n  Listen to a mix of pop hits and regional favorites from one of Germany’s top stations.\n\n* **[Prambors FM – Indonesia](https://megaradio.live/id/prambors-fm)**  \n  ![Prambors FM](https://cdn.megaradio.live/stations/prambors-fm.webp)  \n  Get into the groove with a popular station known for its upbeat music and lively shows.\n\n## Quick Start Guide\n\n1. Visit [Megaradio.live](https://megaradio.live)\n2. Select your region or use the search function.\n3. Click a station to begin streaming live.\n4. Let the global vibes elevate your day!\n\n![Global Vibes](https://cdn.megaradio.live/stations/fm4-orf-128.webp)\n",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T15:00:15.053+00:00",
+      "updated_at": "2025-02-23T15:03:12.934+00:00",
+      "meta_title": "Global Vibes – Diverse Stations from the Americas, Europe, & Beyond",
+      "meta_description": "Explore a rich mix of radio stations from different regions on [Megaradio.live](https://megaradio.live). This curated list features unique stations from various countries, offering a taste of local culture, news, and music from every corner of the globe.",
+      "meta_keywords": "radio streaming, online radio, free radio, live radio, ORF radio, FM4, international radio, internet radio, radio online, music streaming, radio stations, web radio, radyo, radyo dinle, canli dinle, höre radio, radio hören, beste radios, beste radio, beste app, radio app,"
+    },
+    {
+      "id": "8137e6f8-6d9d-43a8-bf54-ac75b61e9d8a",
+      "slug": "austrianrock",
+      "title": "Your Ultimate Guide to Online Radio – Tips, Tricks & Top Stations",
+      "content": "New to online radio or looking for pro tips? This guide will walk you through everything you need to know about getting the most out of Megaradio.live.\n\n## Unlock the World of Online Radio\n\nLearn how to navigate a vast network of over 100,000 radio stations, explore genres, and discover shows from around the globe.\n\n## Why Listen Online?\n\n* **Unlimited Choices:** A station for every mood and moment\n* **Free & Accessible:** No subscriptions or hidden fees\n* **Interactive Experience:** Discover interviews, playlists, and live events\n\n## Our Top Recommendations\n\nStart your journey with these standout stations:\n* **[ORF Ö1](https://megaradio.live/de/orf-o1)**\n  ![ORF Ö1](https://cdn.megaradio.live/stations/orf-o1.webp)\n* **[RadioFlamingo TMU](https://megaradio.live/de/radioflamingo-tmu)**\n  ![RadioFlamingo TMU](https://cdn.megaradio.live/stations/wiRpzWAgZkFZXUnh0KXY58DVmRrqhdgPCPJCPQVb.png)\n* **[Austrian Rock Radio PPW](https://megaradio.live/de/austrian-rock-radio-ppw)**\n  ![Austrian Rock Radio](https://cdn.megaradio.live/stations/austrian-rock-radio.webp)\n\n## How to Get Started\n\nDiscover stations by country, genre, or use our search feature to pinpoint exactly what you’re in the mood for.\n\n### Quick Start Guide\n\n1. Go to [Megaradio.live](https://megaradio.live)\n2. Explore via genre, country, or search\n3. Select a station and click play\n4. Enjoy the ultimate online radio experience\n\n![Online Radio Guide](https://cdn.megaradio.live/stations/orf-o1.webp)\n",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/blog/ht5s3za6io.png",
+      "published": true,
+      "created_at": "2025-02-23T14:50:35.66+00:00",
+      "updated_at": "2025-02-23T16:07:51.034+00:00",
+      "meta_title": "Your Ultimate Guide to Online Radio – Tips, Tricks & Top Stations",
+      "meta_description": "* **Unlimited Choices:** A station for every mood and moment\n* **Free & Accessible:** No subscriptions or hidden fees\n* **Interactive Experience:** Discover interviews, playlists, and live events",
+      "meta_keywords": "radio streaming, online radio, free radio, live radio, ORF radio, FM4, international radio, internet radio, radio online, music streaming, radio stations, web radio"
+    },
+    {
+      "id": "4e2e6613-91dd-4dfc-be86-2132c52cc76e",
+      "slug": "radioeurope",
+      "title": "European & Regional Radio Treasures – A Diverse Sonic Experience",
+      "content": "Discover a handpicked selection of radio stations from across Europe and nearby regions on [Megaradio.live](https://megaradio.live). This collection showcases local gems—from Scandinavian broadcasts to Mediterranean favorites—that bring regional flavor right to your ears.\n\n## Explore Regional Radio Delights\n\n* **[ORF Radio Wien – Austria](https://megaradio.live/de/orf-radio-wien-pzq)**  \n  ![ORF Radio Wien](https://cdn.megaradio.live/stations/orf-radio-wien.webp)  \n  Enjoy local news, music, and talk shows straight from Vienna.\n\n* **[Radio Italia – Italy](https://megaradio.live/it/radio-italia)**  \n  ![Radio Italia](https://cdn.megaradio.live/stations/radio-italia.webp)  \n  Immerse yourself in Italian culture with a mix of classic and contemporary hits.\n\n* **[NRK P1 – Norway](https://megaradio.live/no/nrk-p1)**  \n  ![NRK P1](https://cdn.megaradio.live/stations/nrk-p1.webp)  \n  Stay informed with Norway’s trusted news and regional programming.\n\n* **[Yle Radio Suomi – Finland](https://megaradio.live/fi/yle-radio-suomi)**  \n  ![Yle Radio Suomi](https://cdn.megaradio.live/stations/yle-radio-suomi.webp)  \n  Listen to quality news and cultural shows from Finland’s public broadcaster.\n\n* **[Radio Hamburg – Germany](https://megaradio.live/de/radio-hamburg)**  \n  ![Radio Hamburg](https://cdn.megaradio.live/stations/radio-hamburg.webp)  \n  Enjoy a diverse mix of music and talk shows from one of Germany’s well-loved stations.\n\n* **[Radio Swiss Pop – Switzerland](https://megaradio.live/ch/radio-swiss-pop)**  \n  ![Radio Swiss Pop](https://cdn.megaradio.live/stations/radio-swiss-pop.webp)  \n  Get your fix of contemporary hits and pop culture from Switzerland.\n\n* **[3FM – Netherlands](https://megaradio.live/nl/3fm)**  \n  ![3FM](https://cdn.megaradio.live/stations/3fm.webp)  \n  Experience the latest in Dutch music and entertainment with this popular station.\n\n* **[Radio Contact – Belgium](https://megaradio.live/be/radio-contact)**  \n  ![Radio Contact](https://cdn.megaradio.live/stations/radio-contact.webp)  \n  Stay connected with Belgium’s lively mix of music and talk.\n\n* **[Rotana Radio – United Arab Emirates](https://megaradio.live/ae/rotana-radio)**  \n  ![Rotana Radio](https://cdn.megaradio.live/stations/rotana-radio.webp)  \n  Immerse yourself in modern Arabic hits and regional programming.\n\n* **[Radio Globo – Brazil](https://megaradio.live/br/radio-globo)**  \n  ![Radio Globo](https://cdn.megaradio.live/stations/radio-globo.webp)  \n  Feel the energy of Brazil with a dynamic blend of music, news, and entertainment.\n\n## Quick Start Guide\n\n1. Visit [Megaradio.live](https://megaradio.live)\n2. Browse by region or use the search tool.\n3. Click on a station to start listening live.\n4. Enjoy a rich, diverse sonic experience!\n\n![Regional Treasures](https://cdn.megaradio.live/stations/orf-radio-wien.webp)\n",
+      "image_url": null,
+      "published": true,
+      "created_at": "2025-02-23T15:00:51.633+00:00",
+      "updated_at": "2025-02-23T16:09:13.698+00:00",
+      "meta_title": "European & Regional Radio Treasures – A Diverse Sonic Experience",
+      "meta_description": "Discover a handpicked selection of radio stations from across Europe and nearby regions on [Megaradio.live](https://megaradio.live). This collection showcases local gems—from Scandinavian broadcasts to Mediterranean favorites—that bring regional flavor right to your ears",
+      "meta_keywords": "radio streaming, online radio, free radio, live radio, ORF radio, FM4, international radio, internet radio, radio online, music streaming, radio stations, web radio, radyo, radyo dinle, canli dinle, höre radio, radio hören, beste radios, beste radio, beste app, radio app,"
+    }
+  ],
+  "catering_services": [
+    {
+      "id": "f8ed9490-5573-4cc6-bb77-c21eb6e80c48",
+      "title": "Buffet-Service",
+      "description": "Vielfältige Buffets für jeden Anlass - von klassisch bis international",
+      "type": "main",
+      "order": 1,
+      "created_at": "2025-02-18T19:43:48.877163+00:00"
+    },
+    {
+      "id": "68e7375e-5292-4857-a067-447103b52ab8",
+      "title": "Live-Cooking",
+      "description": "Spektakuläre Show-Cooking Stationen mit unseren erfahrenen Köchen",
+      "type": "main",
+      "order": 2,
+      "created_at": "2025-02-18T19:43:48.877163+00:00"
+    },
+    {
+      "id": "b65efb5f-afe0-436b-9299-e08c4d1e0dc9",
+      "title": "Flying Service",
+      "description": "Eleganter Service mit kleinen Köstlichkeiten für den besonderen Moment",
+      "type": "main",
+      "order": 3,
+      "created_at": "2025-02-18T19:43:48.877163+00:00"
+    },
+    {
+      "id": "6b9948b8-3e98-4dd2-87a9-512bd33b4db0",
+      "title": "Getränkeservice",
+      "description": "Umfassendes Getränkeangebot mit professionellem Service",
+      "type": "additional",
+      "order": 1,
+      "created_at": "2025-02-18T19:43:48.877163+00:00"
+    },
+    {
+      "id": "ed2d4fe0-33ca-41b8-9d94-3947a9f0519a",
+      "title": "Logistik & Transport",
+      "description": "Zuverlässige Lieferung und Aufbau Ihrer Veranstaltung",
+      "type": "additional",
+      "order": 2,
+      "created_at": "2025-02-18T19:43:48.877163+00:00"
+    },
+    {
+      "id": "38d292a0-3b37-4024-840e-cf05e925b4b2",
+      "title": "Personal",
+      "description": "Geschultes Service-Personal für einen reibungslosen Ablauf",
+      "type": "additional",
+      "order": 3,
+      "created_at": "2025-02-18T19:43:48.877163+00:00"
+    }
+  ],
+  "company_info": [
+    {
+      "id": "97463ca4-3f1e-4731-85a4-a96f54a0b39e",
+      "name": "FEST'LMACHER",
+      "tagline": "Professional catering services for all occasions",
+      "created_at": "2025-02-18T19:40:43.026111+00:00",
+      "logo_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/logos/lzmx1xerz7o.jpg"
+    }
+  ],
+  "contact_info": [
+    {
+      "id": "4458d64c-cf7c-4bbe-bf2a-75b4e1ae15df",
+      "type": "address",
+      "value": "DDSG, Handelskai 265\n1020 Wien\nÖsterreich",
+      "created_at": "2025-02-18T19:42:58.405698+00:00"
+    },
+    {
+      "id": "83671114-d864-4e9a-96dc-9b5c514cb48f",
+      "type": "hours",
+      "value": "grundsätzlich jederzeit für Sie \nnach Vereinbarung",
+      "created_at": "2025-02-18T19:40:43.026111+00:00"
+    },
+    {
+      "id": "239c8e15-acc0-49d6-b6d4-dfda7ee0cf82",
+      "type": "phone",
+      "value": "         +43 (1) 600 2800                    \n+43 (0) 699 1600 2800",
+      "created_at": "2025-02-18T19:42:58.405698+00:00"
+    },
+    {
+      "id": "9a829fa0-362a-44b6-8dee-7a0807a0acc6",
+      "type": "email",
+      "value": "info@cateringandmore.at",
+      "created_at": "2025-02-18T19:42:58.405698+00:00"
+    }
+  ],
+  "faq_items": [
+    {
+      "id": "0a3029ca-b41f-4521-b160-7936b541838b",
+      "question": "Wie früh sollte ich mein Event buchen?",
+      "answer": "Wir empfehlen, mindestens 3-6 Monate im Voraus zu buchen, besonders für größere Veranstaltungen oder in der Hochsaison. Für kleinere Events kann auch ein kürzerer Vorlauf ausreichen.",
+      "order": 1,
+      "created_at": "2025-02-23T15:59:51.734639+00:00"
+    },
+    {
+      "id": "1214aef1-5d8d-4d30-90db-dc8e87f7d04f",
+      "question": "Welche Mindestanzahl an Gästen ist erforderlich?",
+      "answer": "Wir bieten flexible Lösungen für verschiedene Gruppengrößen an. Die Mindestanzahl hängt von der Art des Events und des gewünschten Services ab. Kontaktieren Sie uns für ein individuelles Angebot.",
+      "order": 2,
+      "created_at": "2025-02-23T15:59:51.734639+00:00"
+    },
+    {
+      "id": "64a2b7dc-547c-4677-8ad3-8145cab5a5f0",
+      "question": "Bieten Sie Probeessen an?",
+      "answer": "Ja, für Hochzeiten und größere Veranstaltungen bieten wir Probeessen an. Diese können individuell vereinbart werden und geben Ihnen einen Einblick in unsere Qualität und Vielfalt.",
+      "order": 3,
+      "created_at": "2025-02-23T15:59:51.734639+00:00"
+    },
+    {
+      "id": "1c29bc5e-8995-48ed-8ba2-4819e191711a",
+      "question": "Können Sie auf Allergien und Unverträglichkeiten eingehen?",
+      "answer": "Selbstverständlich! Wir berücksichtigen alle Allergien und Unverträglichkeiten und bieten entsprechende Alternativen an. Bitte informieren Sie uns frühzeitig über spezielle Anforderungen.",
+      "order": 4,
+      "created_at": "2025-02-23T15:59:51.734639+00:00"
+    },
+    {
+      "id": "ce5d5c1a-d34d-4092-94e5-f39b8fb7e062",
+      "question": "Wie läuft die Planung ab?",
+      "answer": "Nach der ersten Kontaktaufnahme vereinbaren wir ein persönliches Gespräch, in dem wir Ihre Wünsche und Vorstellungen besprechen. Darauf basierend erstellen wir ein individuelles Angebot und begleiten Sie bis zur Durchführung.",
+      "order": 5,
+      "created_at": "2025-02-23T15:59:51.734639+00:00"
+    },
+    {
+      "id": "364a5fd2-3e2b-4e8e-a479-96f63dfa3efe",
+      "question": "Welche Zahlungsmöglichkeiten bieten Sie an?",
+      "answer": "Wir akzeptieren Überweisung und EC-Karte. In der Regel wird eine Anzahlung von 30% bei Buchung fällig, der Restbetrag nach der Veranstaltung.",
+      "order": 6,
+      "created_at": "2025-02-23T15:59:51.734639+00:00"
+    },
+    {
+      "id": "9142f9ba-e14d-4102-8ee8-239c8b574864",
+      "question": "Was passiert bei schlechtem Wetter bei Outdoor-Events?",
+      "answer": "Wir entwickeln gemeinsam mit Ihnen einen 'Plan B' für Outdoor-Veranstaltungen. Dies kann die Bereitstellung von Zelten oder die Verlegung in Innenräume umfassen.",
+      "order": 7,
+      "created_at": "2025-02-23T15:59:51.734639+00:00"
+    },
+    {
+      "id": "b03820f8-4fcc-4ca9-b34a-981e08444c22",
+      "question": "Können wir eigene Getränke mitbringen?",
+      "answer": "Dies ist in Absprache möglich. Bitte beachten Sie, dass in diesem Fall eventuell Korkgeld berechnet wird. Wir beraten Sie gerne zu unserem umfangreichen Getränkeangebot.",
+      "order": 8,
+      "created_at": "2025-02-23T15:59:51.734639+00:00"
+    }
+  ],
+  "footer_links": [
+    {
+      "id": "75638886-0307-4179-af31-951f04d5606d",
+      "title": "Equipment",
+      "url": "/equipment",
+      "category": "quick_links",
+      "order": 2,
+      "created_at": "2025-02-18T19:40:43.026111+00:00"
+    },
+    {
+      "id": "b78ffecc-aae0-4aec-8b95-49a9a735d6a8",
+      "title": "Gallery",
+      "url": "/gallery",
+      "category": "quick_links",
+      "order": 3,
+      "created_at": "2025-02-18T19:40:43.026111+00:00"
+    },
+    {
+      "id": "9067410d-6b65-45b2-be22-e00cab6e8057",
+      "title": "Impressum",
+      "url": "/impressum",
+      "category": "legal",
+      "order": 1,
+      "created_at": "2025-02-18T19:40:43.026111+00:00"
+    },
+    {
+      "id": "2f87bb5b-e345-4310-920d-2e8b93ad1a19",
+      "title": "AGB",
+      "url": "/agb",
+      "category": "legal",
+      "order": 3,
+      "created_at": "2025-02-18T19:40:43.026111+00:00"
+    },
+    {
+      "id": "5789195b-574d-47c2-b882-12b193ad9d47",
+      "title": "Services",
+      "url": "/services",
+      "category": "quick_links",
+      "order": 1,
+      "created_at": "2025-02-18T19:43:00.964944+00:00"
+    },
+    {
+      "id": "d10afcb5-b199-449a-a858-f3b849c1cadc",
+      "title": "Contact",
+      "url": "/contact",
+      "category": "quick_links",
+      "order": 4,
+      "created_at": "2025-02-18T19:43:00.964944+00:00"
+    },
+    {
+      "id": "c599754e-23e6-4d71-9a97-fced737db2c2",
+      "title": "Datenschutz",
+      "url": "/datenschutz",
+      "category": "legal",
+      "order": 2,
+      "created_at": "2025-02-18T19:43:00.964944+00:00"
+    }
+  ],
+  "pages": [
+    {
+      "id": "d986be62-18d9-43a6-8a7e-29c754784f74",
+      "slug": "impressum",
+      "title": "Impressum",
+      "content": "<div class=\"max-w-3xl mx-auto prose prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3 prose-p:text-gray-600 prose-p:leading-relaxed prose-p:mb-4\"># Angaben gemäß § 5 TMG\n\nFEST'LMACHER Gastronomie GmbH\nDDSG, Handelskai 265\nA-1020 Wien\n\n## Kontakt\nTelefon: +43 1 600 2800\nMobil:   +43 (0) 699 1600 2800\nE-Mail: catering@festlmacher.at\n\n## Registereintrag\nEintragung im Handelsregister\nRegistergericht: HGR Wien\nRegisternummer: FN 136072g\n\n## Umsatzsteuer-ID\nUmsatzsteuer-Identifikationsnummer gemäß §27 a Umsatzsteuergesetz:\nATU 54486104</div>",
+      "created_at": "2025-02-18T19:40:35.860158+00:00"
+    },
+    {
+      "id": "4fef12e3-f839-429c-a2c5-ff90742199db",
+      "slug": "datenschutz",
+      "title": "Datenschutzerklärung",
+      "content": "# Datenschutzerklärung\n\nWir nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Diese Datenschutzerklärung informiert Sie über Art, Umfang und Zweck der Verarbeitung personenbezogener Daten auf unserer Website.\n\n## 1. Datenschutz auf einen Blick\n\n### Allgemeine Hinweise\nDie folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie unsere Website besuchen. Personenbezogene Daten sind alle Daten, mit denen Sie persönlich identifiziert werden können.\n\n## 2. Datenerfassung auf unserer Website\n\n### Verantwortliche Stelle\nDie Datenverarbeitung auf dieser Website erfolgt durch den Websitebetreiber. Die Kontaktdaten können Sie dem Impressum dieser Website entnehmen.\n\nFEST'LMACHER GmbH\nHandelskai 265\\n1020 Wien\n\nTelefon: +43 123 456 789\nE-Mail: info@cateringandmore.at",
+      "created_at": "2025-02-18T19:40:35.860158+00:00"
+    },
+    {
+      "id": "7f247565-1ffd-4676-ada0-f130342e3881",
+      "slug": "agb",
+      "title": "Allgemeine Geschäftsbedingungen",
+      "content": "<div class=\"max-w-3xl mx-auto prose prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3 prose-p:text-gray-600 prose-p:leading-relaxed prose-p:mb-4\"># Allgemeine Geschäftsbedingungen\n\nDie nachfolgenden Geschäftsbedingungen gelten für alle Verträge, Lieferungen und sonstigen Leistungen der FEST'LMACHER Gastronomie GmbH. Abweichende Bedingungen bedürfen unserer ausdrücklichen schriftlichen Zustimmung.\n\n## 1. Geltungsbereich\nDiese Allgemeinen Geschäftsbedingungen gelten für alle Geschäftsbeziehungen zwischen der FEST'LMACHER Gastronomie GmbH (nachfolgend \"FEST'LMACHER\") und ihren Kunden. Maßgeblich ist jeweils die zum Zeitpunkt des Vertragsschlusses gültige Fassung.\n\n## 2. Vertragsschluss\nDie Präsentation unserer Dienstleistungen stellt kein bindendes Angebot dar. Erst die Bestellung einer Dienstleistung durch Sie ist ein bindendes Angebot nach § 145 BGB. Im Falle der Annahme dieses Angebotes senden wir Ihnen eine Auftragsbestätigung zu.\n\n## 3. Preise und Zahlungsbedingungen\nAlle Preise verstehen sich in Euro inklusive der gesetzlichen Mehrwertsteuer. Bei Vertragsschluss ist eine Anzahlung in Höhe von 30% des Gesamtpreises zu leisten. Der Restbetrag ist spätestens 14 Tage vor der Veranstaltung zu zahlen.\n\n## 4. Stornierung\nBei Stornierung eines bestätigten Auftrags fallen folgende Stornogebühren an:\n\n- bis 60 Tage vor Veranstaltungsbeginn: 30% des Auftragswertes\n- bis 30 Tage vor Veranstaltungsbeginn: 50% des Auftragswertes\n- bis 14 Tage vor Veranstaltungsbeginn: 80% des Auftragswertes\n- danach: 100% des Auftragswertes</div>",
+      "created_at": "2025-02-18T19:40:35.860158+00:00"
+    }
+  ],
+  "services": [
+    {
+      "id": "294b8631-534a-40cd-bd6d-769d6a79d33d",
+      "title": "Eventplanung",
+      "description": "Professionelle Planung und Durchführung",
+      "image_url": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3",
+      "order": 2,
+      "created_at": "2025-02-18T19:40:43.026111+00:00"
+    },
+    {
+      "id": "76c8c7da-a64c-47a4-933e-f47bf332c548",
+      "title": "Eventplanung",
+      "description": "Professionelle Planung und Durchführung",
+      "image_url": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3",
+      "order": 2,
+      "created_at": "2025-02-18T19:42:58.405698+00:00"
+    },
+    {
+      "id": "e8e271c1-3791-42d0-ac5b-5ce421d931ab",
+      "title": "Catering Service",
+      "description": "Exquisite Speisen und Getränke für jeden Anlass 11",
+      "image_url": "https://images.unsplash.com/photo-1555244162-803834f70033",
+      "order": 1,
+      "created_at": "2025-02-18T19:42:58.405698+00:00"
+    },
+    {
+      "id": "36da6ad3-a178-4d70-a1d8-d722febfe339",
+      "title": "Hochzeitsservice",
+      "description": "Ihr schönster Tag in besten Händen",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/services/7t49rmo03z9.jpg",
+      "order": 3,
+      "created_at": "2025-02-18T19:40:43.026111+00:00"
+    },
+    {
+      "id": "870900dc-5118-49ae-8aef-8041d1455863",
+      "title": "Hochzeitsservice",
+      "description": "Ihr schönster Tag in besten Händen",
+      "image_url": "https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/services/772fubrn6ht.png",
+      "order": 3,
+      "created_at": "2025-02-18T19:42:58.405698+00:00"
+    },
+    {
+      "id": "8dc3602e-c265-4f57-9871-9ada86572375",
+      "title": "Catering Service",
+      "description": "Exquisite Speisen und Getränke für jeden Anlass",
+      "image_url": "https://images.unsplash.com/photo-1555244162-803834f70033",
+      "order": 1,
+      "created_at": "2025-02-18T19:40:43.026111+00:00"
+    }
+  ]
+}
