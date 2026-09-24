@@ -93,7 +93,8 @@ export function Header() {
     },
     { id: 'sustainability', name: 'Bio & Nachhaltigkeit', href: '/bio-nachhaltigkeit' },
     { id: 'references', name: 'Referenzen', href: '/referenzen' },
-    { id: 'faq', name: 'SSS', href: '/sss' },
+    { id: 'blog', name: 'Blog', href: '/blog' },
+    { id: 'faq', name: 'FAQ', href: '/sss' },
     { id: 'contact', name: 'Kontakt', href: '/kontakt' }
   ];
 

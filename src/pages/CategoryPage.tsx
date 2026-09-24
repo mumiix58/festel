@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { Container } from '@/components/ui/Container';
 import { motion } from 'framer-motion';
 import { Link, useParams } from 'react-router-dom';
@@ -64,6 +65,7 @@ export function CategoryPage() {
       <div className="py-24">
         <Container>
           <div className="text-center">
+            <SEO noindex />
             <h1 className="font-display text-4xl font-bold">Kategorie nicht gefunden</h1>
             <p className="mt-4 text-gray-600">
               Die gesuchte Kategorie existiert nicht oder wurde entfernt.
@@ -88,6 +90,7 @@ export function CategoryPage() {
       variants={containerVariants}
       className="py-24"
     >
+      <SEO metadata={{title: `${category.name} | FEST'LMACHER Wien`, description: category.description, keywords: ""}} />
       <Container>
         <motion.div variants={itemVariants} className="mx-auto max-w-4xl text-center">
           <h1 className="font-display text-4xl font-bold sm:text-5xl">

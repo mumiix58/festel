@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { FAQContent } from '@/types';
-import { getFAQContent, updateFAQContent } from '@/lib/faq';
+import { getFAQContent, updateFAQContent, defaultFAQContent } from '@/lib/faq';
 import { showToast } from '@/lib/toast';
 
 export function useFAQ() {
-  const [content, setContent] = useState<FAQContent | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [content, setContent] = useState<FAQContent | null>(defaultFAQContent);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

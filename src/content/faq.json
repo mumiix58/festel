@@ -1,0 +1,58 @@
+[
+  {
+    "id": "0a3029ca-b41f-4521-b160-7936b541838b",
+    "question": "Wie früh sollte ich mein Event buchen?",
+    "answer": "Wir empfehlen, mindestens 3-6 Monate im Voraus zu buchen, besonders für größere Veranstaltungen oder in der Hochsaison. Für kleinere Events kann auch ein kürzerer Vorlauf ausreichen.",
+    "order": 1,
+    "isActive": true
+  },
+  {
+    "id": "1214aef1-5d8d-4d30-90db-dc8e87f7d04f",
+    "question": "Welche Mindestanzahl an Gästen ist erforderlich?",
+    "answer": "Wir bieten flexible Lösungen für verschiedene Gruppengrößen an. Die Mindestanzahl hängt von der Art des Events und des gewünschten Services ab. Kontaktieren Sie uns für ein individuelles Angebot.",
+    "order": 2,
+    "isActive": true
+  },
+  {
+    "id": "64a2b7dc-547c-4677-8ad3-8145cab5a5f0",
+    "question": "Bieten Sie Probeessen an?",
+    "answer": "Ja, für Hochzeiten und größere Veranstaltungen bieten wir Probeessen an. Diese können individuell vereinbart werden und geben Ihnen einen Einblick in unsere Qualität und Vielfalt.",
+    "order": 3,
+    "isActive": true
+  },
+  {
+    "id": "1c29bc5e-8995-48ed-8ba2-4819e191711a",
+    "question": "Können Sie auf Allergien und Unverträglichkeiten eingehen?",
+    "answer": "Selbstverständlich! Wir berücksichtigen alle Allergien und Unverträglichkeiten und bieten entsprechende Alternativen an. Bitte informieren Sie uns frühzeitig über spezielle Anforderungen.",
+    "order": 4,
+    "isActive": true
+  },
+  {
+    "id": "ce5d5c1a-d34d-4092-94e5-f39b8fb7e062",
+    "question": "Wie läuft die Planung ab?",
+    "answer": "Nach der ersten Kontaktaufnahme vereinbaren wir ein persönliches Gespräch, in dem wir Ihre Wünsche und Vorstellungen besprechen. Darauf basierend erstellen wir ein individuelles Angebot und begleiten Sie bis zur Durchführung.",
+    "order": 5,
+    "isActive": true
+  },
+  {
+    "id": "364a5fd2-3e2b-4e8e-a479-96f63dfa3efe",
+    "question": "Welche Zahlungsmöglichkeiten bieten Sie an?",
+    "answer": "Wir akzeptieren Überweisung und EC-Karte. In der Regel wird eine Anzahlung von 30% bei Buchung fällig, der Restbetrag nach der Veranstaltung.",
+    "order": 6,
+    "isActive": true
+  },
+  {
+    "id": "9142f9ba-e14d-4102-8ee8-239c8b574864",
+    "question": "Was passiert bei schlechtem Wetter bei Outdoor-Events?",
+    "answer": "Wir entwickeln gemeinsam mit Ihnen einen 'Plan B' für Outdoor-Veranstaltungen. Dies kann die Bereitstellung von Zelten oder die Verlegung in Innenräume umfassen.",
+    "order": 7,
+    "isActive": true
+  },
+  {
+    "id": "b03820f8-4fcc-4ca9-b34a-981e08444c22",
+    "question": "Können wir eigene Getränke mitbringen?",
+    "answer": "Dies ist in Absprache möglich. Bitte beachten Sie, dass in diesem Fall eventuell Korkgeld berechnet wird. Wir beraten Sie gerne zu unserem umfangreichen Getränkeangebot.",
+    "order": 8,
+    "isActive": true
+  }
+]

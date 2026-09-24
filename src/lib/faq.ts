@@ -1,28 +1,14 @@
+import publishedFAQs from '@/content/faq.json';
 import { FAQContent } from '@/types';
 import api from '@/lib/api';
 
 // Default FAQ content
-const defaultFAQContent: FAQContent = {
+export const defaultFAQContent: FAQContent = {
   hero: {
     title: 'Häufig gestellte Fragen',
     subtitle: 'Hier finden Sie Antworten auf die häufigsten Fragen zu unserem Service'
   },
-  faqs: [
-    {
-      id: 'faq-1',
-      question: 'Wie weit im Voraus sollte ich buchen?',
-      answer: 'Wir empfehlen, mindestens 4-6 Wochen im Voraus zu buchen.',
-      order: 0,
-      isActive: true
-    },
-    {
-      id: 'faq-2',
-      question: 'Welche Regionen beliefern Sie?',
-      answer: 'Wir sind in ganz Wien und Umgebung für Sie da.',
-      order: 1,
-      isActive: true
-    }
-  ],
+  faqs: publishedFAQs,
   cta: {
     title: 'Noch Fragen?',
     description: 'Kontaktieren Sie uns gerne für weitere Informationen.',
@@ -40,7 +26,7 @@ const defaultFAQContent: FAQContent = {
 export async function getFAQContent(): Promise<FAQContent> {
   try {
     const content = await api.get('/content/faq');
-    return content || defaultFAQContent;
+    return content && Array.isArray(content.faqs) ? content : defaultFAQContent;
   } catch (error) {
     console.error('Error loading FAQ content:', error);
     // Return default content as fallback

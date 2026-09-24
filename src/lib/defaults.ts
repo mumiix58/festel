@@ -12,7 +12,7 @@ export const defaultSettings: Settings = {
     },
     contact: {
       phone: "+43 (0)699 – 1600 2800",
-      email: "catering@festlmacher.at"
+      email: "info@cateringandmore.at"
     }
   },
   social: {

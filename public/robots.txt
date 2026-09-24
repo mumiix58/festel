@@ -1,31 +1,5 @@
 User-agent: *
 Allow: /
-Allow: /uber-uns
-Allow: /dienstleistungen
-Allow: /catering-and-more
-Allow: /catering-and-more/equipment
-Allow: /catering-and-more/tischwasche
-Allow: /bio-nachhaltigkeit
-Allow: /sss
-Allow: /referenzen
-Allow: /kontakt
-Allow: /impressum
-Allow: /datenschutz
-Allow: /agb
+Disallow: /admin
 
-Disallow: /admin/
-Disallow: /admin/*
-Disallow: /api/
-Disallow: /api/*
-Disallow: /*.json$
-Disallow: /*.js$
-Disallow: /*.css$
-
-# Sitemap
 Sitemap: https://cateringandmore.at/sitemap.xml
-
-# Crawl-delay
-Crawl-delay: 10
-
-# Host
-Host: https://cateringandmore.at

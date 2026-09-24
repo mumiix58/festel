@@ -171,11 +171,6 @@ export function Footer() {
           <p>© {new Date().getFullYear()} {settings.company.name}. Alle Rechte vorbehalten.</p>
         </div>
 
-        {/* Schema.org JSON-LD */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: content.schemaOrg }}
-        />
       </Container>
     </footer>
   );

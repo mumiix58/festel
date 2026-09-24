@@ -1,3 +1,6 @@
+import { Blog, BlogPost } from '@/pages/Blog';
+import { SEO, DefaultSEO } from '@/components/SEO';
+import { seoAliases } from '@/lib/seo';
 import { Toaster } from 'react-hot-toast';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
@@ -61,6 +64,7 @@ export default function App() {
       <ErrorBoundary>
         <Router>
           <ScrollToTop />
+          <DefaultSEO />
           <Toaster />
           <Routes>
             {/* Admin Routes */}
@@ -105,6 +109,9 @@ export default function App() {
                     <ErrorBoundary>
                       <Routes>
                         <Route path="/" element={<Home />} />
+                        {Object.entries(seoAliases).map(([from, to]) => <Route key={from} path={from} element={<Navigate to={to} replace />} />)}
+                        <Route path="/blog" element={<Blog />} />
+                        <Route path="/blog/:slug" element={<BlogPost />} />
                         <Route path="/uber-uns" element={<About />} />
                         <Route path="/dienstleistungen" element={<Services />} />
                         <Route path="/catering-and-more" element={<CateringAndMore />} />
@@ -113,7 +120,6 @@ export default function App() {
                         <Route path="/sss" element={<FAQ />} />
                         <Route path="/referenzen" element={<References />} />
                         <Route path="/kontakt" element={<Contact />} />
-                        <Route path="/nachhaltigkeit" element={<Sustainability />} />
                         <Route path="/impressum" element={<Impressum />} />
                         <Route path="/datenschutz" element={<Datenschutz />} />
                         <Route path="/agb" element={<AGB />} />
