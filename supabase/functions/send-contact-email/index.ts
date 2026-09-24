@@ -1,0 +1,39 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+
+const corsHeaders = {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Methods":"POST, OPTIONS","Access-Control-Allow-Headers":"Content-Type, Authorization, X-Client-Info, Apikey"};
+const json = (status:number, data:unknown) => new Response(JSON.stringify(data), {status, headers:{...corsHeaders,"Content-Type":"application/json"}});
+const esc = (s:unknown) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c] || c));
+const logo = 'https://jlesdhrfqsqsotwmhysn.supabase.co/storage/v1/object/public/images/logos/lzmx1xerz7o.jpg';
+function render(d:Record<string,string>) {
+ const row = (label:string,value:string) => value ? '<tr><td style="padding:12px 0;border-bottom:1px solid #eee9e5;width:34%;font-size:12px;color:#746d69;vertical-align:top">'+esc(label)+'</td><td style="padding:12px 0;border-bottom:1px solid #eee9e5;font-size:14px;color:#251f22;line-height:1.6;word-break:break-word">'+esc(value)+'</td></tr>' : '';
+  const date = (v:string) => {if(!v)return '';const t=new Date(v);return Number.isNaN(t.getTime())?v:new Intl.DateTimeFormat('de-AT',{dateStyle:'medium',timeStyle:'short',timeZone:'Europe/Vienna'}).format(t)+' Uhr';};
+   const event=row('Beginn',date(d.event_start))+row('Ende',date(d.event_end));
+    const reply='mailto:'+encodeURIComponent(d.email)+'?subject='+encodeURIComponent('Re: '+d.subject);
+     return '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>Neue Anfrage | FEST’LMACHER</title></head><body style="margin:0;padding:0;background:#f3f0ed;font-family:Arial,Helvetica,sans-serif;color:#251f22">'+
+      '<div style="display:none;font-size:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">Neue Anfrage von '+esc(d.name)+' · '+esc(d.subject)+'</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f0ed"><tr><td align="center" style="padding:32px 12px"><!--[if mso]><table role="presentation" width="620"><tr><td><![endif]--><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:620px;background:#fff;border:1px solid #e7e0da">'+
+       '<tr><td style="height:5px;background:#741b48;font-size:1px;line-height:5px">&nbsp;</td></tr><tr><td align="center" style="padding:28px;background:#fff"><a href="https://cateringandmore.at"><img src="'+logo+'" alt="FEST’LMACHER – catering and more" width="240" style="display:block;width:240px;max-width:100%;height:auto;border:0"></a></td></tr>'+
+        '<tr><td style="padding:30px 32px;background:#251f22"><p style="margin:0 0 12px;color:#d8ba91;font-size:10px;letter-spacing:3px;font-weight:bold">KONTAKT &amp; VERANSTALTUNGEN</p><h1 style="margin:0;color:#fff;font-family:Georgia,serif;font-size:32px;line-height:1.2;font-weight:normal">Eine neue Anfrage<br>für besondere Momente.</h1><p style="margin:16px 0 0;color:#ded5d8;font-size:14px;line-height:1.7">'+esc(d.name)+' hat über Ihre Website Kontakt aufgenommen.</p></td></tr>'+
+         '<tr><td style="padding:30px 32px 10px"><p style="margin:0 0 8px;font-size:10px;font-weight:bold;letter-spacing:2px;color:#741b48">BETREFF</p><h2 style="margin:0 0 22px;font-family:Georgia,serif;font-size:24px;line-height:1.4;font-weight:normal;word-break:break-word">'+esc(d.subject)+'</h2><table role="presentation" width="100%" cellpadding="0" cellspacing="0">'+row('Kontaktperson',d.name)+row('E-Mail',d.email)+row('Telefon',d.phone)+'</table></td></tr>'+
+          (event?'<tr><td style="padding:20px 32px 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8f5f1"><tr><td style="padding:20px"><p style="margin:0 0 8px;font-size:10px;letter-spacing:2px;color:#741b48;font-weight:bold">VERANSTALTUNGSDETAILS</p><table role="presentation" width="100%" cellpadding="0" cellspacing="0">'+event+'</table><p style="margin:12px 0 0;font-size:11px;color:#746d69">Zeitangaben: Europe/Vienna</p></td></tr></table></td></tr>':'')+
+           '<tr><td style="padding:24px 32px"><p style="margin:0 0 14px;font-size:10px;font-weight:bold;letter-spacing:2px;color:#741b48">PERSÖNLICHE NACHRICHT</p><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid #c8a97e;padding:2px 0 2px 18px;font-size:15px;line-height:1.85;word-break:break-word">'+esc(d.message).replace(/\r?\n/g,'<br>')+'</td></tr></table></td></tr>'+
+            '<tr><td style="padding:4px 32px 32px"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td bgcolor="#741b48" style="background:#741b48;padding:15px 24px"><a href="'+esc(reply)+'" style="font-family:Arial,sans-serif;color:#fff;text-decoration:none;font-size:14px;font-weight:bold">Anfrage beantworten &nbsp; →</a></td></tr></table><p style="margin:12px 0 0;font-size:12px;line-height:1.7;color:#746d69">Sie können auch direkt auf diese E-Mail antworten.</p></td></tr>'+
+             '<tr><td style="padding:22px 32px;border-top:1px solid #e7e0da;background:#faf8f6"><p style="margin:0 0 5px;font-size:12px;font-weight:bold;letter-spacing:1px">FEST’LMACHER</p><p style="margin:0;font-family:Georgia,serif;font-style:italic;font-size:14px;color:#746d69">catering and more</p><p style="margin:14px 0 0;font-size:12px;line-height:1.7"><a href="https://cateringandmore.at" style="color:#741b48;text-decoration:none">cateringandmore.at</a></p></td></tr></table><p style="max-width:560px;margin:18px 12px 0;font-size:11px;line-height:1.7;color:#817a75">Automatische Benachrichtigung aus dem Kontaktformular.<br>Die Angaben wurden von der anfragenden Person übermittelt.</p><!--[if mso]></td></tr></table><![endif]--></td></tr></table></body></html>';
+             }
+             Deno.serve(async (req:Request) => {
+              if(req.method==='OPTIONS')return new Response(null,{status:200,headers:corsHeaders});
+               if(req.method!=='POST')return json(405,{error:'Method not allowed'});
+                try {
+                  const b=await req.json();
+                    if(!b || typeof b!=='object' || ['name','email','subject','message'].some(k=>typeof b[k]!=='string'||!b[k].trim()) || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(b.email))return json(400,{error:'Invalid contact details'});
+                      if(Object.values(b).some(v=>typeof v==='string'&&v.length>10000))return json(400,{error:'Input too long'});
+                        const key=Deno.env.get('RESEND_API_KEY');
+                          if(!key)return json(500,{error:'Email service not configured'});
+                            const to=b.recipientEmail || 'info@cateringandmore.at';
+                              if(!['info@cateringandmore.at','gey14853@outlook.com'].includes(to))return json(400,{error:'Invalid recipient'});
+                                const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+key},body:JSON.stringify({from:"FEST'LMACHER <anfragen@cateringandmore.at>",to,reply_to:b.email,subject:'Kontaktanfrage: '+b.subject,html:render(b),text:['Neue Kontaktanfrage',b.name,b.email,b.phone||'',b.subject,b.event_start||'',b.event_end||'','',b.message].join('\n')}),signal:AbortSignal.timeout(15000)});
+                                  const result=await response.json();
+                                    if(!response.ok||!result.id){console.error('Resend rejected contact email',response.status);return json(502,{error:'Email delivery failed'});}
+                                      return json(200,{success:true,id:result.id});
+                                       }catch{ return json(500,{error:'Email delivery failed'}); }
+                                       });
+                                       

@@ -1,3 +1,4 @@
+import { renderContactEmail } from './email-template.mjs';
 const failureMessage = 'Es gab einen Fehler beim Senden der Nachricht. Bitte versuchen Sie es später erneut oder kontaktieren Sie uns telefonisch.';
 const json = (status, body, headers = {}) => new Response(JSON.stringify(body), {
   status,
@@ -61,7 +62,7 @@ export default async function sendEmail(request) {
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from, to: [to], reply_to: fields.from_email, subject, text }),
+      body: JSON.stringify({ from, to: [to], reply_to: fields.from_email, subject, text, html: renderContactEmail({ ...fields, name: fields.from_name, email: fields.from_email, subject }) }),
       signal: AbortSignal.timeout(10000)
     });
     const result = await response.json();
