@@ -6,6 +6,7 @@ import { useSettings } from '@/hooks/useSettings';
 import { Loader } from '@googlemaps/js-api-loader';
 import { sendEmail } from '@/lib/email';
 import { saveContactMessage } from '@/lib/analytics';
+import { defaultSettings } from '@/lib/defaults';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -36,7 +37,8 @@ export function Contact() {
   }>({ type: null, message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
-  const { settings, loading: settingsLoading } = useSettings();
+  const { settings: savedSettings } = useSettings();
+  const settings = savedSettings || defaultSettings;
 
   useEffect(() => {
     if (!settings?.seo?.googleMapsApiKey) {
@@ -124,16 +126,6 @@ export function Contact() {
 
   // Get today's date in YYYY-MM-DD format for the date input min attribute
   const today = new Date().toISOString().split('T')[0];
-
-  if (settingsLoading || !settings) {
-    return (
-      <div className="py-24">
-        <Container>
-          <div className="text-center">Laden...</div>
-        </Container>
-      </div>
-    );
-  }
 
   return (
     <motion.div

@@ -7,7 +7,7 @@ const isDevelopment = import.meta.env.DEV;
 
 // Create axios instance
 const axiosInstance = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   timeout: 120000, // 2 minutes
   headers: {
     'Accept': 'application/json',
@@ -81,9 +81,9 @@ axiosInstance.interceptors.response.use(
 );
 
 const api = {
-  async get(url: string) {
+  async get<T = any>(url: string) {
     try {
-      return await axiosInstance.get(url);
+      return await axiosInstance.get<T, T>(url);
     } catch (error) {
       if (isDevelopment) {
         console.error('API GET error:', error);
@@ -92,9 +92,9 @@ const api = {
     }
   },
 
-  async post(url: string, data: any) {
+  async post<T = any>(url: string, data: unknown) {
     try {
-      const response = await axiosInstance.post(url, data);
+      const response = await axiosInstance.post<T, T>(url, data);
       if (isAdminRoute()) {
         showToast.success('Successfully saved');
       }
@@ -104,9 +104,9 @@ const api = {
     }
   },
 
-  async put(url: string, data: any) {
+  async put<T = any>(url: string, data: unknown) {
     try {
-      const response = await axiosInstance.put(url, data);
+      const response = await axiosInstance.put<T, T>(url, data);
       if (isAdminRoute()) {
         showToast.success('Successfully saved');
       }
@@ -116,9 +116,13 @@ const api = {
     }
   },
 
-  async delete(url: string) {
+  async patch<T = any>(url: string, data: unknown) {
+    return axiosInstance.patch<T, T>(url, data);
+  },
+
+  async delete<T = any>(url: string) {
     try {
-      return await axiosInstance.delete(url);
+      return await axiosInstance.delete<T, T>(url);
     } catch (error) {
       throw error;
     }
