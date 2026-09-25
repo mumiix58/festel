@@ -190,10 +190,14 @@ export function pageGraph(
   faqs: { question: string; answer: string }[] = [],
 ) {
   const url = canonicalUrl(page.path);
-  const type =
-    page.type === "FAQPage" && !faqs.length
+  const baseType = page.type || "WebPage";
+  const type = faqs.length
+    ? baseType === "FAQPage"
+      ? "FAQPage"
+      : [baseType, "FAQPage"]
+    : baseType === "FAQPage"
       ? "WebPage"
-      : page.type || "WebPage";
+      : baseType;
   const webPage = {
     "@type": type,
     "@id": url + "#webpage",
@@ -206,7 +210,7 @@ export function pageGraph(
     ...(page.path !== "/"
       ? { breadcrumb: { "@id": url + "#breadcrumb" } }
       : {}),
-    ...(faqs.length && page.type === "FAQPage"
+    ...(faqs.length
       ? {
           mainEntity: faqs.map((f) => ({
             "@type": "Question",

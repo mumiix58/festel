@@ -40,3 +40,9 @@ The CMS uses existing Supabase Auth with email/password, existing database RLS a
 - No new real email was sent in this change. Existing receiving mailbox/MX concerns are not solved by a visual/backend merge.
 - GitHub CLI accounts have no write permission to mumiix58/festel (403). No Netlify CLI credential is configured. These changes are committed locally, not pushed or deployed.
 - Existing dependency audit findings remain; broad dependency upgrades were not mixed into this merge.
+
+## Page-specific conversational FAQs
+
+Nine commercial pages now include four distinct German questions each (36 total), written around natural planning questions rather than keyword lists. `src/content/page-faq.ts` supplies both the visible expandable answers and FAQPage JSON-LD. Existing page types are retained alongside FAQPage. Questions and answers are present in the initial rendered HTML. The standalone FAQ remains unchanged. Legal pages and unrelated existing blog articles do not receive generic catering FAQs.
+
+The production build and 12 SEO/site tests passed after this addition, including exact visible/schema answer matching across all nine pages. Browser verification confirmed the sustainability FAQ expands correctly. These additions remain local until deployment access is available.

@@ -1,3 +1,5 @@
+import { PageFAQ } from "./PageFAQ";
+import { pageFAQs } from "../content/page-faq";
 import { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useLocation } from "react-router-dom";
@@ -94,26 +96,29 @@ function PageIntro({
 }
 function CTA() {
   return (
-    <section className="fm-cta">
-      <div className="fm-wrap fm-cta-inner">
-        <div>
-          <span className="fm-eyebrow">AUS IHRER IDEE WIRD EIN FEST</span>
-          <h2>
-            Was dürfen wir
-            <br />
-            für Sie möglich machen?
-          </h2>
+    <>
+      <PageFAQ />
+      <section className="fm-cta">
+        <div className="fm-wrap fm-cta-inner">
+          <div>
+            <span className="fm-eyebrow">AUS IHRER IDEE WIRD EIN FEST</span>
+            <h2>
+              Was dürfen wir
+              <br />
+              für Sie möglich machen?
+            </h2>
+          </div>
+          <div>
+            <p>
+              Ein erster Kontakt. Viele Möglichkeiten.
+              <br />
+              Gemeinsam planen wir Ihre Veranstaltung.
+            </p>
+            <Button light />
+          </div>
         </div>
-        <div>
-          <p>
-            Ein erster Kontakt. Viele Möglichkeiten.
-            <br />
-            Gemeinsam planen wir Ihre Veranstaltung.
-          </p>
-          <Button light />
-        </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 function SiteHeader() {
@@ -1024,7 +1029,7 @@ function CurrentSEO({ path }: { path: string }) {
         description: "Die gesuchte Seite wurde nicht gefunden.",
       };
   const excluded = path.startsWith("/blog/") ? !post : !source;
-  const faqs = path === "/faq" ? ordered(data.faq_items) : [];
+  const faqs = path === "/faq" ? ordered(data.faq_items) : pageFAQs[path] || [];
   const graph = pageGraph(page, faqs as any);
   const company = graph["@graph"][0] as any;
   company.name = data.company_info[0]?.name || SITE_NAME;
@@ -1086,6 +1091,7 @@ export function PublicSite() {
       <SiteHeader />
       <main id="main-content" tabIndex={-1}>
         {content}
+        {path === "/contact" && <PageFAQ />}
       </main>
       <SiteFooter />
     </div>

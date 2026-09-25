@@ -1373,3 +1373,20 @@
     transition: none !important;
   }
 }
+
+.fm-page-faq {
+  padding-block: 64px 80px;
+  border-top: 1px solid var(--line);
+}
+.fm-page-faq-list {
+  max-width: none;
+  padding-bottom: 25px;
+}
+.fm-page-faq .fm-faq details p {
+  max-width: 880px;
+}
+@media (max-width: 640px) {
+  .fm-page-faq {
+    padding-block: 42px 50px;
+  }
+}

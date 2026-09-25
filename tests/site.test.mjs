@@ -161,3 +161,21 @@ test("dynamic sitemap uses current published posts, not old snapshot slugs", asy
     global.fetch = original;
   }
 });
+
+test('each commercial page has its own visible FAQ and exactly matching schema answers', async () => {
+  const { pageFAQs } = await module('src/content/page-faq.ts', 'page-faq-test');
+  assert.equal(Object.keys(pageFAQs).length, 9);
+  for (const [path, questions] of Object.entries(pageFAQs)) {
+    const html = await readFile('dist' + (path === '/' ? '' : path) + '/index.html', 'utf8');
+    assert.equal((html.match(/id="page-faq-title"/g) || []).length, 1, path);
+    assert.equal((html.match(/<details>/g) || []).length, questions.length, path);
+    const match = html.match(/<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/);
+    const graph = JSON.parse(match[1])['@graph'];
+    const faq = graph.find(node => [node['@type']].flat().includes('FAQPage'));
+    assert.deepEqual(faq.mainEntity.map(item => ({question:item.name,answer:item.acceptedAnswer.text})), questions, path);
+    for (const item of questions) {
+      const escape = value => value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+      assert.ok(html.includes('<p>' + escape(item.answer) + '</p>'), path + ': visible answer');
+    }
+  }
+});
