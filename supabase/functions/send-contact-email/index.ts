@@ -28,8 +28,7 @@ function render(d:Record<string,string>) {
                       if(Object.values(b).some(v=>typeof v==='string'&&v.length>10000))return json(400,{error:'Input too long'});
                         const key=Deno.env.get('RESEND_API_KEY');
                           if(!key)return json(500,{error:'Email service not configured'});
-                            const to=b.recipientEmail || 'info@cateringandmore.at';
-                              if(!['info@cateringandmore.at','gey14853@outlook.com'].includes(to))return json(400,{error:'Invalid recipient'});
+                            const to='info@cateringandmore.at';
                                 const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+key},body:JSON.stringify({from:"FEST'LMACHER <anfragen@cateringandmore.at>",to,reply_to:b.email,subject:'Kontaktanfrage: '+b.subject,html:render(b),text:['Neue Kontaktanfrage',b.name,b.email,b.phone||'',b.subject,b.event_start||'',b.event_end||'','',b.message].join('\n')}),signal:AbortSignal.timeout(15000)});
                                   const result=await response.json();
                                     if(!response.ok||!result.id){console.error('Resend rejected contact email',response.status);return json(502,{error:'Email delivery failed'});}
