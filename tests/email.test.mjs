@@ -19,7 +19,7 @@ test('contact sends all event details, fixed recipient and visitor reply-to', as
   const provider = mock.method(globalThis, 'fetch', async (url, options) => {
     assert.equal(url, 'https://api.resend.com/emails');
     const email = JSON.parse(options.body);
-    assert.deepEqual(email.to, ['info@cateringandmore.at']);
+    assert.deepEqual(email.to, ['catering@festlmacher.at']);
     assert.equal(email.from, 'Forms <forms@example.com>');
     assert.equal(email.reply_to, contact.from_email);
     for (const value of Object.values(contact).slice(1)) assert.ok(email.text.includes(value));

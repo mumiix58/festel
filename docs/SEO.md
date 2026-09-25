@@ -25,7 +25,7 @@ Non-blog static content in the initial HTML reflects the last build; browser dat
 
 ## Contact and administration
 
-The form saves to the existing `contact_submissions` table and invokes the existing `send-contact-email` Supabase function. It retains the existing Resend sender and branded template. The visitor cannot set a recipient; delivery defaults to `info@cateringandmore.at` on the server. Successful database saves are not repeated when retrying an email failure in the same form session. Dates are validated and input is preserved after failures.
+The form saves to the existing `contact_submissions` table and invokes the existing `send-contact-email` Supabase function. It retains the existing Resend sender and branded template. The visitor cannot set a recipient; delivery defaults to `catering@festlmacher.at` on the server. Successful database saves are not repeated when retrying an email failure in the same form session. Dates are validated and input is preserved after failures.
 
 The CMS uses existing Supabase Auth with email/password, existing database RLS and the existing images bucket. There is no new user registration or permission change. It provides content CRUD, image upload and reading/responding to inquiries. Actual authenticated CMS writes were not tested because an application-admin login was unavailable; the login UI and compile path were checked. Supabase dashboard sign-in is not the same as a website administrator session.
 

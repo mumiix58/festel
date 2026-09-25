@@ -42,7 +42,7 @@ export default async function sendEmail(request) {
 
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
-  const to = process.env.CONTACT_TO_EMAIL || 'info@cateringandmore.at';
+  const to = process.env.CONTACT_TO_EMAIL || 'catering@festlmacher.at';
   if (!apiKey || !from) {
     console.error('Contact email configuration missing: RESEND_API_KEY or RESEND_FROM_EMAIL');
     return json(503, { message: failureMessage });
