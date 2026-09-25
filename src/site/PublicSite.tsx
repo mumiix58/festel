@@ -244,7 +244,6 @@ function SiteFooter() {
             ...navigation,
             ["/sustainability", "Bio & Nachhaltigkeit"],
             ["/references", "Referenzen"],
-            ["/blog", "Blog"],
             ["/faq", "Häufige Fragen"],
           ].map(([url, label]) => (
             <Link key={url} to={url}>
