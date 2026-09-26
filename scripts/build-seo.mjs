@@ -73,6 +73,7 @@ try {
   await writeFile("dist/sitemap.xml", sitemap);
   await writeFile("public/sitemap.xml", sitemap);
   const redirects = [
+    "/blog /blog/index.html 200!",
     "/blog/* /.netlify/functions/live-blog/:splat 200!",
     ...Object.entries(seoAliases).map(([from, to]) => `${from} ${to} 301!`),
     ...seoPages
