@@ -80,8 +80,9 @@ test("sitemap preserves live URLs and routing has dynamic published-blog validat
   const rules = await readFile("dist/_redirects", "utf8");
   assert.ok(rules.includes("/sss /faq 301!"));
   assert.ok(
-    rules.includes("/blog/* /.netlify/functions/live-blog?slug=:splat 200!"),
+    rules.includes("/blog/* /.netlify/functions/live-blog/:splat 200!"),
   );
+  assert.ok(!rules.includes("/catering/ /catering 301"));
   assert.ok(rules.endsWith("/* /404.html 404\n"));
   assert.ok(
     (await readFile("dist/404.html", "utf8")).includes("noindex,follow"),

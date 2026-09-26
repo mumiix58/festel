@@ -73,12 +73,11 @@ try {
   await writeFile("dist/sitemap.xml", sitemap);
   await writeFile("public/sitemap.xml", sitemap);
   const redirects = [
-    "/blog/* /.netlify/functions/live-blog?slug=:splat 200!",
+    "/blog/* /.netlify/functions/live-blog/:splat 200!",
     ...Object.entries(seoAliases).map(([from, to]) => `${from} ${to} 301!`),
     ...seoPages
       .filter((p) => p.path !== "/")
       .flatMap((p) => [
-        `${p.path}/ ${p.path} 301!`,
         `${p.path} ${p.path}/index.html 200`,
       ]),
     "/sitemap.xml /.netlify/functions/site-sitemap 200!",

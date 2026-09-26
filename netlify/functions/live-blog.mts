@@ -4,8 +4,12 @@ import { initialData, publicBackend } from "../../src/site/data";
 import { serializeJsonLd } from "../../src/lib/seo";
 export async function handler(event: {
   queryStringParameters?: Record<string, string>;
+  path?: string;
+  rawUrl?: string;
 }) {
-  const slug = (event.queryStringParameters?.slug || "").replace(/\/$/, "");
+  const requestPath = event.path || (event.rawUrl ? new URL(event.rawUrl).pathname : "");
+  const pathSlug = requestPath.replace(/^\/(?:\.netlify\/functions\/live-blog|blog)\//, "");
+  const slug = (event.queryStringParameters?.slug || pathSlug).replace(/\/$/, "");
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))
     return { statusCode: 404, body: "Not found" };
   try {

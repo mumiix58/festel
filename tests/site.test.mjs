@@ -132,6 +132,10 @@ test("live blog handles new published articles, missing slugs and backend errors
     assert.ok(found.body.includes("A fresh published article."));
     assert.ok(found.body.includes("BlogPosting"));
     assert.ok(found.body.includes("site-data"));
+    const routed = await blog.handler({ path: "/.netlify/functions/live-blog/new-published-article" });
+    assert.equal(routed.statusCode, 200);
+    const originalPath = await blog.handler({ path: "/blog/new-published-article/" });
+    assert.equal(originalPath.statusCode, 200);
     global.fetch = async () => new Response("[]");
     const missing = await blog.handler({
       queryStringParameters: { slug: "missing" },
